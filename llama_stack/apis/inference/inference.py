@@ -17,7 +17,6 @@ from typing import (
     runtime_checkable,
 )
 
-from llama_models.schema_utils import json_schema_type, register_schema, webmethod
 from pydantic import BaseModel, Field, field_validator
 from typing_extensions import Annotated
 
