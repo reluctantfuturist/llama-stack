@@ -152,6 +152,13 @@ class MemoryToolRuntimeImpl(ToolsProtocolPrivate, ToolRuntime, RAGToolRuntime):
             ToolDef(
                 name="query_from_memory",
                 description="Retrieve context from memory",
+                parameters=[
+                    ToolParameter(
+                        name="query",
+                        description="The query to search for. Can be a natural language sentence or keywords.",
+                        parameter_type="string",
+                    ),
+                ],
             ),
             ToolDef(
                 name="insert_into_memory",
