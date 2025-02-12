@@ -1885,6 +1885,7 @@ components:
           enum:
             - auto
             - required
+            - none
           description: >-
             Whether tool use is required or automatic. This is a hint to the model
             which may not be followed. It depends on the Instruction Following capabilities
@@ -1925,6 +1926,10 @@ components:
     ChatCompletionResponse:
       type: object
       properties:
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricEvent'
         completion_message:
           $ref: '#/components/schemas/CompletionMessage'
           description: The complete response message
@@ -1938,6 +1943,46 @@ components:
       required:
         - completion_message
       description: Response from a chat completion request.
+    MetricEvent:
+      type: object
+      properties:
+        trace_id:
+          type: string
+        span_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        attributes:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: integer
+              - type: number
+              - type: boolean
+              - type: 'null'
+        type:
+          type: string
+          const: metric
+          default: metric
+        metric:
+          type: string
+        value:
+          oneOf:
+            - type: integer
+            - type: number
+        unit:
+          type: string
+      additionalProperties: false
+      required:
+        - trace_id
+        - span_id
+        - timestamp
+        - type
+        - metric
+        - value
+        - unit
     TokenLogProbs:
       type: object
       properties:
@@ -2023,13 +2068,21 @@ components:
       type: object
       properties:
         tool_choice:
-          type: string
-          enum:
-            - auto
-            - required
-          description: >-
-            (Optional) Whether tool use is required or automatic. Defaults to ToolChoice.auto.
+          oneOf:
+            - type: string
+              enum:
+                - auto
+                - required
+                - none
+              description: >-
+                Whether tool use is required or automatic. This is a hint to the model
+                which may not be followed. It depends on the Instruction Following
+                capabilities of the model.
+            - type: string
           default: auto
+          description: >-
+            (Optional) Whether tool use is automatic, required, or none. Can also
+            specify a tool name to use a specific tool. Defaults to ToolChoice.auto.
         tool_prompt_format:
           type: string
           enum:
@@ -2056,8 +2109,6 @@ components:
             where the function definitions should be inserted.
           default: append
       additionalProperties: false
-      required:
-        - system_message_behavior
       description: Configuration for tool use.
     ChatCompletionRequest:
       type: object
@@ -2087,6 +2138,7 @@ components:
           enum:
             - auto
             - required
+            - none
           description: >-
             (Optional) Whether tool use is required or automatic. Defaults to ToolChoice.auto.
             .. deprecated:: Use tool_config instead.
@@ -2173,6 +2225,10 @@ components:
     ChatCompletionResponseStreamChunk:
       type: object
       properties:
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricEvent'
         event:
           $ref: '#/components/schemas/ChatCompletionResponseEvent'
           description: The event containing the new content
@@ -2334,11 +2390,11 @@ components:
           enum:
             - auto
             - required
+            - none
           description: >-
             Whether tool use is required or automatic. This is a hint to the model
             which may not be followed. It depends on the Instruction Following capabilities
             of the model.
-          default: auto
         tool_prompt_format:
           type: string
           enum:
@@ -4070,47 +4126,6 @@ components:
         - warn
         - error
         - critical
-    MetricEvent:
-      type: object
-      properties:
-        trace_id:
-          type: string
-        span_id:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-        attributes:
-          type: object
-          additionalProperties:
-            oneOf:
-              - type: 'null'
-              - type: boolean
-              - type: number
-              - type: string
-              - type: array
-              - type: object
-        type:
-          type: string
-          const: metric
-          default: metric
-        metric:
-          type: string
-        value:
-          oneOf:
-            - type: integer
-            - type: number
-        unit:
-          type: string
-      additionalProperties: false
-      required:
-        - trace_id
-        - span_id
-        - timestamp
-        - type
-        - metric
-        - value
-        - unit
     SpanEndPayload:
       type: object
       properties:
@@ -4153,12 +4168,11 @@ components:
           type: object
           additionalProperties:
             oneOf:
-              - type: 'null'
-              - type: boolean
-              - type: number
               - type: string
-              - type: array
-              - type: object
+              - type: integer
+              - type: number
+              - type: boolean
+              - type: 'null'
         type:
           type: string
           const: structured_log
@@ -4195,12 +4209,11 @@ components:
           type: object
           additionalProperties:
             oneOf:
-              - type: 'null'
-              - type: boolean
-              - type: number
               - type: string
-              - type: array
-              - type: object
+              - type: integer
+              - type: number
+              - type: boolean
+              - type: 'null'
         type:
           type: string
           const: unstructured_log

@@ -11,6 +11,7 @@ PROVIDER_TOOL_PROMPT_FORMAT = {
     "remote::ollama": "json",
     "remote::together": "json",
     "remote::fireworks": "json",
+    "remote::vllm": "json",
 }
 
 PROVIDER_LOGPROBS_TOP_K = set(
@@ -156,8 +157,8 @@ def test_text_completion_structured_output(llama_stack_client, text_model_id, in
 @pytest.mark.parametrize(
     "question,expected",
     [
-        ("What are the names of planets in our solar system?", "Earth"),
-        ("What are the names of the planets that have rings around them?", "Saturn"),
+        ("Which planet do humans live on?", "Earth"),
+        ("Which planet has rings around it with a name starting with letter S?", "Saturn"),
     ],
 )
 def test_text_chat_completion_non_streaming(llama_stack_client, text_model_id, question, expected):
@@ -247,6 +248,40 @@ def test_text_chat_completion_with_tool_calling_and_streaming(
     )
     tool_invocation_content = extract_tool_invocation_content(response)
     assert tool_invocation_content == "[get_weather, {'location': 'San Francisco, CA'}]"
+
+
+def test_text_chat_completion_with_tool_choice_required(
+    llama_stack_client, text_model_id, get_weather_tool_definition, provider_tool_format
+):
+    response = llama_stack_client.inference.chat_completion(
+        model_id=text_model_id,
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "What's the weather like in San Francisco?"},
+        ],
+        tools=[get_weather_tool_definition],
+        tool_config={"tool_choice": "required", "tool_prompt_format": provider_tool_format},
+        stream=True,
+    )
+    tool_invocation_content = extract_tool_invocation_content(response)
+    assert tool_invocation_content == "[get_weather, {'location': 'San Francisco, CA'}]"
+
+
+def test_text_chat_completion_with_tool_choice_none(
+    llama_stack_client, text_model_id, get_weather_tool_definition, provider_tool_format
+):
+    response = llama_stack_client.inference.chat_completion(
+        model_id=text_model_id,
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "What's the weather like in San Francisco?"},
+        ],
+        tools=[get_weather_tool_definition],
+        tool_config={"tool_choice": "none", "tool_prompt_format": provider_tool_format},
+        stream=True,
+    )
+    tool_invocation_content = extract_tool_invocation_content(response)
+    assert tool_invocation_content == ""
 
 
 def test_text_chat_completion_structured_output(llama_stack_client, text_model_id, inference_provider_type):
