@@ -55,21 +55,6 @@ def pytest_configure(config):
         )
 
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--inference-model",
-        action="store",
-        default="meta-llama/Llama-3.2-3B-Instruct",
-        help="Specify the inference model to use for testing",
-    )
-    parser.addoption(
-        "--judge-model",
-        action="store",
-        default="meta-llama/Llama-3.1-8B-Instruct",
-        help="Specify the judge model to use for testing",
-    )
-
-
 def pytest_generate_tests(metafunc):
     judge_model = metafunc.config.getoption("--judge-model")
     if "judge_model" in metafunc.fixturenames:
@@ -86,7 +71,6 @@ def pytest_generate_tests(metafunc):
             "inference": INFERENCE_FIXTURES,
         }
         combinations = (
-            get_provider_fixture_overrides(metafunc.config, available_fixtures)
-            or DEFAULT_PROVIDER_COMBINATIONS
+            get_provider_fixture_overrides(metafunc.config, available_fixtures) or DEFAULT_PROVIDER_COMBINATIONS
         )
         metafunc.parametrize("scoring_stack", combinations, indirect=True)

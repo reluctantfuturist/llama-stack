@@ -4,12 +4,12 @@
 # This source code is licensed under the terms described in the LICENSE file in
 # the root directory of this source tree.
 
+import base64
 from pathlib import Path
 
 import pytest
 
-from llama_stack.apis.common.content_types import ImageContentItem, TextContentItem, URL
-
+from llama_stack.apis.common.content_types import URL, ImageContentItem, TextContentItem
 from llama_stack.apis.inference import (
     ChatCompletionResponse,
     ChatCompletionResponseEventType,
@@ -23,7 +23,7 @@ from .utils import group_chunks
 THIS_DIR = Path(__file__).parent
 
 with open(THIS_DIR / "pasta.jpeg", "rb") as f:
-    PASTA_IMAGE = f.read()
+    PASTA_IMAGE = base64.b64encode(f.read()).decode("utf-8")
 
 
 class TestVisionModelInference:
@@ -32,13 +32,15 @@ class TestVisionModelInference:
         "image, expected_strings",
         [
             (
-                ImageContentItem(data=PASTA_IMAGE),
+                ImageContentItem(image=dict(data=PASTA_IMAGE)),
                 ["spaghetti"],
             ),
             (
                 ImageContentItem(
-                    url=URL(
-                        uri="https://www.healthypawspetinsurance.com/Images/V3/DogAndPuppyInsurance/Dog_CTA_Desktop_HeroImage.jpg"
+                    image=dict(
+                        url=URL(
+                            uri="https://raw.githubusercontent.com/meta-llama/llama-stack/main/tests/client-sdk/inference/dog.png"
+                        )
                     )
                 ),
                 ["puppy"],
@@ -49,19 +51,6 @@ class TestVisionModelInference:
         self, inference_model, inference_stack, image, expected_strings
     ):
         inference_impl, _ = inference_stack
-
-        provider = inference_impl.routing_table.get_provider_impl(inference_model)
-        if provider.__provider_spec__.provider_type not in (
-            "inline::meta-reference",
-            "remote::together",
-            "remote::fireworks",
-            "remote::ollama",
-            "remote::vllm",
-        ):
-            pytest.skip(
-                "Other inference providers don't support vision chat completion() yet"
-            )
-
         response = await inference_impl.chat_completion(
             model_id=inference_model,
             messages=[
@@ -84,27 +73,15 @@ class TestVisionModelInference:
             assert expected_string in response.completion_message.content
 
     @pytest.mark.asyncio
-    async def test_vision_chat_completion_streaming(
-        self, inference_model, inference_stack
-    ):
+    async def test_vision_chat_completion_streaming(self, inference_model, inference_stack):
         inference_impl, _ = inference_stack
-
-        provider = inference_impl.routing_table.get_provider_impl(inference_model)
-        if provider.__provider_spec__.provider_type not in (
-            "inline::meta-reference",
-            "remote::together",
-            "remote::fireworks",
-            "remote::ollama",
-            "remote::vllm",
-        ):
-            pytest.skip(
-                "Other inference providers don't support vision chat completion() yet"
-            )
 
         images = [
             ImageContentItem(
-                url=URL(
-                    uri="https://www.healthypawspetinsurance.com/Images/V3/DogAndPuppyInsurance/Dog_CTA_Desktop_HeroImage.jpg"
+                image=dict(
+                    url=URL(
+                        uri="https://raw.githubusercontent.com/meta-llama/llama-stack/main/tests/client-sdk/inference/dog.png"
+                    )
                 )
             ),
         ]
@@ -121,9 +98,7 @@ class TestVisionModelInference:
                         UserMessage(
                             content=[
                                 image,
-                                TextContentItem(
-                                    text="Describe this image in two sentences."
-                                ),
+                                TextContentItem(text="Describe this image in two sentences."),
                             ]
                         ),
                     ],
@@ -133,18 +108,12 @@ class TestVisionModelInference:
             ]
 
             assert len(response) > 0
-            assert all(
-                isinstance(chunk, ChatCompletionResponseStreamChunk)
-                for chunk in response
-            )
+            assert all(isinstance(chunk, ChatCompletionResponseStreamChunk) for chunk in response)
             grouped = group_chunks(response)
             assert len(grouped[ChatCompletionResponseEventType.start]) == 1
             assert len(grouped[ChatCompletionResponseEventType.progress]) > 0
             assert len(grouped[ChatCompletionResponseEventType.complete]) == 1
 
-            content = "".join(
-                chunk.event.delta
-                for chunk in grouped[ChatCompletionResponseEventType.progress]
-            )
+            content = "".join(chunk.event.delta.text for chunk in grouped[ChatCompletionResponseEventType.progress])
             for expected_string in expected_strings:
                 assert expected_string in content

@@ -21,8 +21,6 @@ from llama_stack.apis.eval import Eval
 from llama_stack.apis.eval_tasks import EvalTasks
 from llama_stack.apis.inference import Inference
 from llama_stack.apis.inspect import Inspect
-from llama_stack.apis.memory import Memory
-from llama_stack.apis.memory_banks import MemoryBanks
 from llama_stack.apis.models import Models
 from llama_stack.apis.post_training import PostTraining
 from llama_stack.apis.safety import Safety
@@ -31,7 +29,9 @@ from llama_stack.apis.scoring_functions import ScoringFunctions
 from llama_stack.apis.shields import Shields
 from llama_stack.apis.synthetic_data_generation import SyntheticDataGeneration
 from llama_stack.apis.telemetry import Telemetry
-from llama_stack.apis.tools import ToolGroups, ToolRuntime
+from llama_stack.apis.tools import RAGToolRuntime, ToolGroups, ToolRuntime
+from llama_stack.apis.vector_dbs import VectorDBs
+from llama_stack.apis.vector_io import VectorIO
 from llama_stack.distribution.datatypes import StackRunConfig
 from llama_stack.distribution.distribution import get_provider_registry
 from llama_stack.distribution.resolver import ProviderRegistry, resolve_impls
@@ -40,11 +40,9 @@ from llama_stack.providers.datatypes import Api
 
 log = logging.getLogger(__name__)
 
-LLAMA_STACK_API_VERSION = "alpha"
-
 
 class LlamaStack(
-    MemoryBanks,
+    VectorDBs,
     Inference,
     BatchInference,
     Agents,
@@ -53,7 +51,7 @@ class LlamaStack(
     Datasets,
     Telemetry,
     PostTraining,
-    Memory,
+    VectorIO,
     Eval,
     EvalTasks,
     Scoring,
@@ -64,6 +62,7 @@ class LlamaStack(
     Inspect,
     ToolGroups,
     ToolRuntime,
+    RAGToolRuntime,
 ):
     pass
 
@@ -71,7 +70,7 @@ class LlamaStack(
 RESOURCES = [
     ("models", Api.models, "register_model", "list_models"),
     ("shields", Api.shields, "register_shield", "list_shields"),
-    ("memory_banks", Api.memory_banks, "register_memory_bank", "list_memory_banks"),
+    ("vector_dbs", Api.vector_dbs, "register_vector_db", "list_vector_dbs"),
     ("datasets", Api.datasets, "register_dataset", "list_datasets"),
     (
         "scoring_fns",
@@ -95,7 +94,11 @@ async def register_resources(run_config: StackRunConfig, impls: Dict[Api, Any]):
             await method(**obj.model_dump())
 
         method = getattr(impls[api], list_method)
-        for obj in await method():
+        response = await method()
+
+        objects_to_process = response.data if hasattr(response, "data") else response
+
+        for obj in objects_to_process:
             log.info(
                 f"{rsrc.capitalize()}: {colored(obj.identifier, 'white', attrs=['bold'])} served by {colored(obj.provider_id, 'white', attrs=['bold'])}",
             )
@@ -107,9 +110,7 @@ class EnvVarError(Exception):
     def __init__(self, var_name: str, path: str = ""):
         self.var_name = var_name
         self.path = path
-        super().__init__(
-            f"Environment variable '{var_name}' not set or empty{f' at {path}' if path else ''}"
-        )
+        super().__init__(f"Environment variable '{var_name}' not set or empty{f' at {path}' if path else ''}")
 
 
 def redact_sensitive_fields(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -184,9 +185,7 @@ def validate_env_pair(env_pair: str) -> tuple[str, str]:
         if not key:
             raise ValueError(f"Empty key in environment variable pair: {env_pair}")
         if not all(c.isalnum() or c == "_" for c in key):
-            raise ValueError(
-                f"Key must contain only alphanumeric characters and underscores: {key}"
-            )
+            raise ValueError(f"Key must contain only alphanumeric characters and underscores: {key}")
         return key, value
     except ValueError as e:
         raise ValueError(
@@ -199,20 +198,14 @@ def validate_env_pair(env_pair: str) -> tuple[str, str]:
 async def construct_stack(
     run_config: StackRunConfig, provider_registry: Optional[ProviderRegistry] = None
 ) -> Dict[Api, Any]:
-    dist_registry, _ = await create_dist_registry(
-        run_config.metadata_store, run_config.image_name
-    )
-    impls = await resolve_impls(
-        run_config, provider_registry or get_provider_registry(), dist_registry
-    )
+    dist_registry, _ = await create_dist_registry(run_config.metadata_store, run_config.image_name)
+    impls = await resolve_impls(run_config, provider_registry or get_provider_registry(), dist_registry)
     await register_resources(run_config, impls)
     return impls
 
 
 def get_stack_run_config_from_template(template: str) -> StackRunConfig:
-    template_path = (
-        importlib.resources.files("llama_stack") / f"templates/{template}/run.yaml"
-    )
+    template_path = importlib.resources.files("llama_stack") / f"templates/{template}/run.yaml"
 
     with importlib.resources.as_file(template_path) as path:
         if not path.exists():

@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Protocol
 
 import aiosqlite
 
-from llama_stack.apis.telemetry import QueryCondition, SpanWithStatus, Trace
+from llama_stack.apis.telemetry import QueryCondition, Span, SpanWithStatus, Trace
 
 
 class TraceStore(Protocol):
@@ -118,10 +118,7 @@ class SQLiteTraceStore(TraceStore):
         # Build the attributes selection
         attributes_select = "s.attributes"
         if attributes_to_return:
-            json_object = ", ".join(
-                f"'{key}', json_extract(s.attributes, '$.{key}')"
-                for key in attributes_to_return
-            )
+            json_object = ", ".join(f"'{key}', json_extract(s.attributes, '$.{key}')" for key in attributes_to_return)
             attributes_select = f"json_object({json_object})"
 
         # SQLite CTE query with filtered attributes
@@ -167,3 +164,23 @@ class SQLiteTraceStore(TraceStore):
                     spans_by_id[span.span_id] = span
 
                 return spans_by_id
+
+    async def get_trace(self, trace_id: str) -> Trace:
+        query = "SELECT * FROM traces WHERE trace_id = ?"
+        async with aiosqlite.connect(self.conn_string) as conn:
+            conn.row_factory = aiosqlite.Row
+            async with conn.execute(query, (trace_id,)) as cursor:
+                row = await cursor.fetchone()
+                if row is None:
+                    raise ValueError(f"Trace {trace_id} not found")
+                return Trace(**row)
+
+    async def get_span(self, trace_id: str, span_id: str) -> Span:
+        query = "SELECT * FROM spans WHERE trace_id = ? AND span_id = ?"
+        async with aiosqlite.connect(self.conn_string) as conn:
+            conn.row_factory = aiosqlite.Row
+            async with conn.execute(query, (trace_id, span_id)) as cursor:
+                row = await cursor.fetchone()
+                if row is None:
+                    raise ValueError(f"Span {span_id} not found")
+                return Span(**row)

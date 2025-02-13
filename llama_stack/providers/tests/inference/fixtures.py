@@ -23,6 +23,7 @@ from llama_stack.providers.remote.inference.fireworks import FireworksImplConfig
 from llama_stack.providers.remote.inference.groq import GroqConfig
 from llama_stack.providers.remote.inference.nvidia import NVIDIAConfig
 from llama_stack.providers.remote.inference.ollama import OllamaImplConfig
+from llama_stack.providers.remote.inference.sambanova import SambaNovaImplConfig
 from llama_stack.providers.remote.inference.tgi import TGIImplConfig
 from llama_stack.providers.remote.inference.together import TogetherImplConfig
 from llama_stack.providers.remote.inference.vllm import VLLMInferenceAdapterConfig
@@ -46,9 +47,7 @@ def inference_remote() -> ProviderFixture:
 
 @pytest.fixture(scope="session")
 def inference_meta_reference(inference_model) -> ProviderFixture:
-    inference_model = (
-        [inference_model] if isinstance(inference_model, str) else inference_model
-    )
+    inference_model = [inference_model] if isinstance(inference_model, str) else inference_model
     # If embedding dimension is set, use the 8B model for testing
     if os.getenv("EMBEDDING_DIMENSION"):
         inference_model = ["meta-llama/Llama-3.1-8B-Instruct"]
@@ -87,9 +86,7 @@ def inference_cerebras() -> ProviderFixture:
 
 @pytest.fixture(scope="session")
 def inference_ollama(inference_model) -> ProviderFixture:
-    inference_model = (
-        [inference_model] if isinstance(inference_model, str) else inference_model
-    )
+    inference_model = [inference_model] if isinstance(inference_model, str) else inference_model
     if inference_model and "Llama3.1-8B-Instruct" in inference_model:
         pytest.skip("Ollama only supports Llama3.2-3B-Instruct for testing")
 
@@ -98,9 +95,7 @@ def inference_ollama(inference_model) -> ProviderFixture:
             Provider(
                 provider_id="ollama",
                 provider_type="remote::ollama",
-                config=OllamaImplConfig(
-                    host="localhost", port=os.getenv("OLLAMA_PORT", 11434)
-                ).model_dump(),
+                config=OllamaImplConfig(host="localhost", port=os.getenv("OLLAMA_PORT", 11434)).model_dump(),
             )
         ],
     )
@@ -108,9 +103,7 @@ def inference_ollama(inference_model) -> ProviderFixture:
 
 @pytest_asyncio.fixture(scope="session")
 def inference_vllm(inference_model) -> ProviderFixture:
-    inference_model = (
-        [inference_model] if isinstance(inference_model, str) else inference_model
-    )
+    inference_model = [inference_model] if isinstance(inference_model, str) else inference_model
     return ProviderFixture(
         providers=[
             Provider(
@@ -232,6 +225,23 @@ def inference_tgi() -> ProviderFixture:
 
 
 @pytest.fixture(scope="session")
+def inference_sambanova() -> ProviderFixture:
+    return ProviderFixture(
+        providers=[
+            Provider(
+                provider_id="sambanova",
+                provider_type="remote::sambanova",
+                config=SambaNovaImplConfig(
+                    api_key=get_env_or_fail("SAMBANOVA_API_KEY"),
+                ).model_dump(),
+            )
+        ],
+        provider_data=dict(
+            sambanova_api_key=get_env_or_fail("SAMBANOVA_API_KEY"),
+        ),
+    )
+
+
 def inference_sentence_transformers() -> ProviderFixture:
     return ProviderFixture(
         providers=[
@@ -282,6 +292,7 @@ INFERENCE_FIXTURES = [
     "cerebras",
     "nvidia",
     "tgi",
+    "sambanova",
 ]
 
 
@@ -301,6 +312,7 @@ async def inference_stack(request, inference_model):
         inference_fixture.provider_data,
         models=[
             ModelInput(
+                provider_id=inference_fixture.providers[0].provider_id,
                 model_id=inference_model,
                 model_type=model_type,
                 metadata=metadata,

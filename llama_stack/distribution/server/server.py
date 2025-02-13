@@ -14,16 +14,13 @@ import signal
 import sys
 import traceback
 import warnings
-
 from contextlib import asynccontextmanager
-
 from importlib.metadata import version as parse_version
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, List, Union
 
 import yaml
-
-from fastapi import Body, FastAPI, HTTPException, Request
+from fastapi import Body, FastAPI, HTTPException, Path as FastapiPath, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, ValidationError
@@ -31,7 +28,6 @@ from termcolor import cprint
 from typing_extensions import Annotated
 
 from llama_stack.distribution.datatypes import StackRunConfig
-
 from llama_stack.distribution.distribution import builtin_automatically_routed_apis
 from llama_stack.distribution.request_headers import set_request_provider_data
 from llama_stack.distribution.resolver import InvalidProviderError
@@ -41,13 +37,11 @@ from llama_stack.distribution.stack import (
     replace_env_vars,
     validate_env_pair,
 )
-
 from llama_stack.providers.datatypes import Api
 from llama_stack.providers.inline.telemetry.meta_reference.config import TelemetryConfig
 from llama_stack.providers.inline.telemetry.meta_reference.telemetry import (
     TelemetryAdapter,
 )
-
 from llama_stack.providers.utils.telemetry.tracing import (
     end_trace,
     setup_logger,
@@ -55,7 +49,6 @@ from llama_stack.providers.utils.telemetry.tracing import (
 )
 
 from .endpoints import get_all_api_endpoints
-
 
 REPO_ROOT = Path(__file__).parent.parent.parent.parent
 
@@ -83,9 +76,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     traceback.print_exception(exc)
     http_exc = translate_exception(exc)
 
-    return JSONResponse(
-        status_code=http_exc.status_code, content={"error": {"detail": http_exc.detail}}
-    )
+    return JSONResponse(status_code=http_exc.status_code, content={"error": {"detail": http_exc.detail}})
 
 
 def translate_exception(exc: Exception) -> Union[HTTPException, RequestValidationError]:
@@ -178,16 +169,14 @@ async def sse_generator(event_gen):
         )
 
 
-def create_dynamic_typed_route(func: Any, method: str):
+def create_dynamic_typed_route(func: Any, method: str, route: str):
     async def endpoint(request: Request, **kwargs):
         set_request_provider_data(request.headers)
 
         is_streaming = is_streaming_request(func.__name__, request, **kwargs)
         try:
             if is_streaming:
-                return StreamingResponse(
-                    sse_generator(func(**kwargs)), media_type="text/event-stream"
-                )
+                return StreamingResponse(sse_generator(func(**kwargs)), media_type="text/event-stream")
             else:
                 value = func(**kwargs)
                 return await maybe_await(value)
@@ -196,19 +185,19 @@ def create_dynamic_typed_route(func: Any, method: str):
             raise translate_exception(e) from e
 
     sig = inspect.signature(func)
-    new_params = [
-        inspect.Parameter(
-            "request", inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=Request
-        )
-    ]
+
+    new_params = [inspect.Parameter("request", inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=Request)]
     new_params.extend(sig.parameters.values())
 
+    path_params = extract_path_params(route)
     if method == "post":
-        # make sure every parameter is annotated with Body() so FASTAPI doesn't
-        # do anything too intelligent and ask for some parameters in the query
-        # and some in the body
+        # Annotate parameters that are in the path with Path(...) and others with Body(...)
         new_params = [new_params[0]] + [
-            param.replace(annotation=Annotated[param.annotation, Body(..., embed=True)])
+            (
+                param.replace(annotation=Annotated[param.annotation, FastapiPath(..., title=param.name)])
+                if param.name in path_params
+                else param.replace(annotation=Annotated[param.annotation, Body(..., embed=True)])
+            )
             for param in new_params[1:]
         ]
 
@@ -241,12 +230,8 @@ class ClientVersionMiddleware:
             client_version = headers.get(b"x-llamastack-client-version", b"").decode()
             if client_version:
                 try:
-                    client_version_parts = tuple(
-                        map(int, client_version.split(".")[:2])
-                    )
-                    server_version_parts = tuple(
-                        map(int, self.server_version.split(".")[:2])
-                    )
+                    client_version_parts = tuple(map(int, client_version.split(".")[:2]))
+                    server_version_parts = tuple(map(int, self.server_version.split(".")[:2]))
                     if client_version_parts != server_version_parts:
 
                         async def send_version_error(send):
@@ -260,13 +245,11 @@ class ClientVersionMiddleware:
                             error_msg = json.dumps(
                                 {
                                     "error": {
-                                        "message": f"Client version {client_version} is not compatible with server version {self.server_version}. Please upgrade your client."
+                                        "message": f"Client version {client_version} is not compatible with server version {self.server_version}. Please update your client."
                                     }
                                 }
                             ).encode()
-                            await send(
-                                {"type": "http.response.body", "body": error_msg}
-                            )
+                            await send({"type": "http.response.body", "body": error_msg})
 
                         return await send_version_error(send)
                 except (ValueError, IndexError):
@@ -290,19 +273,28 @@ def main():
     parser.add_argument(
         "--port",
         type=int,
-        default=int(os.getenv("LLAMA_STACK_PORT", 5000)),
+        default=int(os.getenv("LLAMA_STACK_PORT", 8321)),
         help="Port to listen on",
     )
-    parser.add_argument(
-        "--disable-ipv6", action="store_true", help="Whether to disable IPv6 support"
-    )
+    parser.add_argument("--disable-ipv6", action="store_true", help="Whether to disable IPv6 support")
     parser.add_argument(
         "--env",
         action="append",
         help="Environment variables in KEY=value format. Can be specified multiple times.",
     )
+    parser.add_argument(
+        "--tls-keyfile",
+        help="Path to TLS key file for HTTPS",
+        required="--tls-certfile" in sys.argv,
+    )
+    parser.add_argument(
+        "--tls-certfile",
+        help="Path to TLS certificate file for HTTPS",
+        required="--tls-keyfile" in sys.argv,
+    )
 
     args = parser.parse_args()
+
     if args.env:
         for env_pair in args.env:
             try:
@@ -320,9 +312,7 @@ def main():
             raise ValueError(f"Config file {config_file} does not exist")
         print(f"Using config file: {config_file}")
     elif args.template:
-        config_file = (
-            Path(REPO_ROOT) / "llama_stack" / "templates" / args.template / "run.yaml"
-        )
+        config_file = Path(REPO_ROOT) / "llama_stack" / "templates" / args.template / "run.yaml"
         if not config_file.exists():
             raise ValueError(f"Template {args.template} does not exist")
         print(f"Using template {args.template} config file: {config_file}")
@@ -339,7 +329,8 @@ def main():
 
     app = FastAPI(lifespan=lifespan)
     app.add_middleware(TracingMiddleware)
-    app.add_middleware(ClientVersionMiddleware)
+    if not os.environ.get("LLAMA_STACK_DISABLE_VERSION_CHECK"):
+        app.add_middleware(ClientVersionMiddleware)
 
     try:
         impls = asyncio.run(construct_stack(config))
@@ -379,13 +370,12 @@ def main():
             impl_method = getattr(impl, endpoint.name)
 
             with warnings.catch_warnings():
-                warnings.filterwarnings(
-                    "ignore", category=UserWarning, module="pydantic._internal._fields"
-                )
+                warnings.filterwarnings("ignore", category=UserWarning, module="pydantic._internal._fields")
                 getattr(app, endpoint.method)(endpoint.route, response_model=None)(
                     create_dynamic_typed_route(
                         impl_method,
                         endpoint.method,
+                        endpoint.route,
                     )
                 )
 
@@ -402,11 +392,42 @@ def main():
 
     import uvicorn
 
-    # FYI this does not do hot-reloads
+    # Configure SSL if certificates are provided
+    port = args.port or config.server.port
+
+    ssl_config = None
+    if args.tls_keyfile:
+        keyfile = args.tls_keyfile
+        certfile = args.tls_certfile
+    else:
+        keyfile = config.server.tls_keyfile
+        certfile = config.server.tls_certfile
+
+    if keyfile and certfile:
+        ssl_config = {
+            "ssl_keyfile": keyfile,
+            "ssl_certfile": certfile,
+        }
+        print(f"HTTPS enabled with certificates:\n  Key: {keyfile}\n  Cert: {certfile}")
 
     listen_host = ["::", "0.0.0.0"] if not args.disable_ipv6 else "0.0.0.0"
-    print(f"Listening on {listen_host}:{args.port}")
-    uvicorn.run(app, host=listen_host, port=args.port)
+    print(f"Listening on {listen_host}:{port}")
+
+    uvicorn_config = {
+        "app": app,
+        "host": listen_host,
+        "port": port,
+    }
+    if ssl_config:
+        uvicorn_config.update(ssl_config)
+
+    uvicorn.run(**uvicorn_config)
+
+
+def extract_path_params(route: str) -> List[str]:
+    segments = route.split("/")
+    params = [seg[1:-1] for seg in segments if seg.startswith("{") and seg.endswith("}")]
+    return params
 
 
 if __name__ == "__main__":

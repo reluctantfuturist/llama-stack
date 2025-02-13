@@ -11,17 +11,14 @@ from llama_stack.distribution.datatypes import Api, ProviderSpec
 from .config import MetaReferenceAgentsImplConfig
 
 
-async def get_provider_impl(
-    config: MetaReferenceAgentsImplConfig, deps: Dict[Api, ProviderSpec]
-):
+async def get_provider_impl(config: MetaReferenceAgentsImplConfig, deps: Dict[Api, ProviderSpec]):
     from .agents import MetaReferenceAgentsImpl
 
     impl = MetaReferenceAgentsImpl(
         config,
         deps[Api.inference],
-        deps[Api.memory],
+        deps[Api.vector_io],
         deps[Api.safety],
-        deps[Api.memory_banks],
         deps[Api.tool_runtime],
         deps[Api.tool_groups],
     )

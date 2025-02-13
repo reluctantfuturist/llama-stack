@@ -6,31 +6,13 @@
 
 import pytest
 
-from ..conftest import get_provider_fixture_overrides
-
+from ..conftest import get_provider_fixture_overrides, get_test_config_for_api
 from .fixtures import INFERENCE_FIXTURES
-
-
-def pytest_addoption(parser):
-    parser.addoption(
-        "--inference-model",
-        action="store",
-        default=None,
-        help="Specify the inference model to use for testing",
-    )
-    parser.addoption(
-        "--embedding-model",
-        action="store",
-        default=None,
-        help="Specify the embedding model to use for testing",
-    )
 
 
 def pytest_configure(config):
     for model in ["llama_8b", "llama_3b", "llama_vision"]:
-        config.addinivalue_line(
-            "markers", f"{model}: mark test to run only with the given model"
-        )
+        config.addinivalue_line("markers", f"{model}: mark test to run only with the given model")
 
     for fixture_name in INFERENCE_FIXTURES:
         config.addinivalue_line(
@@ -40,12 +22,8 @@ def pytest_configure(config):
 
 
 MODEL_PARAMS = [
-    pytest.param(
-        "meta-llama/Llama-3.1-8B-Instruct", marks=pytest.mark.llama_8b, id="llama_8b"
-    ),
-    pytest.param(
-        "meta-llama/Llama-3.2-3B-Instruct", marks=pytest.mark.llama_3b, id="llama_3b"
-    ),
+    pytest.param("meta-llama/Llama-3.1-8B-Instruct", marks=pytest.mark.llama_8b, id="llama_8b"),
+    pytest.param("meta-llama/Llama-3.2-3B-Instruct", marks=pytest.mark.llama_3b, id="llama_3b"),
 ]
 
 VISION_MODEL_PARAMS = [
@@ -58,16 +36,19 @@ VISION_MODEL_PARAMS = [
 
 
 def pytest_generate_tests(metafunc):
+    test_config = get_test_config_for_api(metafunc.config, "inference")
+
     if "inference_model" in metafunc.fixturenames:
-        model = metafunc.config.getoption("--inference-model")
-        if model:
+        cls_name = metafunc.cls.__name__
+        params = []
+        inference_models = getattr(test_config, "inference_models", [])
+        for model in inference_models:
+            if ("Vision" in cls_name and "Vision" in model) or ("Vision" not in cls_name and "Vision" not in model):
+                params.append(pytest.param(model, id=model))
+
+        if not params:
+            model = metafunc.config.getoption("--inference-model")
             params = [pytest.param(model, id="")]
-        else:
-            cls_name = metafunc.cls.__name__
-            if "Vision" in cls_name:
-                params = VISION_MODEL_PARAMS
-            else:
-                params = MODEL_PARAMS
 
         metafunc.parametrize(
             "inference_model",
@@ -83,4 +64,10 @@ def pytest_generate_tests(metafunc):
             },
         ):
             fixtures = [stack.values[0]["inference"] for stack in filtered_stacks]
+        if test_config:
+            if custom_fixtures := [
+                (scenario.fixture_combo_id or scenario.provider_fixtures.get("inference"))
+                for scenario in test_config.scenarios
+            ]:
+                fixtures = custom_fixtures
         metafunc.parametrize("inference_stack", fixtures, indirect=True)

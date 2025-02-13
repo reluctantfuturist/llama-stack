@@ -7,19 +7,27 @@
 import errno
 import logging
 import os
-import pty
 import select
 import signal
 import subprocess
 import sys
-import termios
 
 log = logging.getLogger(__name__)
 
 
+def run_with_pty(command):
+    if sys.platform.startswith("win"):
+        return _run_with_pty_win(command)
+    else:
+        return _run_with_pty_unix(command)
+
+
 # run a command in a pseudo-terminal, with interrupt handling,
 # useful when you want to run interactive things
-def run_with_pty(command):
+def _run_with_pty_unix(command):
+    import pty
+    import termios
+
     master, slave = pty.openpty()
 
     old_settings = termios.tcgetattr(sys.stdin)
@@ -97,10 +105,45 @@ def run_with_pty(command):
     return process.returncode
 
 
+# run a command in a pseudo-terminal in windows, with interrupt handling,
+def _run_with_pty_win(command):
+    """
+    Runs a command with interactive support using subprocess directly.
+    """
+    try:
+        # For shell scripts on Windows, use appropriate shell
+        if isinstance(command, (list, tuple)):
+            if command[0].endswith(".sh"):
+                if os.path.exists("/usr/bin/bash"):  # WSL
+                    command = ["bash"] + command
+                else:
+                    # Use cmd.exe with bash while preserving all arguments
+                    command = ["cmd.exe", "/c", "bash"] + command
+
+        process = subprocess.Popen(
+            command,
+            shell=True,
+            universal_newlines=True,
+        )
+
+        process.wait()
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return 1
+    finally:
+        if process and process.poll() is None:
+            process.terminate()
+            process.wait()
+    return process.returncode
+
+
 def run_command(command):
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, error = process.communicate()
-    if process.returncode != 0:
-        log.error(f"Error: {error.decode('utf-8')}")
-        sys.exit(1)
-    return output.decode("utf-8")
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        print("Script Output\n", result.stdout)
+        return result.returncode
+    except subprocess.CalledProcessError as e:
+        print("Error running script:", e)
+        print("Error output:", e.stderr)
+        return e.returncode

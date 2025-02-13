@@ -24,6 +24,7 @@ from llama_stack.apis.inference import (
     ResponseFormat,
     SamplingParams,
     ToolChoice,
+    ToolConfig,
     ToolDefinition,
     ToolPromptFormat,
 )
@@ -34,6 +35,7 @@ from llama_stack.providers.utils.inference.model_registry import (
     ModelRegistryHelper,
 )
 from llama_stack.providers.utils.inference.openai_compat import (
+    get_sampling_strategy_options,
     OpenAICompatCompletionChoice,
     OpenAICompatCompletionResponse,
     process_chat_completion_response,
@@ -101,20 +103,18 @@ class BedrockInferenceAdapter(ModelRegistryHelper, Inference):
         tool_prompt_format: Optional[ToolPromptFormat] = None,
         stream: Optional[bool] = False,
         logprobs: Optional[LogProbConfig] = None,
-    ) -> Union[
-        ChatCompletionResponse, AsyncIterator[ChatCompletionResponseStreamChunk]
-    ]:
+        tool_config: Optional[ToolConfig] = None,
+    ) -> Union[ChatCompletionResponse, AsyncIterator[ChatCompletionResponseStreamChunk]]:
         model = await self.model_store.get_model(model_id)
         request = ChatCompletionRequest(
             model=model.provider_resource_id,
             messages=messages,
             sampling_params=sampling_params,
             tools=tools or [],
-            tool_choice=tool_choice,
-            tool_prompt_format=tool_prompt_format,
             response_format=response_format,
             stream=stream,
             logprobs=logprobs,
+            tool_config=tool_config,
         )
 
         if stream:
@@ -122,9 +122,7 @@ class BedrockInferenceAdapter(ModelRegistryHelper, Inference):
         else:
             return await self._nonstream_chat_completion(request)
 
-    async def _nonstream_chat_completion(
-        self, request: ChatCompletionRequest
-    ) -> ChatCompletionResponse:
+    async def _nonstream_chat_completion(self, request: ChatCompletionRequest) -> ChatCompletionResponse:
         params = await self._get_params_for_chat_completion(request)
         res = self.client.invoke_model(**params)
         chunk = next(res["body"])
@@ -136,11 +134,9 @@ class BedrockInferenceAdapter(ModelRegistryHelper, Inference):
         )
 
         response = OpenAICompatCompletionResponse(choices=[choice])
-        return process_chat_completion_response(response, self.formatter)
+        return process_chat_completion_response(response, self.formatter, request)
 
-    async def _stream_chat_completion(
-        self, request: ChatCompletionRequest
-    ) -> AsyncGenerator:
+    async def _stream_chat_completion(self, request: ChatCompletionRequest) -> AsyncGenerator:
         params = await self._get_params_for_chat_completion(request)
         res = self.client.invoke_model_with_response_stream(**params)
         event_stream = res["body"]
@@ -156,36 +152,27 @@ class BedrockInferenceAdapter(ModelRegistryHelper, Inference):
                 yield OpenAICompatCompletionResponse(choices=[choice])
 
         stream = _generate_and_convert_to_openai_compat()
-        async for chunk in process_chat_completion_stream_response(
-            stream, self.formatter
-        ):
+        async for chunk in process_chat_completion_stream_response(stream, self.formatter, request):
             yield chunk
 
-    async def _get_params_for_chat_completion(
-        self, request: ChatCompletionRequest
-    ) -> Dict:
+    async def _get_params_for_chat_completion(self, request: ChatCompletionRequest) -> Dict:
         bedrock_model = request.model
 
-        inference_config = {}
-        param_mapping = {
-            "max_tokens": "max_gen_len",
-            "temperature": "temperature",
-            "top_p": "top_p",
-        }
+        sampling_params = request.sampling_params
+        options = get_sampling_strategy_options(sampling_params)
 
-        for k, v in param_mapping.items():
-            if getattr(request.sampling_params, k):
-                inference_config[v] = getattr(request.sampling_params, k)
+        if sampling_params.max_tokens:
+            options["max_gen_len"] = sampling_params.max_tokens
+        if sampling_params.repetition_penalty > 0:
+            options["repetition_penalty"] = sampling_params.repetition_penalty
 
-        prompt = await chat_completion_request_to_prompt(
-            request, self.get_llama_model(request.model), self.formatter
-        )
+        prompt = await chat_completion_request_to_prompt(request, self.get_llama_model(request.model), self.formatter)
         return {
             "modelId": bedrock_model,
             "body": json.dumps(
                 {
                     "prompt": prompt,
-                    **inference_config,
+                    **options,
                 }
             ),
         }
@@ -198,9 +185,7 @@ class BedrockInferenceAdapter(ModelRegistryHelper, Inference):
         model = await self.model_store.get_model(model_id)
         embeddings = []
         for content in contents:
-            assert not content_has_media(
-                content
-            ), "Bedrock does not support media for embeddings"
+            assert not content_has_media(content), "Bedrock does not support media for embeddings"
             input_text = interleaved_content_as_str(content)
             input_body = {"inputText": input_text}
             body = json.dumps(input_body)

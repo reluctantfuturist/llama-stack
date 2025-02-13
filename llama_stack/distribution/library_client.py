@@ -9,6 +9,7 @@ import inspect
 import json
 import logging
 import os
+import re
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from pathlib import Path
@@ -16,17 +17,6 @@ from typing import Any, get_args, get_origin, Optional, TypeVar
 
 import httpx
 import yaml
-from llama_stack_client import (
-    APIResponse,
-    AsyncAPIResponse,
-    AsyncLlamaStackClient,
-    AsyncStream,
-    LlamaStackClient,
-    NOT_GIVEN,
-)
-from pydantic import BaseModel, TypeAdapter
-from rich.console import Console
-from termcolor import cprint
 
 from llama_stack.distribution.build import print_pip_install_help
 from llama_stack.distribution.configure import parse_and_maybe_upgrade_config
@@ -45,6 +35,17 @@ from llama_stack.providers.utils.telemetry.tracing import (
     setup_logger,
     start_trace,
 )
+from llama_stack_client import (
+    APIResponse,
+    AsyncAPIResponse,
+    AsyncLlamaStackClient,
+    AsyncStream,
+    LlamaStackClient,
+    NOT_GIVEN,
+)
+from pydantic import BaseModel, TypeAdapter
+from rich.console import Console
+from termcolor import cprint
 
 T = TypeVar("T")
 
@@ -128,8 +129,8 @@ class LlamaStackAsLibraryClient(LlamaStackClient):
             import nest_asyncio
 
             nest_asyncio.apply()
-        if not self.skip_logger_removal:
-            self._remove_root_logger_handlers()
+            if not self.skip_logger_removal:
+                self._remove_root_logger_handlers()
 
         return asyncio.run(self.async_client.initialize())
 
@@ -153,9 +154,7 @@ class LlamaStackAsLibraryClient(LlamaStackClient):
 
             def sync_generator():
                 try:
-                    async_stream = loop.run_until_complete(
-                        self.async_client.request(*args, **kwargs)
-                    )
+                    async_stream = loop.run_until_complete(self.async_client.request(*args, **kwargs))
                     while True:
                         chunk = loop.run_until_complete(async_stream.__anext__())
                         yield chunk
@@ -180,9 +179,7 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
         # when using the library client, we should not log to console since many
         # of our logs are intended for server-side usage
         current_sinks = os.environ.get("TELEMETRY_SINKS", "sqlite").split(",")
-        os.environ["TELEMETRY_SINKS"] = ",".join(
-            sink for sink in current_sinks if sink != "console"
-        )
+        os.environ["TELEMETRY_SINKS"] = ",".join(sink for sink in current_sinks if sink != "console")
 
         if config_path_or_template_name.endswith(".yaml"):
             config_path = Path(config_path_or_template_name)
@@ -199,11 +196,10 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
         self.custom_provider_registry = custom_provider_registry
         self.provider_data = provider_data
 
-    async def initialize(self):
+    async def initialize(self) -> bool:
         try:
-            self.impls = await construct_stack(
-                self.config, self.custom_provider_registry
-            )
+            self.endpoint_impls = None
+            self.impls = await construct_stack(self.config, self.custom_provider_registry)
         except ModuleNotFoundError as _e:
             cprint(_e.msg, "red")
             cprint(
@@ -218,7 +214,7 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
                     f"Please run:\n\n{prefix}llama stack build --template {self.config_path_or_template_name} --image-type venv\n\n",
                     "yellow",
                 )
-            return False
+            raise _e
 
         if Api.telemetry in self.impls:
             setup_logger(self.impls[Api.telemetry])
@@ -232,13 +228,21 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
 
         endpoints = get_all_api_endpoints()
         endpoint_impls = {}
+
+        def _convert_path_to_regex(path: str) -> str:
+            # Convert {param} to named capture groups
+            pattern = re.sub(r"{(\w+)}", r"(?P<\1>[^/]+)", path)
+            return f"^{pattern}$"
+
         for api, api_endpoints in endpoints.items():
             if api not in self.impls:
                 continue
             for endpoint in api_endpoints:
                 impl = self.impls[api]
                 func = getattr(impl, endpoint.name)
-                endpoint_impls[endpoint.route] = func
+                if endpoint.method not in endpoint_impls:
+                    endpoint_impls[endpoint.method] = {}
+                endpoint_impls[endpoint.method][_convert_path_to_regex(endpoint.route)] = func
 
         self.endpoint_impls = endpoint_impls
         return True
@@ -255,10 +259,8 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
             raise ValueError("Client not initialized")
 
         if self.provider_data:
-            set_request_provider_data(
-                {"X-LlamaStack-Provider-Data": json.dumps(self.provider_data)}
-            )
-        await start_trace(options.url, {"__location__": "library_client"})
+            set_request_provider_data({"X-LlamaStack-Provider-Data": json.dumps(self.provider_data)})
+
         if stream:
             response = await self._call_streaming(
                 cast_to=cast_to,
@@ -270,8 +272,33 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
                 cast_to=cast_to,
                 options=options,
             )
-        await end_trace()
         return response
+
+    def _find_matching_endpoint(self, method: str, path: str) -> tuple[Any, dict]:
+        """Find the matching endpoint implementation for a given method and path.
+
+        Args:
+            method: HTTP method (GET, POST, etc.)
+            path: URL path to match against
+
+        Returns:
+            A tuple of (endpoint_function, path_params)
+
+        Raises:
+            ValueError: If no matching endpoint is found
+        """
+        impls = self.endpoint_impls.get(method)
+        if not impls:
+            raise ValueError(f"No endpoint found for {path}")
+
+        for regex, func in impls.items():
+            match = re.match(regex, path)
+            if match:
+                # Extract named groups from the regex match
+                path_params = match.groupdict()
+                return func, path_params
+
+        raise ValueError(f"No endpoint found for {path}")
 
     async def _call_non_streaming(
         self,
@@ -280,15 +307,17 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
         options: Any,
     ):
         path = options.url
-
         body = options.params or {}
         body |= options.json_data or {}
-        func = self.endpoint_impls.get(path)
-        if not func:
-            raise ValueError(f"No endpoint found for {path}")
 
-        body = self._convert_body(path, body)
-        result = await func(**body)
+        matched_func, path_params = self._find_matching_endpoint(options.method, path)
+        body |= path_params
+        body = self._convert_body(path, options.method, body)
+        await start_trace(options.url, {"__location__": "library_client"})
+        try:
+            result = await matched_func(**body)
+        finally:
+            await end_trace()
 
         json_content = json.dumps(convert_pydantic_to_json_value(result))
         mock_response = httpx.Response(
@@ -301,7 +330,7 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
                 method=options.method,
                 url=options.url,
                 params=options.params,
-                headers=options.headers,
+                headers=options.headers or {},
                 json=options.json_data,
             ),
         )
@@ -325,17 +354,20 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
         path = options.url
         body = options.params or {}
         body |= options.json_data or {}
-        func = self.endpoint_impls.get(path)
-        if not func:
-            raise ValueError(f"No endpoint found for {path}")
+        func, path_params = self._find_matching_endpoint(options.method, path)
+        body |= path_params
 
-        body = self._convert_body(path, body)
+        body = self._convert_body(path, options.method, body)
 
         async def gen():
-            async for chunk in await func(**body):
-                data = json.dumps(convert_pydantic_to_json_value(chunk))
-                sse_event = f"data: {data}\n\n"
-                yield sse_event.encode("utf-8")
+            await start_trace(options.url, {"__location__": "library_client"})
+            try:
+                async for chunk in await func(**body):
+                    data = json.dumps(convert_pydantic_to_json_value(chunk))
+                    sse_event = f"data: {data}\n\n"
+                    yield sse_event.encode("utf-8")
+            finally:
+                await end_trace()
 
         mock_response = httpx.Response(
             status_code=httpx.codes.OK,
@@ -347,7 +379,7 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
                 method=options.method,
                 url=options.url,
                 params=options.params,
-                headers=options.headers,
+                headers=options.headers or {},
                 json=options.json_data,
             ),
         )
@@ -367,11 +399,11 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
         )
         return await response.parse()
 
-    def _convert_body(self, path: str, body: Optional[dict] = None) -> dict:
+    def _convert_body(self, path: str, method: str, body: Optional[dict] = None) -> dict:
         if not body:
             return {}
 
-        func = self.endpoint_impls[path]
+        func, _ = self._find_matching_endpoint(method, path)
         sig = inspect.signature(func)
 
         # Strip NOT_GIVENs to use the defaults in signature
@@ -382,7 +414,5 @@ class AsyncLlamaStackAsLibraryClient(AsyncLlamaStackClient):
         for param_name, param in sig.parameters.items():
             if param_name in body:
                 value = body.get(param_name)
-                converted_body[param_name] = convert_to_pydantic(
-                    param.annotation, value
-                )
+                converted_body[param_name] = convert_to_pydantic(param.annotation, value)
         return converted_body

@@ -21,7 +21,9 @@ from groq.types.chat.chat_completion_message_tool_call import (
     Function,
 )
 from groq.types.shared.function_definition import FunctionDefinition
+from llama_models.datatypes import GreedySamplingStrategy, TopPSamplingStrategy
 from llama_models.llama3.api.datatypes import ToolParamDefinition
+from llama_stack.apis.common.content_types import ToolCallParseStatus
 from llama_stack.apis.inference import (
     ChatCompletionRequest,
     ChatCompletionResponseEventType,
@@ -152,25 +154,32 @@ class TestConvertChatCompletionRequest:
 
         assert converted["max_tokens"] == 100
 
-    def test_includes_temperature(self):
+    def _dummy_chat_completion_request(self):
+        return ChatCompletionRequest(
+            model="Llama-3.2-3B",
+            messages=[UserMessage(content="Hello World")],
+        )
+
+    def test_includes_stratgy(self):
         request = self._dummy_chat_completion_request()
-        request.sampling_params.temperature = 0.5
+        request.sampling_params.strategy = TopPSamplingStrategy(temperature=0.5, top_p=0.95)
 
         converted = convert_chat_completion_request(request)
 
         assert converted["temperature"] == 0.5
+        assert converted["top_p"] == 0.95
 
-    def test_includes_top_p(self):
+    def test_includes_greedy_strategy(self):
         request = self._dummy_chat_completion_request()
-        request.sampling_params.top_p = 0.95
+        request.sampling_params.strategy = GreedySamplingStrategy()
 
         converted = convert_chat_completion_request(request)
 
-        assert converted["top_p"] == 0.95
+        assert converted["temperature"] == 0.0
 
     def test_includes_tool_choice(self):
         request = self._dummy_chat_completion_request()
-        request.tool_choice = ToolChoice.required
+        request.tool_config.tool_choice = ToolChoice.required
 
         converted = convert_chat_completion_request(request)
 
@@ -268,12 +277,6 @@ class TestConvertChatCompletionRequest:
             },
         ]
 
-    def _dummy_chat_completion_request(self):
-        return ChatCompletionRequest(
-            model="Llama-3.2-3B",
-            messages=[UserMessage(content="Hello World")],
-        )
-
 
 class TestConvertNonStreamChatCompletionResponse:
     def test_returns_response(self):
@@ -343,6 +346,26 @@ class TestConvertNonStreamChatCompletionResponse:
             ),
         ]
 
+    def test_converts_unparseable_tool_calls(self):
+        response = self._dummy_chat_completion_response_with_tool_call()
+        response.choices[0].message.tool_calls = [
+            ChatCompletionMessageToolCall(
+                id="tool_call_id",
+                type="function",
+                function=Function(
+                    name="log",
+                    arguments="(number=10, base=2)",
+                ),
+            ),
+        ]
+
+        converted = convert_chat_completion_response(response)
+
+        assert (
+            converted.completion_message.content
+            == '[{"call_id": "tool_call_id", "tool_name": "log", "arguments": "(number=10, base=2)"}]'
+        )
+
     def _dummy_chat_completion_response(self):
         return ChatCompletion(
             id="chatcmpl-123",
@@ -350,9 +373,7 @@ class TestConvertNonStreamChatCompletionResponse:
             choices=[
                 Choice(
                     index=0,
-                    message=ChatCompletionMessage(
-                        role="assistant", content="Hello World"
-                    ),
+                    message=ChatCompletionMessage(role="assistant", content="Hello World"),
                     finish_reason="stop",
                 )
             ],
@@ -409,19 +430,19 @@ class TestConvertStreamChatCompletionResponse:
         iter = converted.__aiter__()
         chunk = await iter.__anext__()
         assert chunk.event.event_type == ChatCompletionResponseEventType.start
-        assert chunk.event.delta == "Hello "
+        assert chunk.event.delta.text == "Hello "
 
         chunk = await iter.__anext__()
         assert chunk.event.event_type == ChatCompletionResponseEventType.progress
-        assert chunk.event.delta == "World "
+        assert chunk.event.delta.text == "World "
 
         chunk = await iter.__anext__()
         assert chunk.event.event_type == ChatCompletionResponseEventType.progress
-        assert chunk.event.delta == " !"
+        assert chunk.event.delta.text == " !"
 
         chunk = await iter.__anext__()
         assert chunk.event.event_type == ChatCompletionResponseEventType.complete
-        assert chunk.event.delta == ""
+        assert chunk.event.delta.text == ""
         assert chunk.event.stop_reason == StopReason.end_of_turn
 
         with pytest.raises(StopAsyncIteration):
@@ -468,11 +489,45 @@ class TestConvertStreamChatCompletionResponse:
         iter = converted.__aiter__()
         chunk = await iter.__anext__()
         assert chunk.event.event_type == ChatCompletionResponseEventType.start
-        assert chunk.event.delta.content == ToolCall(
+        assert chunk.event.delta.tool_call == ToolCall(
             call_id="tool_call_id",
             tool_name="get_flight_info",
             arguments={"origin": "AU", "destination": "LAX"},
         )
+
+    @pytest.mark.asyncio
+    async def test_returns_tool_calls_stream_with_unparseable_tool_calls(self):
+        def tool_call_stream():
+            chunk = self._dummy_chat_completion_chunk_with_tool_call()
+            chunk.choices[0].delta.tool_calls = [
+                ChoiceDeltaToolCall(
+                    index=0,
+                    type="function",
+                    id="tool_call_id",
+                    function=ChoiceDeltaToolCallFunction(
+                        name="get_flight_info",
+                        arguments="(origin=AU, destination=LAX)",
+                    ),
+                ),
+            ]
+            yield chunk
+
+            chunk = self._dummy_chat_completion_chunk_with_tool_call()
+            chunk.choices[0].delta.content = None
+            chunk.choices[0].finish_reason = "stop"
+            yield chunk
+
+        stream = tool_call_stream()
+        converted = convert_chat_completion_response_stream(stream)
+
+        iter = converted.__aiter__()
+        chunk = await iter.__anext__()
+        assert chunk.event.event_type == ChatCompletionResponseEventType.start
+        assert (
+            chunk.event.delta.content
+            == '{"call_id":"tool_call_id","tool_name":"get_flight_info","arguments":"(origin=AU, destination=LAX)"}'
+        )
+        assert chunk.event.delta.parse_status == ToolCallParseStatus.failed
 
     def _dummy_chat_completion_chunk(self):
         return ChatCompletionChunk(

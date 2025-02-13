@@ -58,11 +58,6 @@ def define_eval_candidate_2():
 
         # Sampling Parameters
         st.markdown("##### Sampling Parameters")
-        strategy = st.selectbox(
-            "Strategy",
-            ["greedy", "top_p", "top_k"],
-            index=0,
-        )
         temperature = st.slider(
             "Temperature",
             min_value=0.0,
@@ -95,13 +90,20 @@ def define_eval_candidate_2():
             help="Controls the likelihood for generating the same word or phrase multiple times in the same sentence or paragraph. 1 implies no penalty, 2 will strongly discourage model to repeat words or phrases.",
         )
         if candidate_type == "model":
+            if temperature > 0.0:
+                strategy = {
+                    "type": "top_p",
+                    "temperature": temperature,
+                    "top_p": top_p,
+                }
+            else:
+                strategy = {"type": "greedy"}
+
             eval_candidate = {
                 "type": "model",
                 "model": selected_model,
                 "sampling_params": {
                     "strategy": strategy,
-                    "temperature": temperature,
-                    "top_p": top_p,
                     "max_tokens": max_tokens,
                     "repetition_penalty": repetition_penalty,
                 },
@@ -193,7 +195,6 @@ def run_evaluation_3():
 
     # Add run button and handle evaluation
     if st.button("Run Evaluation"):
-
         progress_text = "Running evaluation..."
         progress_bar = st.progress(0, text=progress_text)
         rows = rows.rows
@@ -231,9 +232,7 @@ def run_evaluation_3():
                     output_res[scoring_fn] = []
                 output_res[scoring_fn].append(eval_res.scores[scoring_fn].score_rows[0])
 
-            progress_text_container.write(
-                f"Expand to see current processed result ({i + 1} / {len(rows)})"
-            )
+            progress_text_container.write(f"Expand to see current processed result ({i + 1} / {len(rows)})")
             results_container.json(eval_res, expanded=2)
 
         progress_bar.progress(1.0, text="Evaluation complete!")
@@ -245,7 +244,6 @@ def run_evaluation_3():
 
 
 def native_evaluation_page():
-
     st.set_page_config(page_title="Evaluations (Generation + Scoring)", page_icon="🦙")
     st.title("📊 Evaluations (Generation + Scoring)")
 

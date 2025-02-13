@@ -26,6 +26,7 @@ from llama_stack.apis.inference import (
     Message,
     ResponseFormat,
     ToolChoice,
+    ToolConfig,
 )
 from llama_stack.distribution.request_headers import NeedsRequestProviderData
 from llama_stack.providers.remote.inference.groq.config import GroqConfig
@@ -99,9 +100,8 @@ class GroqInferenceAdapter(Inference, ModelRegistryHelper, NeedsRequestProviderD
         tool_prompt_format: Optional[ToolPromptFormat] = None,
         stream: Optional[bool] = False,
         logprobs: Optional[LogProbConfig] = None,
-    ) -> Union[
-        ChatCompletionResponse, AsyncIterator[ChatCompletionResponseStreamChunk]
-    ]:
+        tool_config: Optional[ToolConfig] = None,
+    ) -> Union[ChatCompletionResponse, AsyncIterator[ChatCompletionResponseStreamChunk]]:
         model_id = self.get_provider_model_id(model_id)
         if model_id == "llama-3.2-3b-preview":
             warnings.warn(
@@ -117,10 +117,9 @@ class GroqInferenceAdapter(Inference, ModelRegistryHelper, NeedsRequestProviderD
                 sampling_params=sampling_params,
                 response_format=response_format,
                 tools=tools,
-                tool_choice=tool_choice,
-                tool_prompt_format=tool_prompt_format,
                 stream=stream,
                 logprobs=logprobs,
+                tool_config=tool_config,
             )
         )
 
@@ -129,9 +128,7 @@ class GroqInferenceAdapter(Inference, ModelRegistryHelper, NeedsRequestProviderD
         except groq.BadRequestError as e:
             if e.body.get("error", {}).get("code") == "tool_use_failed":
                 # For smaller models, Groq may fail to call a tool even when the request is well formed
-                raise ValueError(
-                    "Groq failed to call a tool", e.body.get("error", {})
-                ) from e
+                raise ValueError("Groq failed to call a tool", e.body.get("error", {})) from e
             else:
                 raise e
 

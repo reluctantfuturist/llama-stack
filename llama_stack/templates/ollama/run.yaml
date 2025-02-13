@@ -1,16 +1,15 @@
 version: '2'
 image_name: ollama
-conda_env: ollama
 apis:
 - agents
 - datasetio
 - eval
 - inference
-- memory
 - safety
 - scoring
 - telemetry
 - tool_runtime
+- vector_io
 providers:
   inference:
   - provider_id: ollama
@@ -20,7 +19,7 @@ providers:
   - provider_id: sentence-transformers
     provider_type: inline::sentence-transformers
     config: {}
-  memory:
+  vector_io:
   - provider_id: faiss
     provider_type: inline::faiss
     config:
@@ -28,6 +27,14 @@ providers:
         type: sqlite
         namespace: null
         db_path: ${env.SQLITE_STORE_DIR:~/.llama/distributions/ollama}/faiss_store.db
+  - provider_id: sqlite_vec
+    provider_type: inline::sqlite_vec
+    config:
+      kvstore:
+        type: sqlite
+        namespace: null
+        db_path: ${env.SQLITE_STORE_DIR:~/.llama/distributions/ollama}/sqlite_vec.db
+      db_path: ${env.SQLITE_STORE_DIR:~/.llama/distributions/ollama}/sqlite_vec.db
   safety:
   - provider_id: llama-guard
     provider_type: inline::llama-guard
@@ -83,8 +90,8 @@ providers:
   - provider_id: code-interpreter
     provider_type: inline::code-interpreter
     config: {}
-  - provider_id: memory-runtime
-    provider_type: inline::memory-runtime
+  - provider_id: rag-runtime
+    provider_type: inline::rag-runtime
     config: {}
 metadata_store:
   type: sqlite
@@ -100,8 +107,16 @@ models:
   provider_id: sentence-transformers
   model_type: embedding
 shields: []
-memory_banks: []
+vector_dbs: []
 datasets: []
 scoring_fns: []
 eval_tasks: []
-tool_groups: []
+tool_groups:
+- toolgroup_id: builtin::websearch
+  provider_id: tavily-search
+- toolgroup_id: builtin::rag
+  provider_id: rag-runtime
+- toolgroup_id: builtin::code_interpreter
+  provider_id: code-interpreter
+server:
+  port: 8321

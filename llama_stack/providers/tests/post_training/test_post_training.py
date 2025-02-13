@@ -5,7 +5,7 @@
 # the root directory of this source tree.
 import pytest
 
-from llama_stack.apis.common.type_system import JobStatus
+from llama_stack.apis.common.job_types import JobStatus
 from llama_stack.apis.post_training import (
     Checkpoint,
     DataConfig,
@@ -95,7 +95,4 @@ class TestPostTraining:
         assert isinstance(job_artifacts.checkpoints[0], Checkpoint)
         assert job_artifacts.checkpoints[0].identifier == "Llama3.2-3B-Instruct-sft-0"
         assert job_artifacts.checkpoints[0].epoch == 0
-        assert (
-            "/.llama/checkpoints/Llama3.2-3B-Instruct-sft-0"
-            in job_artifacts.checkpoints[0].path
-        )
+        assert "/.llama/checkpoints/Llama3.2-3B-Instruct-sft-0" in job_artifacts.checkpoints[0].path

@@ -23,8 +23,7 @@ if [ $# -lt 3 ]; then
   exit 1
 fi
 
-build_name="$1"
-env_name="llamastack-$build_name"
+env_name="$1"
 shift
 
 yaml_config="$1"
@@ -35,6 +34,7 @@ shift
 
 # Process environment variables from --env arguments
 env_vars=""
+other_args=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --env)
@@ -49,6 +49,7 @@ while [[ $# -gt 0 ]]; do
     fi
     ;;
   *)
+    other_args="$other_args $1"
     shift
     ;;
   esac
@@ -62,4 +63,5 @@ $CONDA_PREFIX/bin/python \
   -m llama_stack.distribution.server.server \
   --yaml-config "$yaml_config" \
   --port "$port" \
-  $env_vars
+  $env_vars \
+  $other_args

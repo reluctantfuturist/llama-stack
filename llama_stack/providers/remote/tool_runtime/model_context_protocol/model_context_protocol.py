@@ -42,9 +42,7 @@ class ModelContextProtocolToolRuntimeImpl(ToolsProtocolPrivate, ToolRuntime):
                 tools_result = await session.list_tools()
                 for tool in tools_result.tools:
                     parameters = []
-                    for param_name, param_schema in tool.inputSchema.get(
-                        "properties", {}
-                    ).items():
+                    for param_name, param_schema in tool.inputSchema.get("properties", {}).items():
                         parameters.append(
                             ToolParameter(
                                 name=param_name,
@@ -64,9 +62,7 @@ class ModelContextProtocolToolRuntimeImpl(ToolsProtocolPrivate, ToolRuntime):
                     )
         return tools
 
-    async def invoke_tool(
-        self, tool_name: str, args: Dict[str, Any]
-    ) -> ToolInvocationResult:
+    async def invoke_tool(self, tool_name: str, kwargs: Dict[str, Any]) -> ToolInvocationResult:
         tool = await self.tool_store.get_tool(tool_name)
         if tool.metadata is None or tool.metadata.get("endpoint") is None:
             raise ValueError(f"Tool {tool_name} does not have metadata")
@@ -77,7 +73,7 @@ class ModelContextProtocolToolRuntimeImpl(ToolsProtocolPrivate, ToolRuntime):
         async with sse_client(endpoint) as streams:
             async with ClientSession(*streams) as session:
                 await session.initialize()
-                result = await session.call_tool(tool.identifier, args)
+                result = await session.call_tool(tool.identifier, kwargs)
 
         return ToolInvocationResult(
             content="\n".join([result.model_dump_json() for result in result.content]),

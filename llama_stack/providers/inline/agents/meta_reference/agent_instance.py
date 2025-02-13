@@ -18,6 +18,7 @@ from urllib.parse import urlparse
 
 import httpx
 from llama_models.llama3.api.datatypes import BuiltinTool, ToolCall, ToolParamDefinition
+from pydantic import TypeAdapter
 
 from llama_stack.apis.agents import (
     AgentConfig,
@@ -59,11 +60,11 @@ from llama_stack.apis.inference import (
     ToolResponseMessage,
     UserMessage,
 )
-from llama_stack.apis.memory import Memory, MemoryBankDocument
-from llama_stack.apis.memory_banks import MemoryBanks, VectorMemoryBankParams
 from llama_stack.apis.safety import Safety
-from llama_stack.apis.tools import ToolGroups, ToolRuntime
+from llama_stack.apis.tools import RAGDocument, RAGQueryConfig, ToolGroups, ToolRuntime
+from llama_stack.apis.vector_io import VectorIO
 from llama_stack.providers.utils.kvstore import KVStore
+from llama_stack.providers.utils.memory.vector_store import concat_interleaved_content
 from llama_stack.providers.utils.telemetry import tracing
 
 from .persistence import AgentPersistence
@@ -73,15 +74,13 @@ log = logging.getLogger(__name__)
 
 
 def make_random_string(length: int = 8):
-    return "".join(
-        secrets.choice(string.ascii_letters + string.digits) for _ in range(length)
-    )
+    return "".join(secrets.choice(string.ascii_letters + string.digits) for _ in range(length))
 
 
 TOOLS_ATTACHMENT_KEY_REGEX = re.compile(r"__tools_attachment__=(\{.*?\})")
-MEMORY_QUERY_TOOL = "query_memory"
+MEMORY_QUERY_TOOL = "query_from_memory"
 WEB_SEARCH_TOOL = "web_search"
-MEMORY_GROUP = "builtin::memory"
+RAG_TOOL_GROUP = "builtin::rag"
 
 
 class ChatAgent(ShieldRunnerMixin):
@@ -91,20 +90,18 @@ class ChatAgent(ShieldRunnerMixin):
         agent_config: AgentConfig,
         tempdir: str,
         inference_api: Inference,
-        memory_api: Memory,
-        memory_banks_api: MemoryBanks,
         safety_api: Safety,
         tool_runtime_api: ToolRuntime,
         tool_groups_api: ToolGroups,
+        vector_io_api: VectorIO,
         persistence_store: KVStore,
     ):
         self.agent_id = agent_id
         self.agent_config = agent_config
         self.tempdir = tempdir
         self.inference_api = inference_api
-        self.memory_api = memory_api
-        self.memory_banks_api = memory_banks_api
         self.safety_api = safety_api
+        self.vector_io_api = vector_io_api
         self.storage = AgentPersistence(agent_id, persistence_store)
         self.tool_runtime_api = tool_runtime_api
         self.tool_groups_api = tool_groups_api
@@ -154,9 +151,7 @@ class ChatAgent(ShieldRunnerMixin):
     async def create_session(self, name: str) -> str:
         return await self.storage.create_session(name)
 
-    async def create_and_execute_turn(
-        self, request: AgentTurnCreateRequest
-    ) -> AsyncGenerator:
+    async def create_and_execute_turn(self, request: AgentTurnCreateRequest) -> AsyncGenerator:
         with tracing.span("create_and_execute_turn") as span:
             span.set_attribute("session_id", request.session_id)
             span.set_attribute("agent_id", self.agent_id)
@@ -207,14 +202,9 @@ class ChatAgent(ShieldRunnerMixin):
                     output_message = chunk
                     continue
 
-                assert isinstance(
-                    chunk, AgentTurnResponseStreamChunk
-                ), f"Unexpected type {type(chunk)}"
+                assert isinstance(chunk, AgentTurnResponseStreamChunk), f"Unexpected type {type(chunk)}"
                 event = chunk.event
-                if (
-                    event.payload.event_type
-                    == AgentTurnResponseEventType.step_complete.value
-                ):
+                if event.payload.event_type == AgentTurnResponseEventType.step_complete.value:
                     steps.append(event.payload.step_details)
 
                 yield chunk
@@ -370,24 +360,28 @@ class ChatAgent(ShieldRunnerMixin):
         documents: Optional[List[Document]] = None,
         toolgroups_for_turn: Optional[List[AgentToolGroup]] = None,
     ) -> AsyncGenerator:
+        # TODO: simplify all of this code, it can be simpler
         toolgroup_args = {}
+        toolgroups = set()
         for toolgroup in self.agent_config.toolgroups:
             if isinstance(toolgroup, AgentToolGroupWithArgs):
+                toolgroups.add(toolgroup.name)
                 toolgroup_args[toolgroup.name] = toolgroup.args
+            else:
+                toolgroups.add(toolgroup)
         if toolgroups_for_turn:
             for toolgroup in toolgroups_for_turn:
                 if isinstance(toolgroup, AgentToolGroupWithArgs):
+                    toolgroups.add(toolgroup.name)
                     toolgroup_args[toolgroup.name] = toolgroup.args
+                else:
+                    toolgroups.add(toolgroup)
 
         tool_defs, tool_to_group = await self._get_tool_defs(toolgroups_for_turn)
         if documents:
-            await self.handle_documents(
-                session_id, documents, input_messages, tool_defs
-            )
-        if MEMORY_QUERY_TOOL in tool_defs and len(input_messages) > 0:
-            memory_tool_group = tool_to_group.get(MEMORY_QUERY_TOOL, None)
-            if memory_tool_group is None:
-                raise ValueError(f"Memory tool group not found for {MEMORY_QUERY_TOOL}")
+            await self.handle_documents(session_id, documents, input_messages, tool_defs)
+
+        if RAG_TOOL_GROUP in toolgroups and len(input_messages) > 0:
             with tracing.span(MEMORY_QUERY_TOOL) as span:
                 step_id = str(uuid.uuid4())
                 yield AgentTurnResponseStreamChunk(
@@ -398,17 +392,22 @@ class ChatAgent(ShieldRunnerMixin):
                         )
                     )
                 )
-                query_args = {
-                    "messages": [msg.content for msg in input_messages],
-                    **toolgroup_args.get(memory_tool_group, {}),
-                }
+
+                args = toolgroup_args.get(RAG_TOOL_GROUP, {})
+                vector_db_ids = args.get("vector_db_ids", [])
+                query_config = args.get("query_config")
+                if query_config:
+                    query_config = TypeAdapter(RAGQueryConfig).validate_python(query_config)
+                else:
+                    # handle someone passing an empty dict
+                    query_config = RAGQueryConfig()
 
                 session_info = await self.storage.get_session_info(session_id)
+
                 # if the session has a memory bank id, let the memory tool use it
-                if session_info.memory_bank_id:
-                    if "memory_bank_ids" not in query_args:
-                        query_args["memory_bank_ids"] = []
-                    query_args["memory_bank_ids"].append(session_info.memory_bank_id)
+                if session_info.vector_db_id:
+                    vector_db_ids.append(session_info.vector_db_id)
+
                 yield AgentTurnResponseStreamChunk(
                     event=AgentTurnResponseEvent(
                         payload=AgentTurnResponseStepProgressPayload(
@@ -416,7 +415,7 @@ class ChatAgent(ShieldRunnerMixin):
                             step_id=step_id,
                             delta=ToolCallDelta(
                                 parse_status=ToolCallParseStatus.succeeded,
-                                content=ToolCall(
+                                tool_call=ToolCall(
                                     call_id="",
                                     tool_name=MEMORY_QUERY_TOOL,
                                     arguments={},
@@ -425,10 +424,12 @@ class ChatAgent(ShieldRunnerMixin):
                         )
                     )
                 )
-                result = await self.tool_runtime_api.invoke_tool(
-                    tool_name=MEMORY_QUERY_TOOL,
-                    args=query_args,
+                result = await self.tool_runtime_api.rag_tool.query(
+                    content=concat_interleaved_content([msg.content for msg in input_messages]),
+                    vector_db_ids=vector_db_ids,
+                    query_config=query_config,
                 )
+                retrieved_context = result.content
 
                 yield AgentTurnResponseStreamChunk(
                     event=AgentTurnResponseEvent(
@@ -449,23 +450,22 @@ class ChatAgent(ShieldRunnerMixin):
                                     ToolResponse(
                                         call_id="",
                                         tool_name=MEMORY_QUERY_TOOL,
-                                        content=result.content,
+                                        content=retrieved_context or [],
                                     )
                                 ],
                             ),
                         )
                     )
                 )
-                span.set_attribute(
-                    "input", [m.model_dump_json() for m in input_messages]
-                )
-                span.set_attribute("output", result.content)
-                span.set_attribute("error_code", result.error_code)
-                span.set_attribute("error_message", result.error_message)
+                span.set_attribute("input", [m.model_dump_json() for m in input_messages])
+                span.set_attribute("output", retrieved_context)
                 span.set_attribute("tool_name", MEMORY_QUERY_TOOL)
-                if result.error_code == 0:
-                    last_message = input_messages[-1]
-                    last_message.context = result.content
+
+                # append retrieved_context to the last user message
+                for message in input_messages[::-1]:
+                    if isinstance(message, UserMessage):
+                        message.context = retrieved_context
+                        break
 
         output_attachments = []
 
@@ -494,13 +494,13 @@ class ChatAgent(ShieldRunnerMixin):
                     self.agent_config.model,
                     input_messages,
                     tools=[
-                        tool
-                        for tool in tool_defs.values()
-                        if tool_to_group.get(tool.tool_name, None) != MEMORY_GROUP
+                        tool for tool in tool_defs.values() if tool_to_group.get(tool.tool_name, None) != RAG_TOOL_GROUP
                     ],
-                    tool_prompt_format=self.agent_config.tool_prompt_format,
+                    tool_prompt_format=self.agent_config.tool_config.tool_prompt_format,
+                    response_format=self.agent_config.response_format,
                     stream=True,
                     sampling_params=sampling_params,
+                    tool_config=self.agent_config.tool_config,
                 ):
                     event = chunk.event
                     if event.event_type == ChatCompletionResponseEventType.start:
@@ -512,7 +512,10 @@ class ChatAgent(ShieldRunnerMixin):
                     delta = event.delta
                     if delta.type == "tool_call":
                         if delta.parse_status == ToolCallParseStatus.succeeded:
-                            tool_calls.append(delta.content)
+                            tool_calls.append(delta.tool_call)
+                        elif delta.parse_status == ToolCallParseStatus.failed:
+                            # If we cannot parse the tools, set the content to the unparsed raw text
+                            content = delta.tool_call
                         if stream:
                             yield AgentTurnResponseStreamChunk(
                                 event=AgentTurnResponseEvent(
@@ -542,12 +545,8 @@ class ChatAgent(ShieldRunnerMixin):
                     if event.stop_reason is not None:
                         stop_reason = event.stop_reason
                 span.set_attribute("stop_reason", stop_reason)
-                span.set_attribute(
-                    "input", [m.model_dump_json() for m in input_messages]
-                )
-                span.set_attribute(
-                    "output", f"content: {content} tool_calls: {tool_calls}"
-                )
+                span.set_attribute("input", [m.model_dump_json() for m in input_messages])
+                span.set_attribute("output", f"content: {content} tool_calls: {tool_calls}")
 
             stop_reason = stop_reason or StopReason.out_of_tokens
 
@@ -624,6 +623,10 @@ class ChatAgent(ShieldRunnerMixin):
                             step_type=StepType.tool_execution.value,
                             step_id=step_id,
                             tool_call=tool_call,
+                            delta=ToolCallDelta(
+                                parse_status=ToolCallParseStatus.in_progress,
+                                tool_call=tool_call,
+                            ),
                         )
                     )
                 )
@@ -645,9 +648,7 @@ class ChatAgent(ShieldRunnerMixin):
                         toolgroup_args,
                         tool_to_group,
                     )
-                    assert (
-                        len(result_messages) == 1
-                    ), "Currently not supporting multiple messages"
+                    assert len(result_messages) == 1, "Currently not supporting multiple messages"
                     result_message = result_messages[0]
                     span.set_attribute("output", result_message.model_dump_json())
 
@@ -675,9 +676,7 @@ class ChatAgent(ShieldRunnerMixin):
                 # TODO: add tool-input touchpoint and a "start" event for this step also
                 # but that needs a lot more refactoring of Tool code potentially
 
-                if out_attachment := _interpret_content_as_attachment(
-                    result_message.content
-                ):
+                if out_attachment := _interpret_content_as_attachment(result_message.content):
                     # NOTE: when we push this message back to the model, the model may ignore the
                     # attached file path etc. since the model is trained to only provide a user message
                     # with the summary. We keep all generated attachments and then attach them to final message
@@ -692,22 +691,14 @@ class ChatAgent(ShieldRunnerMixin):
     ) -> Tuple[Dict[str, ToolDefinition], Dict[str, str]]:
         # Determine which tools to include
         agent_config_toolgroups = set(
-            (
-                toolgroup.name
-                if isinstance(toolgroup, AgentToolGroupWithArgs)
-                else toolgroup
-            )
+            (toolgroup.name if isinstance(toolgroup, AgentToolGroupWithArgs) else toolgroup)
             for toolgroup in self.agent_config.toolgroups
         )
         toolgroups_for_turn_set = (
             agent_config_toolgroups
             if toolgroups_for_turn is None
             else {
-                (
-                    toolgroup.name
-                    if isinstance(toolgroup, AgentToolGroupWithArgs)
-                    else toolgroup
-                )
+                (toolgroup.name if isinstance(toolgroup, AgentToolGroupWithArgs) else toolgroup)
                 for toolgroup in toolgroups_for_turn
             }
         )
@@ -735,12 +726,9 @@ class ChatAgent(ShieldRunnerMixin):
         for toolgroup_name in agent_config_toolgroups:
             if toolgroup_name not in toolgroups_for_turn_set:
                 continue
-            tools = await self.tool_groups_api.list_tools(tool_group_id=toolgroup_name)
-            for tool_def in tools:
-                if (
-                    toolgroup_name.startswith("builtin")
-                    and toolgroup_name != MEMORY_GROUP
-                ):
+            tools = await self.tool_groups_api.list_tools(toolgroup_id=toolgroup_name)
+            for tool_def in tools.data:
+                if toolgroup_name.startswith("builtin") and toolgroup_name != RAG_TOOL_GROUP:
                     tool_name = tool_def.identifier
                     built_in_type = BuiltinTool.brave_search
                     if tool_name == "web_search":
@@ -751,9 +739,7 @@ class ChatAgent(ShieldRunnerMixin):
                     if tool_def_map.get(built_in_type, None):
                         raise ValueError(f"Tool {built_in_type} already exists")
 
-                    tool_def_map[built_in_type] = ToolDefinition(
-                        tool_name=built_in_type
-                    )
+                    tool_def_map[built_in_type] = ToolDefinition(tool_name=built_in_type)
                     tool_to_group[built_in_type] = tool_def.toolgroup_id
                     continue
 
@@ -799,9 +785,7 @@ class ChatAgent(ShieldRunnerMixin):
         # Save the contents to a tempdir and use its path as a URL if code interpreter is present
         if code_interpreter_tool:
             for c in content_items:
-                temp_file_path = os.path.join(
-                    self.tempdir, f"{make_random_string()}.txt"
-                )
+                temp_file_path = os.path.join(self.tempdir, f"{make_random_string()}.txt")
                 with open(temp_file_path, "w") as temp_file:
                     temp_file.write(c.content)
                 url_items.append(URL(uri=f"file://{temp_file_path}"))
@@ -812,7 +796,7 @@ class ChatAgent(ShieldRunnerMixin):
             msg = await attachment_message(self.tempdir, url_items)
             input_messages.append(msg)
             # Since memory is present, add all the data to the memory bank
-            await self.add_to_session_memory_bank(session_id, documents)
+            await self.add_to_session_vector_db(session_id, documents)
         elif code_interpreter_tool:
             # if only code_interpreter is available, we download the URLs to a tempdir
             # and attach the path to them as a message to inference with the
@@ -821,42 +805,40 @@ class ChatAgent(ShieldRunnerMixin):
             input_messages.append(msg)
         elif memory_tool:
             # if only memory is available, we load the data from the URLs and content items to the memory bank
-            await self.add_to_session_memory_bank(session_id, documents)
+            await self.add_to_session_vector_db(session_id, documents)
         else:
             # if no memory or code_interpreter tool is available,
             # we try to load the data from the URLs and content items as a message to inference
             # and add it to the last message's context
             input_messages[-1].context = "\n".join(
-                [doc.content for doc in content_items]
-                + await load_data_from_urls(url_items)
+                [doc.content for doc in content_items] + await load_data_from_urls(url_items)
             )
 
-    async def _ensure_memory_bank(self, session_id: str) -> str:
+    async def _ensure_vector_db(self, session_id: str) -> str:
         session_info = await self.storage.get_session_info(session_id)
         if session_info is None:
             raise ValueError(f"Session {session_id} not found")
 
-        if session_info.memory_bank_id is None:
-            bank_id = f"memory_bank_{session_id}"
-            await self.memory_banks_api.register_memory_bank(
-                memory_bank_id=bank_id,
-                params=VectorMemoryBankParams(
-                    embedding_model="all-MiniLM-L6-v2",
-                    chunk_size_in_tokens=512,
-                ),
+        if session_info.vector_db_id is None:
+            vector_db_id = f"vector_db_{session_id}"
+
+            # TODO: the semantic for registration is definitely not "creation"
+            # so we need to fix it if we expect the agent to create a new vector db
+            # for each session
+            await self.vector_io_api.register_vector_db(
+                vector_db_id=vector_db_id,
+                embedding_model="all-MiniLM-L6-v2",
             )
-            await self.storage.add_memory_bank_to_session(session_id, bank_id)
+            await self.storage.add_vector_db_to_session(session_id, vector_db_id)
         else:
-            bank_id = session_info.memory_bank_id
+            vector_db_id = session_info.vector_db_id
 
-        return bank_id
+        return vector_db_id
 
-    async def add_to_session_memory_bank(
-        self, session_id: str, data: List[Document]
-    ) -> None:
-        bank_id = await self._ensure_memory_bank(session_id)
+    async def add_to_session_vector_db(self, session_id: str, data: List[Document]) -> None:
+        vector_db_id = await self._ensure_vector_db(session_id)
         documents = [
-            MemoryBankDocument(
+            RAGDocument(
                 document_id=str(uuid.uuid4()),
                 content=a.content,
                 mime_type=a.mime_type,
@@ -864,9 +846,10 @@ class ChatAgent(ShieldRunnerMixin):
             )
             for a in data
         ]
-        await self.memory_api.insert_documents(
-            bank_id=bank_id,
+        await self.tool_runtime_api.rag_tool.insert(
             documents=documents,
+            vector_db_id=vector_db_id,
+            chunk_size_in_tokens=512,
         )
 
 
@@ -907,11 +890,7 @@ async def attachment_message(tempdir: str, urls: List[URL]) -> ToolResponseMessa
         else:
             raise ValueError(f"Unsupported URL {url}")
 
-        content.append(
-            TextContentItem(
-                text=f'# There is a file accessible to you at "{filepath}"\n'
-            )
-        )
+        content.append(TextContentItem(text=f'# There is a file accessible to you at "{filepath}"\n'))
 
     return ToolResponseMessage(
         call_id="",
@@ -951,7 +930,7 @@ async def execute_tool_call_maybe(
 
     result = await tool_runtime_api.invoke_tool(
         tool_name=name,
-        args=dict(
+        kwargs=dict(
             session_id=session_id,
             **tool_call_args,
         ),

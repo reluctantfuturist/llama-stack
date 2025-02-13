@@ -16,12 +16,11 @@ from typing import (
     Union,
 )
 
-from llama_models.schema_utils import json_schema_type, webmethod
+from llama_models.schema_utils import json_schema_type, register_schema, webmethod
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
 from llama_stack.apis.common.type_system import ParamType
-
 from llama_stack.apis.resource import Resource, ResourceType
 
 
@@ -44,9 +43,7 @@ class AggregationFunctionType(Enum):
 
 @json_schema_type
 class LLMAsJudgeScoringFnParams(BaseModel):
-    type: Literal[ScoringFnParamsType.llm_as_judge.value] = (
-        ScoringFnParamsType.llm_as_judge.value
-    )
+    type: Literal[ScoringFnParamsType.llm_as_judge.value] = ScoringFnParamsType.llm_as_judge.value
     judge_model: str
     prompt_template: Optional[str] = None
     judge_score_regexes: Optional[List[str]] = Field(
@@ -61,9 +58,7 @@ class LLMAsJudgeScoringFnParams(BaseModel):
 
 @json_schema_type
 class RegexParserScoringFnParams(BaseModel):
-    type: Literal[ScoringFnParamsType.regex_parser.value] = (
-        ScoringFnParamsType.regex_parser.value
-    )
+    type: Literal[ScoringFnParamsType.regex_parser.value] = ScoringFnParamsType.regex_parser.value
     parsing_regexes: Optional[List[str]] = Field(
         description="Regex to extract the answer from generated response",
         default_factory=list,
@@ -83,14 +78,17 @@ class BasicScoringFnParams(BaseModel):
     )
 
 
-ScoringFnParams = Annotated[
-    Union[
-        LLMAsJudgeScoringFnParams,
-        RegexParserScoringFnParams,
-        BasicScoringFnParams,
+ScoringFnParams = register_schema(
+    Annotated[
+        Union[
+            LLMAsJudgeScoringFnParams,
+            RegexParserScoringFnParams,
+            BasicScoringFnParams,
+        ],
+        Field(discriminator="type"),
     ],
-    Field(discriminator="type"),
-]
+    name="ScoringFnParams",
+)
 
 
 class CommonScoringFnFields(BaseModel):
@@ -110,9 +108,7 @@ class CommonScoringFnFields(BaseModel):
 
 @json_schema_type
 class ScoringFn(CommonScoringFnFields, Resource):
-    type: Literal[ResourceType.scoring_function.value] = (
-        ResourceType.scoring_function.value
-    )
+    type: Literal[ResourceType.scoring_function.value] = ResourceType.scoring_function.value
 
     @property
     def scoring_fn_id(self) -> str:
@@ -129,15 +125,19 @@ class ScoringFnInput(CommonScoringFnFields, BaseModel):
     provider_scoring_fn_id: Optional[str] = None
 
 
+class ListScoringFunctionsResponse(BaseModel):
+    data: List[ScoringFn]
+
+
 @runtime_checkable
 class ScoringFunctions(Protocol):
-    @webmethod(route="/scoring-functions/list", method="GET")
-    async def list_scoring_functions(self) -> List[ScoringFn]: ...
+    @webmethod(route="/scoring-functions", method="GET")
+    async def list_scoring_functions(self) -> ListScoringFunctionsResponse: ...
 
-    @webmethod(route="/scoring-functions/get", method="GET")
-    async def get_scoring_function(self, scoring_fn_id: str) -> Optional[ScoringFn]: ...
+    @webmethod(route="/scoring-functions/{scoring_fn_id}", method="GET")
+    async def get_scoring_function(self, scoring_fn_id: str, /) -> Optional[ScoringFn]: ...
 
-    @webmethod(route="/scoring-functions/register", method="POST")
+    @webmethod(route="/scoring-functions", method="POST")
     async def register_scoring_function(
         self,
         scoring_fn_id: str,

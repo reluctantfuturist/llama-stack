@@ -11,9 +11,7 @@ from modules.api import llama_stack_api
 with st.sidebar:
     st.header("Configuration")
     available_models = llama_stack_api.client.models.list()
-    available_models = [
-        model.identifier for model in available_models if model.model_type == "llm"
-    ]
+    available_models = [model.identifier for model in available_models if model.model_type == "llm"]
     selected_model = st.selectbox(
         "Choose a model",
         available_models,
@@ -95,6 +93,15 @@ if prompt := st.chat_input("Example: What is Llama Stack?"):
         message_placeholder = st.empty()
         full_response = ""
 
+        if temperature > 0.0:
+            strategy = {
+                "type": "top_p",
+                "temperature": temperature,
+                "top_p": top_p,
+            }
+        else:
+            strategy = {"type": "greedy"}
+
         response = llama_stack_api.client.inference.chat_completion(
             messages=[
                 {"role": "system", "content": system_prompt},
@@ -103,8 +110,7 @@ if prompt := st.chat_input("Example: What is Llama Stack?"):
             model_id=selected_model,
             stream=stream,
             sampling_params={
-                "temperature": temperature,
-                "top_p": top_p,
+                "strategy": strategy,
                 "max_tokens": max_tokens,
                 "repetition_penalty": repetition_penalty,
             },
@@ -113,13 +119,11 @@ if prompt := st.chat_input("Example: What is Llama Stack?"):
         if stream:
             for chunk in response:
                 if chunk.event.event_type == "progress":
-                    full_response += chunk.event.delta
+                    full_response += chunk.event.delta.text
                 message_placeholder.markdown(full_response + "▌")
             message_placeholder.markdown(full_response)
         else:
             full_response = response
             message_placeholder.markdown(full_response.completion_message.content)
 
-        st.session_state.messages.append(
-            {"role": "assistant", "content": full_response}
-        )
+        st.session_state.messages.append({"role": "assistant", "content": full_response})

@@ -7,6 +7,7 @@
 from datetime import datetime
 from enum import Enum
 from typing import (
+    Annotated,
     Any,
     AsyncIterator,
     Dict,
@@ -20,11 +21,11 @@ from typing import (
 
 from llama_models.schema_utils import json_schema_type, register_schema, webmethod
 from pydantic import BaseModel, ConfigDict, Field
-from typing_extensions import Annotated
 
 from llama_stack.apis.common.content_types import ContentDelta, InterleavedContent, URL
 from llama_stack.apis.inference import (
     CompletionMessage,
+    ResponseFormat,
     SamplingParams,
     ToolCall,
     ToolChoice,
@@ -32,8 +33,8 @@ from llama_stack.apis.inference import (
     ToolResponse,
     ToolResponseMessage,
     UserMessage,
+    ToolConfig,
 )
-from llama_stack.apis.memory import MemoryBank
 from llama_stack.apis.safety import SafetyViolation
 from llama_stack.apis.tools import ToolDef
 from llama_stack.providers.utils.telemetry.trace_protocol import trace_protocol
@@ -86,10 +87,8 @@ class ShieldCallStep(StepCommon):
 
 @json_schema_type
 class MemoryRetrievalStep(StepCommon):
-    step_type: Literal[StepType.memory_retrieval.value] = (
-        StepType.memory_retrieval.value
-    )
-    memory_bank_ids: List[str]
+    step_type: Literal[StepType.memory_retrieval.value] = StepType.memory_retrieval.value
+    vector_db_ids: str
     inserted_context: InterleavedContent
 
 
@@ -118,7 +117,7 @@ class Turn(BaseModel):
     ]
     steps: List[Step]
     output_message: CompletionMessage
-    output_attachments: List[Attachment] = Field(default_factory=list)
+    output_attachments: Optional[List[Attachment]] = Field(default_factory=list)
 
     started_at: datetime
     completed_at: Optional[datetime] = None
@@ -132,8 +131,6 @@ class Session(BaseModel):
     session_name: str
     turns: List[Turn]
     started_at: datetime
-
-    memory_bank: Optional[MemoryBank] = None
 
 
 class AgentToolGroupWithArgs(BaseModel):
@@ -157,12 +154,25 @@ class AgentConfigCommon(BaseModel):
     output_shields: Optional[List[str]] = Field(default_factory=list)
     toolgroups: Optional[List[AgentToolGroup]] = Field(default_factory=list)
     client_tools: Optional[List[ToolDef]] = Field(default_factory=list)
-    tool_choice: Optional[ToolChoice] = Field(default=ToolChoice.auto)
-    tool_prompt_format: Optional[ToolPromptFormat] = Field(
-        default=ToolPromptFormat.json
-    )
+    tool_choice: Optional[ToolChoice] = Field(default=None, deprecated="use tool_config instead")
+    tool_prompt_format: Optional[ToolPromptFormat] = Field(default=None, deprecated="use tool_config instead")
+    tool_config: Optional[ToolConfig] = Field(default=None)
 
-    max_infer_iters: int = 10
+    max_infer_iters: Optional[int] = 10
+
+    def model_post_init(self, __context):
+        if self.tool_config:
+            if self.tool_choice and self.tool_config.tool_choice != self.tool_choice:
+                raise ValueError("tool_choice is deprecated. Use tool_choice in tool_config instead.")
+            if self.tool_prompt_format and self.tool_config.tool_prompt_format != self.tool_prompt_format:
+                raise ValueError("tool_prompt_format is deprecated. Use tool_prompt_format in tool_config instead.")
+        else:
+            params = {}
+            if self.tool_choice:
+                params["tool_choice"] = self.tool_choice
+            if self.tool_prompt_format:
+                params["tool_prompt_format"] = self.tool_prompt_format
+            self.tool_config = ToolConfig(**params)
 
 
 @json_schema_type
@@ -170,6 +180,7 @@ class AgentConfig(AgentConfigCommon):
     model: str
     instructions: str
     enable_session_persistence: bool
+    response_format: Optional[ResponseFormat] = None
 
 
 class AgentConfigOverridablePerTurn(AgentConfigCommon):
@@ -187,9 +198,7 @@ class AgentTurnResponseEventType(Enum):
 
 @json_schema_type
 class AgentTurnResponseStepStartPayload(BaseModel):
-    event_type: Literal[AgentTurnResponseEventType.step_start.value] = (
-        AgentTurnResponseEventType.step_start.value
-    )
+    event_type: Literal[AgentTurnResponseEventType.step_start.value] = AgentTurnResponseEventType.step_start.value
     step_type: StepType
     step_id: str
     metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
@@ -197,9 +206,7 @@ class AgentTurnResponseStepStartPayload(BaseModel):
 
 @json_schema_type
 class AgentTurnResponseStepCompletePayload(BaseModel):
-    event_type: Literal[AgentTurnResponseEventType.step_complete.value] = (
-        AgentTurnResponseEventType.step_complete.value
-    )
+    event_type: Literal[AgentTurnResponseEventType.step_complete.value] = AgentTurnResponseEventType.step_complete.value
     step_type: StepType
     step_id: str
     step_details: Step
@@ -209,9 +216,7 @@ class AgentTurnResponseStepCompletePayload(BaseModel):
 class AgentTurnResponseStepProgressPayload(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
-    event_type: Literal[AgentTurnResponseEventType.step_progress.value] = (
-        AgentTurnResponseEventType.step_progress.value
-    )
+    event_type: Literal[AgentTurnResponseEventType.step_progress.value] = AgentTurnResponseEventType.step_progress.value
     step_type: StepType
     step_id: str
 
@@ -220,25 +225,18 @@ class AgentTurnResponseStepProgressPayload(BaseModel):
 
 @json_schema_type
 class AgentTurnResponseTurnStartPayload(BaseModel):
-    event_type: Literal[AgentTurnResponseEventType.turn_start.value] = (
-        AgentTurnResponseEventType.turn_start.value
-    )
+    event_type: Literal[AgentTurnResponseEventType.turn_start.value] = AgentTurnResponseEventType.turn_start.value
     turn_id: str
 
 
 @json_schema_type
 class AgentTurnResponseTurnCompletePayload(BaseModel):
-    event_type: Literal[AgentTurnResponseEventType.turn_complete.value] = (
-        AgentTurnResponseEventType.turn_complete.value
-    )
+    event_type: Literal[AgentTurnResponseEventType.turn_complete.value] = AgentTurnResponseEventType.turn_complete.value
     turn: Turn
 
 
-@json_schema_type
-class AgentTurnResponseEvent(BaseModel):
-    """Streamed agent execution response."""
-
-    payload: Annotated[
+AgentTurnResponseEventPayload = register_schema(
+    Annotated[
         Union[
             AgentTurnResponseStepStartPayload,
             AgentTurnResponseStepProgressPayload,
@@ -247,7 +245,14 @@ class AgentTurnResponseEvent(BaseModel):
             AgentTurnResponseTurnCompletePayload,
         ],
         Field(discriminator="event_type"),
-    ]
+    ],
+    name="AgentTurnResponseEventPayload",
+)
+
+
+@json_schema_type
+class AgentTurnResponseEvent(BaseModel):
+    payload: AgentTurnResponseEventPayload
 
 
 @json_schema_type
@@ -279,6 +284,7 @@ class AgentTurnCreateRequest(AgentConfigOverridablePerTurn):
     toolgroups: Optional[List[AgentToolGroup]] = None
 
     stream: Optional[bool] = False
+    tool_config: Optional[ToolConfig] = None
 
 
 @json_schema_type
@@ -296,13 +302,23 @@ class AgentStepResponse(BaseModel):
 @runtime_checkable
 @trace_protocol
 class Agents(Protocol):
-    @webmethod(route="/agents/create")
+    """Agents API for creating and interacting with agentic systems.
+
+    Main functionalities provided by this API:
+    - Create agents with specific instructions and ability to use tools.
+    - Interactions with agents are grouped into sessions ("threads"), and each interaction is called a "turn".
+    - Agents can be provided with various tools (see the ToolGroups and ToolRuntime APIs for more details).
+    - Agents can be provided with various shields (see the Safety API for more details).
+    - Agents can also use Memory to retrieve information from knowledge bases. See the RAG Tool and Vector IO APIs for more details.
+    """
+
+    @webmethod(route="/agents", method="POST")
     async def create_agent(
         self,
         agent_config: AgentConfig,
     ) -> AgentCreateResponse: ...
 
-    @webmethod(route="/agents/turn/create")
+    @webmethod(route="/agents/{agent_id}/session/{session_id}/turn", method="POST")
     async def create_agent_turn(
         self,
         agent_id: str,
@@ -316,38 +332,53 @@ class Agents(Protocol):
         stream: Optional[bool] = False,
         documents: Optional[List[Document]] = None,
         toolgroups: Optional[List[AgentToolGroup]] = None,
+        tool_config: Optional[ToolConfig] = None,
     ) -> Union[Turn, AsyncIterator[AgentTurnResponseStreamChunk]]: ...
 
-    @webmethod(route="/agents/turn/get")
+    @webmethod(route="/agents/{agent_id}/session/{session_id}/turn/{turn_id}", method="GET")
     async def get_agents_turn(
-        self, agent_id: str, session_id: str, turn_id: str
+        self,
+        agent_id: str,
+        session_id: str,
+        turn_id: str,
     ) -> Turn: ...
 
-    @webmethod(route="/agents/step/get")
+    @webmethod(
+        route="/agents/{agent_id}/session/{session_id}/turn/{turn_id}/step/{step_id}",
+        method="GET",
+    )
     async def get_agents_step(
-        self, agent_id: str, session_id: str, turn_id: str, step_id: str
+        self,
+        agent_id: str,
+        session_id: str,
+        turn_id: str,
+        step_id: str,
     ) -> AgentStepResponse: ...
 
-    @webmethod(route="/agents/session/create")
+    @webmethod(route="/agents/{agent_id}/session", method="POST")
     async def create_agent_session(
         self,
         agent_id: str,
         session_name: str,
     ) -> AgentSessionCreateResponse: ...
 
-    @webmethod(route="/agents/session/get")
+    @webmethod(route="/agents/{agent_id}/session/{session_id}", method="GET")
     async def get_agents_session(
         self,
-        agent_id: str,
         session_id: str,
+        agent_id: str,
         turn_ids: Optional[List[str]] = None,
     ) -> Session: ...
 
-    @webmethod(route="/agents/session/delete")
-    async def delete_agents_session(self, agent_id: str, session_id: str) -> None: ...
+    @webmethod(route="/agents/{agent_id}/session/{session_id}", method="DELETE")
+    async def delete_agents_session(
+        self,
+        session_id: str,
+        agent_id: str,
+    ) -> None: ...
 
-    @webmethod(route="/agents/delete")
-    async def delete_agents(
+    @webmethod(route="/agents/{agent_id}", method="DELETE")
+    async def delete_agent(
         self,
         agent_id: str,
     ) -> None: ...

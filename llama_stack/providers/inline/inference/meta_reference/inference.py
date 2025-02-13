@@ -38,6 +38,7 @@ from llama_stack.apis.inference import (
     ResponseFormat,
     TokenLogProbs,
     ToolChoice,
+    ToolConfig,
 )
 from llama_stack.apis.models import Model, ModelType
 from llama_stack.providers.datatypes import ModelsProtocolPrivate
@@ -80,9 +81,7 @@ class MetaReferenceInferenceImpl(
     async def load_model(self, model_id, llama_model) -> None:
         log.info(f"Loading model `{model_id}`")
         if self.config.create_distributed_process_group:
-            self.generator = LlamaModelParallelGenerator(
-                self.config, model_id, llama_model
-            )
+            self.generator = LlamaModelParallelGenerator(self.config, model_id, llama_model)
             self.generator.start()
         else:
             self.generator = Llama.build(self.config, model_id, llama_model)
@@ -100,9 +99,7 @@ class MetaReferenceInferenceImpl(
                 "No avaible model yet, please register your requested model or add your model in the resouces first"
             )
         elif request.model != self.model_id:
-            raise RuntimeError(
-                f"Model mismatch: request model: {request.model} != loaded model: {self.model_id}"
-            )
+            raise RuntimeError(f"Model mismatch: request model: {request.model} != loaded model: {self.model_id}")
 
     async def unregister_model(self, model_id: str) -> None:
         pass
@@ -184,23 +181,17 @@ class MetaReferenceInferenceImpl(
                     if request.logprobs:
                         assert len(token_result.logprobs) == 1
 
-                        logprobs = [
-                            TokenLogProbs(
-                                logprobs_by_token={
-                                    token_result.text: token_result.logprobs[0]
-                                }
-                            )
-                        ]
+                        logprobs = [TokenLogProbs(logprobs_by_token={token_result.text: token_result.logprobs[0]})]
 
                 yield CompletionResponseStreamChunk(
-                    delta=TextDelta(text=text),
+                    delta=text,
                     stop_reason=stop_reason,
                     logprobs=logprobs if request.logprobs else None,
                 )
 
             if stop_reason is None:
                 yield CompletionResponseStreamChunk(
-                    delta=TextDelta(text=""),
+                    delta="",
                     stop_reason=StopReason.out_of_tokens,
                 )
 
@@ -212,9 +203,7 @@ class MetaReferenceInferenceImpl(
             for x in impl():
                 yield x
 
-    async def _nonstream_completion(
-        self, request: CompletionRequest
-    ) -> CompletionResponse:
+    async def _nonstream_completion(self, request: CompletionRequest) -> CompletionResponse:
         def impl():
             tokens = []
             logprobs = []
@@ -223,26 +212,24 @@ class MetaReferenceInferenceImpl(
             tokenizer = self.generator.formatter.tokenizer
             for token_result in self.generator.completion(request):
                 tokens.append(token_result.token)
-
-                if token_result.token in tokenizer.stop_tokens:
-                    # not quite right semantically
+                if token_result.text == "<|eot_id|>":
                     stop_reason = StopReason.end_of_turn
+                elif token_result.text == "<|eom_id|>":
+                    stop_reason = StopReason.end_of_message
 
                 if request.logprobs:
                     assert len(token_result.logprobs) == 1
 
-                    logprobs.append(
-                        TokenLogProbs(
-                            logprobs_by_token={
-                                token_result.text: token_result.logprobs[0]
-                            }
-                        )
-                    )
+                    logprobs.append(TokenLogProbs(logprobs_by_token={token_result.text: token_result.logprobs[0]}))
 
             if stop_reason is None:
                 stop_reason = StopReason.out_of_tokens
 
             content = self.generator.formatter.tokenizer.decode(tokens)
+            if content.endswith("<|eot_id|>"):
+                content = content[: -len("<|eot_id|>")]
+            elif content.endswith("<|eom_id|>"):
+                content = content[: -len("<|eom_id|>")]
             return CompletionResponse(
                 content=content,
                 stop_reason=stop_reason,
@@ -266,6 +253,7 @@ class MetaReferenceInferenceImpl(
         tool_prompt_format: Optional[ToolPromptFormat] = None,
         stream: Optional[bool] = False,
         logprobs: Optional[LogProbConfig] = None,
+        tool_config: Optional[ToolConfig] = None,
     ) -> AsyncGenerator:
         if logprobs:
             assert logprobs.top_k == 1, f"Unexpected top_k={logprobs.top_k}"
@@ -276,18 +264,15 @@ class MetaReferenceInferenceImpl(
             messages=messages,
             sampling_params=sampling_params,
             tools=tools or [],
-            tool_choice=tool_choice,
-            tool_prompt_format=tool_prompt_format,
             response_format=response_format,
             stream=stream,
             logprobs=logprobs,
+            tool_config=tool_config,
         )
         self.check_model(request)
 
         # augment and rewrite messages depending on the model
-        request.messages = chat_completion_request_to_messages(
-            request, self.llama_model.core_model_id.value
-        )
+        request.messages = chat_completion_request_to_messages(request, self.llama_model.core_model_id.value)
         # download media and convert to raw content so we can send it to the model
         request = await convert_request_to_raw(request)
 
@@ -300,9 +285,7 @@ class MetaReferenceInferenceImpl(
         else:
             return await self._nonstream_chat_completion(request)
 
-    async def _nonstream_chat_completion(
-        self, request: ChatCompletionRequest
-    ) -> ChatCompletionResponse:
+    async def _nonstream_chat_completion(self, request: ChatCompletionRequest) -> ChatCompletionResponse:
         def impl():
             tokens = []
             logprobs = []
@@ -319,20 +302,12 @@ class MetaReferenceInferenceImpl(
                 if request.logprobs:
                     assert len(token_result.logprobs) == 1
 
-                    logprobs.append(
-                        TokenLogProbs(
-                            logprobs_by_token={
-                                token_result.text: token_result.logprobs[0]
-                            }
-                        )
-                    )
+                    logprobs.append(TokenLogProbs(logprobs_by_token={token_result.text: token_result.logprobs[0]}))
 
             if stop_reason is None:
                 stop_reason = StopReason.out_of_tokens
 
-            raw_message = self.generator.formatter.decode_assistant_message(
-                tokens, stop_reason
-            )
+            raw_message = self.generator.formatter.decode_assistant_message(tokens, stop_reason)
             return ChatCompletionResponse(
                 completion_message=CompletionMessage(
                     content=raw_message.content,
@@ -348,9 +323,7 @@ class MetaReferenceInferenceImpl(
         else:
             return impl()
 
-    async def _stream_chat_completion(
-        self, request: ChatCompletionRequest
-    ) -> AsyncGenerator:
+    async def _stream_chat_completion(self, request: ChatCompletionRequest) -> AsyncGenerator:
         def impl():
             yield ChatCompletionResponseStreamChunk(
                 event=ChatCompletionResponseEvent(
@@ -373,7 +346,7 @@ class MetaReferenceInferenceImpl(
                         event=ChatCompletionResponseEvent(
                             event_type=ChatCompletionResponseEventType.progress,
                             delta=ToolCallDelta(
-                                content="",
+                                tool_call="",
                                 parse_status=ToolCallParseStatus.started,
                             ),
                         )
@@ -391,7 +364,7 @@ class MetaReferenceInferenceImpl(
 
                 if ipython:
                     delta = ToolCallDelta(
-                        content=text,
+                        tool_call=text,
                         parse_status=ToolCallParseStatus.in_progress,
                     )
                 else:
@@ -401,13 +374,7 @@ class MetaReferenceInferenceImpl(
                     if request.logprobs:
                         assert len(token_result.logprobs) == 1
 
-                        logprobs.append(
-                            TokenLogProbs(
-                                logprobs_by_token={
-                                    token_result.text: token_result.logprobs[0]
-                                }
-                            )
-                        )
+                        logprobs.append(TokenLogProbs(logprobs_by_token={token_result.text: token_result.logprobs[0]}))
                     yield ChatCompletionResponseStreamChunk(
                         event=ChatCompletionResponseEvent(
                             event_type=ChatCompletionResponseEventType.progress,
@@ -420,9 +387,7 @@ class MetaReferenceInferenceImpl(
             if stop_reason is None:
                 stop_reason = StopReason.out_of_tokens
 
-            message = self.generator.formatter.decode_assistant_message(
-                tokens, stop_reason
-            )
+            message = self.generator.formatter.decode_assistant_message(tokens, stop_reason)
 
             parsed_tool_calls = len(message.tool_calls) > 0
             if ipython and not parsed_tool_calls:
@@ -430,7 +395,7 @@ class MetaReferenceInferenceImpl(
                     event=ChatCompletionResponseEvent(
                         event_type=ChatCompletionResponseEventType.progress,
                         delta=ToolCallDelta(
-                            content="",
+                            tool_call="",
                             parse_status=ToolCallParseStatus.failed,
                         ),
                         stop_reason=stop_reason,
@@ -442,7 +407,7 @@ class MetaReferenceInferenceImpl(
                     event=ChatCompletionResponseEvent(
                         event_type=ChatCompletionResponseEventType.progress,
                         delta=ToolCallDelta(
-                            content=tool_call,
+                            tool_call=tool_call,
                             parse_status=ToolCallParseStatus.succeeded,
                         ),
                         stop_reason=stop_reason,
