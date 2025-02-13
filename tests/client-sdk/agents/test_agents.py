@@ -317,7 +317,7 @@ def test_custom_tool(llama_stack_client, agent_config):
     logs = [str(log) for log in EventLogger().log(response) if log is not None]
     logs_str = "".join(logs)
     assert "-100" in logs_str
-    assert "CustomTool" in logs_str
+    assert "get_boiling_point" in logs_str
 
 
 # TODO: fix this flaky test
@@ -401,7 +401,7 @@ def xtest_override_system_message_behavior(llama_stack_client, agent_config):
     logs_str = "".join(logs)
     print(logs_str)
     assert "-100" in logs_str
-    assert "CustomTool" in logs_str
+    assert "get_boiling_point" in logs_str
 
 
 def test_rag_agent(llama_stack_client, agent_config):
