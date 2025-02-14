@@ -81,7 +81,7 @@
                 "deprecated": true
             }
         },
-        "/v1/eval-tasks/{task_id}": {
+        "/v1/eval-tasks/{eval_task_id}": {
             "get": {
                 "responses": {
                     "200": {
@@ -109,7 +109,7 @@
                 "parameters": [
                     {
                         "name": "eval_task_id",
-                        "in": "query",
+                        "in": "path",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2907,7 +2907,8 @@
                         "type": "string"
                     },
                     "enable_session_persistence": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "default": false
                     },
                     "response_format": {
                         "$ref": "#/components/schemas/ResponseFormat"
@@ -2916,8 +2917,7 @@
                 "additionalProperties": false,
                 "required": [
                     "model",
-                    "instructions",
-                    "enable_session_persistence"
+                    "instructions"
                 ]
             },
             "AgentTool": {
