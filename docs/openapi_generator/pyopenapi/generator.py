@@ -477,6 +477,8 @@ class Generator:
             "SyntheticDataGeneration",
             "PostTraining",
             "BatchInference",
+            "Files",
+            "Uploads",
         ]:
             op.defining_class.__name__ = f"{op.defining_class.__name__} (Coming Soon)"
             print(op.defining_class.__name__)
@@ -545,15 +547,29 @@ class Generator:
                 },
             )
 
-            requestBody = RequestBody(
-                content={
-                    "application/json": builder.build_media_type(
-                        request_type, op.request_examples
-                    )
-                },
-                description=doc_params.get(request_name),
-                required=True,
-            )
+            if len(op.request_params) == 1 and op.request_params[0][1] == bytearray:
+                requestBody = RequestBody(
+                    content={
+                        "application/octet-stream": {
+                            "schema": {
+                                "type": "string",
+                                "format": "binary",
+                            }
+                        }
+                    },
+                    description=doc_params.get(request_name),
+                    required=True,
+                )
+            else:
+                requestBody = RequestBody(
+                    content={
+                        "application/json": builder.build_media_type(
+                            request_type, op.request_examples
+                        )
+                    },
+                    description=doc_params.get(request_name),
+                    required=True,
+                )
         else:
             requestBody = None
 
