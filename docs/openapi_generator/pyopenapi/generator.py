@@ -477,6 +477,7 @@ class Generator:
             "SyntheticDataGeneration",
             "PostTraining",
             "BatchInference",
+            "Files",
         ]:
             op.defining_class.__name__ = f"{op.defining_class.__name__} (Coming Soon)"
             print(op.defining_class.__name__)
@@ -545,15 +546,35 @@ class Generator:
                 },
             )
 
-            requestBody = RequestBody(
-                content={
-                    "application/json": builder.build_media_type(
-                        request_type, op.request_examples
-                    )
-                },
-                description=doc_params.get(request_name),
-                required=True,
-            )
+            # If there is only one request parameter and it is of bytes type
+            # use the application/octet-stream media type.
+            if (
+                len(op.request_params) == 1
+                and len(op.request_params[0]) == 2
+                and op.request_params[0][1] == bytes
+            ):
+                requestBody = RequestBody(
+                    content={
+                        "application/octet-stream": {
+                            "schema": {
+                                "type": "string",
+                                "format": "binary",
+                            }
+                        }
+                    },
+                    description=doc_params.get(request_name),
+                    required=True,
+                )
+            else:
+                requestBody = RequestBody(
+                    content={
+                        "application/json": builder.build_media_type(
+                            request_type, op.request_examples
+                        )
+                    },
+                    description=doc_params.get(request_name),
+                    required=True,
+                )
         else:
             requestBody = None
 
