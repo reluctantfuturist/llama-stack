@@ -2725,7 +2725,8 @@
                         "type": "string"
                     },
                     "enable_session_persistence": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "default": false
                     },
                     "response_format": {
                         "$ref": "#/components/schemas/ResponseFormat"
@@ -2734,8 +2735,7 @@
                 "additionalProperties": false,
                 "required": [
                     "model",
-                    "instructions",
-                    "enable_session_persistence"
+                    "instructions"
                 ]
             },
             "AgentTool": {
