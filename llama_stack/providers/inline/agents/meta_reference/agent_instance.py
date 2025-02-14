@@ -508,6 +508,9 @@ class ChatAgent(ShieldRunnerMixin):
                     elif event.event_type == ChatCompletionResponseEventType.complete:
                         stop_reason = StopReason.end_of_turn
                         continue
+                    elif event.event_type == ChatCompletionResponseEventType.prepare:
+                        model_input = event.input_prompt or input_messages
+                        continue
 
                     delta = event.delta
                     if delta.type == "tool_call":
@@ -573,7 +576,8 @@ class ChatAgent(ShieldRunnerMixin):
                             # `deepcopy` for now, but this is symptomatic of a deeper issue.
                             step_id=step_id,
                             turn_id=turn_id,
-                            model_response=copy.deepcopy(message),
+                            model_response=message,
+                            model_input=model_input,
                         ),
                     )
                 )
