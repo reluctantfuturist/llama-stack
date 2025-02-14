@@ -299,6 +299,55 @@ paths:
           required: true
           schema:
             type: string
+  /v1/files/{bucket}/{key}:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ListFileResponse'
+                  - type: 'null'
+      tags:
+        - Files (Coming Soon)
+      description: ''
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+    delete:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ListFileResponse'
+                  - type: 'null'
+      tags:
+        - Files (Coming Soon)
+      description: ''
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
   /v1/inference/embeddings:
     post:
       responses:
@@ -752,6 +801,27 @@ paths:
         - Inspect
       description: ''
       parameters: []
+  /v1/uploads:
+    post:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/UploadResponse'
+                  - type: 'null'
+      tags:
+        - Uploads (Coming Soon)
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitUploadRequest'
+        required: true
   /v1/tool-runtime/rag-tool/insert:
     post:
       responses:
@@ -864,6 +934,26 @@ paths:
           schema:
             type: string
         - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+  /v1/files/{bucket}:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ListFileResponse'
+                  - type: 'null'
+      tags:
+        - Files (Coming Soon)
+      description: ''
+      parameters:
+        - name: bucket
           in: path
           required: true
           schema:
@@ -1411,6 +1501,33 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SyntheticDataGenerateRequest'
+        required: true
+  /v1/uploads/{upload_id}:
+    post:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FileResponse'
+                  - type: 'null'
+      tags:
+        - Uploads (Coming Soon)
+      description: ''
+      parameters:
+        - name: upload_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
         required: true
   /v1/version:
     get:
@@ -2924,6 +3041,39 @@ components:
       required:
         - event_type
         - turn_id
+    FileResponse:
+      type: object
+      properties:
+        key:
+          type: string
+        bucket:
+          type: string
+        mime_type:
+          type: string
+        url:
+          type: string
+        bytes:
+          type: integer
+        created_at:
+          type: integer
+      additionalProperties: false
+      required:
+        - key
+        - bucket
+        - mime_type
+        - url
+        - bytes
+        - created_at
+    ListFileResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileResponse'
+      additionalProperties: false
+      required:
+        - data
     EmbeddingsRequest:
       type: object
       properties:
@@ -3858,6 +4008,31 @@ components:
       additionalProperties: false
       required:
         - status
+    InitUploadRequest:
+      type: object
+      properties:
+        bucket:
+          type: string
+        key:
+          type: string
+        mime_type:
+          type: string
+      additionalProperties: false
+      required:
+        - bucket
+        - key
+        - mime_type
+    UploadResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+      additionalProperties: false
+      required:
+        - id
+        - url
     RAGDocument:
       type: object
       properties:
@@ -5053,6 +5228,7 @@ tags:
   - name: Datasets
   - name: Eval
   - name: EvalTasks
+  - name: Files (Coming Soon)
   - name: Inference
     description: >-
       This API provides the raw interface to the underlying models. Two kinds of models
@@ -5076,6 +5252,7 @@ tags:
   - name: Telemetry
   - name: ToolGroups
   - name: ToolRuntime
+  - name: Uploads (Coming Soon)
   - name: VectorDBs
   - name: VectorIO
 x-tagGroups:
@@ -5087,6 +5264,7 @@ x-tagGroups:
       - Datasets
       - Eval
       - EvalTasks
+      - Files (Coming Soon)
       - Inference
       - Inspect
       - Models
@@ -5099,5 +5277,6 @@ x-tagGroups:
       - Telemetry
       - ToolGroups
       - ToolRuntime
+      - Uploads (Coming Soon)
       - VectorDBs
       - VectorIO
