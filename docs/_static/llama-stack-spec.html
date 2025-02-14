@@ -779,6 +779,80 @@
                 ]
             }
         },
+        "/v1/files/{bucket}/{key}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FileResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Files (Coming Soon)"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FileResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Files (Coming Soon)"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
         "/v1/inference/embeddings": {
             "post": {
                 "responses": {
@@ -1549,6 +1623,37 @@
                 "parameters": []
             }
         },
+        "/v1/uploads": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UploadResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Uploads (Coming Soon)"
+                ],
+                "description": "",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InitUploadRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
         "/v1/tool-runtime/rag-tool/insert": {
             "post": {
                 "responses": {
@@ -1781,6 +1886,36 @@
                     },
                     "required": true
                 }
+            }
+        },
+        "/v1/files/{bucket}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListFileResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Files (Coming Soon)"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
             }
         },
         "/v1/datasets": {
@@ -2613,6 +2748,54 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/SyntheticDataGenerateRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/v1/uploads/{upload_id}": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/FileResponse"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Uploads (Coming Soon)"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "upload_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/octet-stream": {
+                            "schema": {
+                                "type": "string",
+                                "format": "binary"
                             }
                         }
                     },
@@ -5338,6 +5521,38 @@
                     "turn_id"
                 ]
             },
+            "FileResponse": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "bucket": {
+                        "type": "string"
+                    },
+                    "mime_type": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "bytes": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "integer"
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "key",
+                    "bucket",
+                    "mime_type",
+                    "url",
+                    "bytes",
+                    "created_at"
+                ]
+            },
             "EmbeddingsRequest": {
                 "type": "object",
                 "properties": {
@@ -6414,6 +6629,42 @@
                     "status"
                 ]
             },
+            "InitUploadRequest": {
+                "type": "object",
+                "properties": {
+                    "bucket": {
+                        "type": "string"
+                    },
+                    "key": {
+                        "type": "string"
+                    },
+                    "mime_type": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "bucket",
+                    "key",
+                    "mime_type"
+                ]
+            },
+            "UploadResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "id",
+                    "url"
+                ]
+            },
             "RAGDocument": {
                 "type": "object",
                 "properties": {
@@ -6609,6 +6860,21 @@
                 "additionalProperties": false,
                 "required": [
                     "content"
+                ]
+            },
+            "ListFileResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FileResponse"
+                        }
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "data"
                 ]
             },
             "ListDatasetsResponse": {
@@ -8339,6 +8605,9 @@
             "name": "Eval"
         },
         {
+            "name": "Files (Coming Soon)"
+        },
+        {
             "name": "Inference",
             "description": "This API provides the raw interface to the underlying models. Two kinds of models are supported:\n- LLM models: these models generate \"raw\" and \"chat\" (conversational) completions.\n- Embedding models: these models generate embeddings to be used for semantic search.",
             "x-displayName": "Llama Stack Inference API for generating completions, chat completions, and embeddings."
@@ -8377,6 +8646,9 @@
             "name": "ToolRuntime"
         },
         {
+            "name": "Uploads (Coming Soon)"
+        },
+        {
             "name": "VectorDBs"
         },
         {
@@ -8393,6 +8665,7 @@
                 "DatasetIO",
                 "Datasets",
                 "Eval",
+                "Files (Coming Soon)",
                 "Inference",
                 "Inspect",
                 "Models",
@@ -8405,6 +8678,7 @@
                 "Telemetry",
                 "ToolGroups",
                 "ToolRuntime",
+                "Uploads (Coming Soon)",
                 "VectorDBs",
                 "VectorIO"
             ]
