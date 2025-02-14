@@ -19,6 +19,7 @@ from llama_stack.apis.benchmarks import Benchmarks
 from llama_stack.apis.datasetio import DatasetIO
 from llama_stack.apis.datasets import Datasets
 from llama_stack.apis.eval import Eval
+from llama_stack.apis.files import Files
 from llama_stack.apis.inference import Inference
 from llama_stack.apis.inspect import Inspect
 from llama_stack.apis.models import Models
@@ -30,6 +31,7 @@ from llama_stack.apis.shields import Shields
 from llama_stack.apis.synthetic_data_generation import SyntheticDataGeneration
 from llama_stack.apis.telemetry import Telemetry
 from llama_stack.apis.tools import RAGToolRuntime, ToolGroups, ToolRuntime
+from llama_stack.apis.uploads import Uploads
 from llama_stack.apis.vector_dbs import VectorDBs
 from llama_stack.apis.vector_io import VectorIO
 from llama_stack.distribution.datatypes import StackRunConfig
@@ -63,6 +65,8 @@ class LlamaStack(
     ToolGroups,
     ToolRuntime,
     RAGToolRuntime,
+    Files,
+    Uploads,
 ):
     pass
 
