@@ -12,7 +12,12 @@ from llama_models.llama3.api.chat_format import ChatFormat
 from llama_models.llama3.api.tokenizer import Tokenizer
 from openai import OpenAI
 
-from llama_stack.apis.common.content_types import InterleavedContent, TextDelta, ToolCallDelta, ToolCallParseStatus
+from llama_stack.apis.common.content_types import (
+    InterleavedContent,
+    TextDelta,
+    ToolCallDelta,
+    ToolCallParseStatus,
+)
 from llama_stack.apis.inference import (
     ChatCompletionRequest,
     ChatCompletionResponse,
@@ -117,7 +122,7 @@ def _convert_to_vllm_tools_in_request(tools: List[ToolDefinition]) -> List[dict]
         compat_tool = {
             "type": "function",
             "function": {
-                "name": tool.tool_name,
+                "name": (tool.tool_name if isinstance(tool.tool_name, str) else tool.tool_name.value),
                 "description": tool.description,
                 "parameters": {
                     "type": "object",
@@ -148,6 +153,7 @@ async def _process_vllm_chat_completion_stream_response(
     event_type = ChatCompletionResponseEventType.start
     tool_call_buf = UnparseableToolCall()
     async for chunk in stream:
+        print(chunk)
         choice = chunk.choices[0]
         if choice.finish_reason:
             yield ChatCompletionResponseStreamChunk(
@@ -283,10 +289,10 @@ class VLLMInferenceAdapter(Inference, ModelsProtocolPrivate):
                 yield chunk
 
         stream = _to_async_generator()
-        if len(request.tools) > 0:
-            res = _process_vllm_chat_completion_stream_response(stream)
-        else:
-            res = process_chat_completion_stream_response(stream, self.formatter, request)
+        # if len(request.tools) > 0:
+        #     res = _process_vllm_chat_completion_stream_response(stream)
+        # else:
+        res = process_chat_completion_stream_response(stream, self.formatter, request)
         async for chunk in res:
             yield chunk
 
@@ -348,6 +354,16 @@ class VLLMInferenceAdapter(Inference, ModelsProtocolPrivate):
         if request.logprobs and request.logprobs.top_k:
             input_dict["logprobs"] = request.logprobs.top_k
 
+        from rich.pretty import pprint
+
+        pprint(
+            {
+                "model": request.model,
+                **input_dict,
+                "stream": request.stream,
+                **options,
+            }
+        )
         return {
             "model": request.model,
             **input_dict,
