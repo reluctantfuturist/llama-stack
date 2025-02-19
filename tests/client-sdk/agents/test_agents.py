@@ -47,6 +47,7 @@ class TestClientTool(ClientTool):
             call_id=tool_call.call_id,
             tool_name=tool_call.tool_name,
             content=response_str,
+            metadata={"source": ["made-up-source"]},
         )
         return message
 
@@ -453,6 +454,7 @@ def test_rag_agent(llama_stack_client, agent_config):
         vector_db_id=vector_db_id,
         embedding_model="all-MiniLM-L6-v2",
         embedding_dimension=384,
+        provider_id="faiss",
     )
     llama_stack_client.tool_runtime.rag_tool.insert(
         documents=documents,
@@ -488,6 +490,7 @@ def test_rag_agent(llama_stack_client, agent_config):
         response = rag_agent.create_turn(
             messages=[{"role": "user", "content": prompt}],
             session_id=session_id,
+            stream=False,
         )
         logs = [str(log) for log in EventLogger().log(response) if log is not None]
         logs_str = "".join(logs)
@@ -597,3 +600,5 @@ def test_create_turn_response(llama_stack_client, agent_config):
             assert last_step_completed_at < step.started_at
             assert step.started_at < step.completed_at
             last_step_completed_at = step.completed_at
+
+    assert steps[1].tool_responses[0].metadata["source"] == ["made-up-source"]
