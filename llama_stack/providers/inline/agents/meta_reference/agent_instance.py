@@ -60,7 +60,7 @@ from llama_stack.apis.inference import (
     UserMessage,
 )
 from llama_stack.apis.safety import Safety
-from llama_stack.apis.tools import RAGDocument, ToolGroups, ToolRuntime
+from llama_stack.apis.tools import RAGDocument, ToolGroups, ToolRuntime, ToolInvocationResult
 from llama_stack.apis.vector_io import VectorIO
 from llama_stack.models.llama.datatypes import BuiltinTool, ToolCall, ToolParamDefinition
 from llama_stack.providers.utils.kvstore import KVStore
@@ -566,13 +566,20 @@ class ChatAgent(ShieldRunnerMixin):
                     },
                 ) as span:
                     tool_execution_start_time = datetime.now()
-                    result_messages = await execute_tool_call_maybe(
+                    tool_call, tool_result = await execute_tool_call_maybe(
                         self.tool_runtime_api,
                         session_id,
                         [message],
                         toolgroup_args,
                         tool_to_group,
                     )
+                    result_messages = [
+                        ToolResponseMessage(
+                            call_id=tool_call.call_id,
+                            tool_name=tool_call.tool_name,
+                            content=tool_result.content,
+                        )
+                    ]
                     assert len(result_messages) == 1, "Currently not supporting multiple messages"
                     result_message = result_messages[0]
                     span.set_attribute("output", result_message.model_dump_json())
@@ -591,6 +598,7 @@ class ChatAgent(ShieldRunnerMixin):
                                         call_id=result_message.call_id,
                                         tool_name=result_message.tool_name,
                                         content=result_message.content,
+                                        metadata=tool_result.metadata,
                                     )
                                 ],
                                 started_at=tool_execution_start_time,
@@ -837,12 +845,12 @@ async def execute_tool_call_maybe(
     messages: List[CompletionMessage],
     toolgroup_args: Dict[str, Dict[str, Any]],
     tool_to_group: Dict[str, str],
-) -> List[ToolResponseMessage]:
+) -> Tuple[ToolCall, ToolInvocationResult]:
     # While Tools.run interface takes a list of messages,
     # All tools currently only run on a single message
     # When this changes, we can drop this assert
     # Whether to call tools on each message and aggregate
-    # or aggregate and call tool once, reamins to be seen.
+    # or aggregate and call tool once, remains to be seen.
     assert len(messages) == 1, "Expected single message"
     message = messages[0]
 
@@ -867,14 +875,7 @@ async def execute_tool_call_maybe(
             **tool_call_args,
         ),
     )
-
-    return [
-        ToolResponseMessage(
-            call_id=tool_call.call_id,
-            tool_name=tool_call.tool_name,
-            content=result.content,
-        )
-    ]
+    return (tool_call, result)
 
 
 def _interpret_content_as_attachment(

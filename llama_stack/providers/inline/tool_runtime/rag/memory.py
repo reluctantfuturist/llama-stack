@@ -140,7 +140,13 @@ class MemoryToolRuntimeImpl(ToolsProtocolPrivate, ToolRuntime, RAGToolRuntime):
             )
         picked.append(TextContentItem(text="END of knowledge_search tool results."))
 
-        return RAGQueryResult(content=picked)
+        return RAGQueryResult(
+            content=picked,
+            metadata={
+                "chunk_content": [chunk.content for chunk in chunks[: len(picked)]],
+                "document_ids": [chunk.metadata["document_id"] for chunk in chunks[: len(picked)]],
+            },
+        )
 
     async def list_runtime_tools(
         self, tool_group_id: Optional[str] = None, mcp_endpoint: Optional[URL] = None
@@ -189,4 +195,5 @@ class MemoryToolRuntimeImpl(ToolsProtocolPrivate, ToolRuntime, RAGToolRuntime):
 
         return ToolInvocationResult(
             content=retrieved_context,
+            metadata=result.metadata,
         )
