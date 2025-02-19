@@ -98,7 +98,6 @@ def agent_config(llama_stack_client, text_model_id):
             },
         },
         toolgroups=[],
-        tool_choice="auto",
         input_shields=available_shields,
         output_shields=available_shields,
         enable_session_persistence=False,
@@ -322,6 +321,38 @@ def test_custom_tool(llama_stack_client, agent_config):
     assert "get_boiling_point" in logs_str
 
 
+def test_tool_choice(llama_stack_client, agent_config):
+    data = [
+        ("required", '{"type": "function"'),
+        ("none", None),
+        ("get_boiling_point", '{"type": "function", "name": "get_boiling_point"'),
+    ]
+    client_tool = TestClientTool()
+    for tool_choice, expected_tool in data:
+        agent_config["tool_config"] = {"tool_choice": tool_choice}
+        agent_config["client_tools"] = [client_tool.get_tool_definition()]
+
+        agent = Agent(llama_stack_client, agent_config, client_tools=(client_tool,))
+        session_id = agent.create_session(f"test-session-{uuid4()}")
+
+        response = agent.create_turn(
+            messages=[
+                {
+                    "role": "user",
+                    "content": "What is the boiling point of polyjuice?",
+                },
+            ],
+            session_id=session_id,
+        )
+
+        logs = [str(log) for log in EventLogger().log(response) if log is not None]
+        logs_str = "".join(logs)
+        if expected_tool:
+            assert expected_tool in logs_str
+        else:
+            assert '{"type": "function"' not in logs_str
+
+
 # TODO: fix this flaky test
 def xtest_override_system_message_behavior(llama_stack_client, agent_config):
     client_tool = TestClientTool()
@@ -422,6 +453,7 @@ def test_rag_agent(llama_stack_client, agent_config):
         vector_db_id=vector_db_id,
         embedding_model="all-MiniLM-L6-v2",
         embedding_dimension=384,
+        provider_id="faiss",
     )
     llama_stack_client.tool_runtime.rag_tool.insert(
         documents=documents,
@@ -457,24 +489,36 @@ def test_rag_agent(llama_stack_client, agent_config):
         response = rag_agent.create_turn(
             messages=[{"role": "user", "content": prompt}],
             session_id=session_id,
+            stream=False,
         )
-        logs = [str(log) for log in EventLogger().log(response) if log is not None]
-        logs_str = "".join(logs)
-        assert "Tool:query_from_memory" in logs_str
-        assert expected_kw in logs_str.lower()
+        # knowledge_search is called
+        assert response.steps[1].tool_calls[0].tool_name == "knowledge_search"
+        # document ids are present in metadata
+        assert "num-0" in response.steps[1].tool_responses[0].metadata["document_ids"]
+        assert expected_kw in response.output_message.content
 
 
 def test_rag_and_code_agent(llama_stack_client, agent_config):
-    urls = ["chat.rst"]
-    documents = [
+    documents = []
+    documents.append(
         Document(
-            document_id=f"num-{i}",
-            content=f"https://raw.githubusercontent.com/pytorch/torchtune/main/docs/source/tutorials/{url}",
-            mime_type="text/plain",
+            document_id="nba_wiki",
+            content="The NBA was created on August 3, 1949, with the merger of the Basketball Association of America (BAA) and the National Basketball League (NBL).",
             metadata={},
         )
-        for i, url in enumerate(urls)
-    ]
+    )
+    documents.append(
+        Document(
+            document_id="perplexity_wiki",
+            content="""Perplexity was founded in 2022 by Aravind Srinivas, Andy Konwinski, Denis Yarats and Johnny Ho, engineers with backgrounds in back-end systems, artificial intelligence (AI) and machine learning:
+
+    Srinivas, the CEO, worked at OpenAI as an AI researcher.
+    Konwinski was among the founding team at Databricks.
+    Yarats, the CTO, was an AI research scientist at Meta.
+    Ho, the CSO, worked as an engineer at Quora, then as a quantitative trader on Wall Street.[5]""",
+            metadata={},
+        )
+    )
     vector_db_id = f"test-vector-db-{uuid4()}"
     llama_stack_client.vector_dbs.register(
         vector_db_id=vector_db_id,
@@ -486,6 +530,18 @@ def test_rag_and_code_agent(llama_stack_client, agent_config):
         vector_db_id=vector_db_id,
         chunk_size_in_tokens=128,
     )
+
+    instructions = """
+    You are a helpful assistant. You have access to functions, but you should only use them if they are required.
+
+    You are an expert in composing functions. You are given a question and a set of possible functions.
+    Based on the question, you may or may not need to make one function/tool call to achieve the purpose.
+    If none of the function can be used, don't return [], instead answer the question directly without using functions. If the given question lacks the parameters required by the function,
+    also point it out.
+    Only use `code_interpreter` to answer questions about the provided file.
+
+    {{ function_description }}
+    """
     agent_config = {
         **agent_config,
         "toolgroups": [
@@ -495,7 +551,14 @@ def test_rag_and_code_agent(llama_stack_client, agent_config):
             ),
             "builtin::code_interpreter",
         ],
+        "instructions": instructions,
+        # use this model to get correct tool calls
+        "model": "meta-llama/Llama-3.3-70B-Instruct",
+        "tool_config": {
+            "system_message_behavior": "replace",
+        },
     }
+
     agent = Agent(llama_stack_client, agent_config)
     inflation_doc = Document(
         document_id="test_csv",
@@ -508,15 +571,23 @@ def test_rag_and_code_agent(llama_stack_client, agent_config):
             "Here is a csv file, can you describe it?",
             [inflation_doc],
             "code_interpreter",
+            "",
         ),
         (
-            "What are the top 5 topics that were explained? Only list succinct bullet points.",
+            "when was the perplexity created?",
             [],
-            "query_from_memory",
+            "knowledge_search",
+            "2022",
+        ),
+        (
+            "when was the nba created?",
+            [],
+            "knowledge_search",
+            "1949",
         ),
     ]
 
-    for prompt, docs, tool_name in user_prompts:
+    for prompt, docs, tool_name, expected_kw in user_prompts:
         print(f"User> {prompt}")
         session_id = agent.create_session(f"test-session-{uuid4()}")
         response = agent.create_turn(
@@ -525,8 +596,11 @@ def test_rag_and_code_agent(llama_stack_client, agent_config):
             documents=docs,
         )
         logs = [str(log) for log in EventLogger().log(response) if log is not None]
-        logs_str = "".join(logs)
+        logs_str = "\n".join(logs)
+        print(logs_str)
         assert f"Tool:{tool_name}" in logs_str
+        if expected_kw:
+            assert expected_kw in logs_str.lower()
 
 
 def test_create_turn_response(llama_stack_client, agent_config):
