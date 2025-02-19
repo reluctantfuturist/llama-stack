@@ -12,7 +12,12 @@ from llama_models.llama3.api.chat_format import ChatFormat
 from llama_models.llama3.api.tokenizer import Tokenizer
 from openai import OpenAI
 
-from llama_stack.apis.common.content_types import InterleavedContent, TextDelta, ToolCallDelta, ToolCallParseStatus
+from llama_stack.apis.common.content_types import (
+    InterleavedContent,
+    TextDelta,
+    ToolCallDelta,
+    ToolCallParseStatus,
+)
 from llama_stack.apis.inference import (
     ChatCompletionRequest,
     ChatCompletionResponse,
@@ -117,7 +122,7 @@ def _convert_to_vllm_tools_in_request(tools: List[ToolDefinition]) -> List[dict]
         compat_tool = {
             "type": "function",
             "function": {
-                "name": tool.tool_name,
+                "name": (tool.tool_name if isinstance(tool.tool_name, str) else tool.tool_name.value),
                 "description": tool.description,
                 "parameters": {
                     "type": "object",
@@ -274,6 +279,9 @@ class VLLMInferenceAdapter(Inference, ModelsProtocolPrivate):
 
     async def _stream_chat_completion(self, request: ChatCompletionRequest, client: OpenAI) -> AsyncGenerator:
         params = await self._get_params(request)
+        from rich.pretty import pprint
+
+        pprint(params)
 
         # TODO: Can we use client.completions.acreate() or maybe there is another way to directly create an async
         #  generator so this wrapper is not necessary?
@@ -283,11 +291,12 @@ class VLLMInferenceAdapter(Inference, ModelsProtocolPrivate):
                 yield chunk
 
         stream = _to_async_generator()
-        if len(request.tools) > 0:
-            res = _process_vllm_chat_completion_stream_response(stream)
-        else:
-            res = process_chat_completion_stream_response(stream, self.formatter, request)
+        # if len(request.tools) > 0:
+        #     res = _process_vllm_chat_completion_stream_response(stream)
+        # else:
+        res = process_chat_completion_stream_response(stream, self.formatter, request)
         async for chunk in res:
+            pprint(chunk)
             yield chunk
 
     async def _nonstream_completion(self, request: CompletionRequest) -> CompletionResponse:
