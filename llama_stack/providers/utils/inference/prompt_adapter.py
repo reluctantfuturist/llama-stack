@@ -456,3 +456,17 @@ def _get_tool_choice_prompt(tool_choice: ToolChoice | str, tools: List[ToolDefin
     else:
         # specific tool
         return f"You MUST use the tool `{tool_choice}` to answer the user query."
+
+
+def get_default_tool_prompt_format(model: str) -> ToolPromptFormat:
+    model = resolve_model(model)
+    if model.model_family == ModelFamily.llama3_1 or (
+        model.model_family == ModelFamily.llama3_2 and is_multimodal(model.core_model_id)
+    ):
+        # llama3.1 and llama3.2 multimodal models follow the same tool prompt format
+        return ToolPromptFormat.json
+    elif model.model_family in (ModelFamily.llama3_2, ModelFamily.llama3_3):
+        # llama3.2 and llama3.3 models follow the same tool prompt format
+        return ToolPromptFormat.python_list
+    else:
+        return ToolPromptFormat.json
