@@ -8,7 +8,10 @@ import unittest
 
 from llama_stack.apis.inference import (
     ChatCompletionRequest,
+    CompletionMessage,
+    StopReason,
     SystemMessage,
+    ToolCall,
     ToolConfig,
     UserMessage,
     CompletionMessage,
