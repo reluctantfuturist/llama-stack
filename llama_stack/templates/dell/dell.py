@@ -85,7 +85,7 @@ def get_distribution_template() -> DistributionTemplate:
             provider_id="brave-search",
         ),
         ToolGroupInput(
-            toolgroup_id="builtin::rag",
+            toolgroup_id="builtin::rag::knowledge_search",
             provider_id="rag-runtime",
         ),
         ToolGroupInput(

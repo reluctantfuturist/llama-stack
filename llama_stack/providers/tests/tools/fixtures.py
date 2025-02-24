@@ -47,7 +47,7 @@ def tool_runtime_memory_and_search() -> ProviderFixture:
 @pytest.fixture(scope="session")
 def tool_group_input_memory() -> ToolGroupInput:
     return ToolGroupInput(
-        toolgroup_id="builtin::rag",
+        toolgroup_id="builtin::rag::knowledge_search",
         provider_id="rag-runtime",
     )
 
