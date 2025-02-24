@@ -225,6 +225,7 @@ class FireworksInferenceAdapter(ModelRegistryHelper, Inference, NeedsRequestProv
         if "prompt" in input_dict:
             if input_dict["prompt"].startswith("<|begin_of_text|>"):
                 input_dict["prompt"] = input_dict["prompt"][len("<|begin_of_text|>") :]
+        print("input prompt", input_dict["prompt"])
 
         return {
             "model": request.model,
