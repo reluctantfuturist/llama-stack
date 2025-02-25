@@ -77,7 +77,7 @@ agent_config = AgentConfig(
     instructions="You are a helpful assistant",
     # Enable both RAG and tool usage
     toolgroups=[
-        {"name": "builtin::rag", "args": {"vector_db_ids": ["my_docs"]}},
+        {"name": "builtin::rag::knowledge_search", "args": {"vector_db_ids": ["my_docs"]}},
         "builtin::code_interpreter",
     ],
     # Configure safety
