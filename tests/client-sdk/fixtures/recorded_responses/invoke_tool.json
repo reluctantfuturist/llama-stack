@@ -1,0 +1,291 @@
+{
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'def is_prime(n):\\n    if n <= 1:\\n        return False\\n    if n <= 3:\\n        return True\\n    if n % 2 == 0 or n % 3 == 0:\\n        return False\\n    i = 5\\n    while i * i <= n:\\n        if n % i == 0 or n % (i + 2) == 0:\\n            return False\\n        i += 6\\n    return True\\n\\ndef find_nth_prime(n):\\n    count = 0\\n    num = 2\\n    while True:\\n        if is_prime(num):\\n            count += 1\\n            if count == n:\\n                return num\\n        num += 1\\n\\nprint(find_nth_prime(100))'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\n# Load data\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmp90snr8pf/5p8YY3kIinflation.csv\")\\n# Rows\\nprint(\"Number of rows and columns in the data:\", df.shape)\\n# Columns\\nprint(\"Columns of the data are:\", len(df.columns))\\n# Column names\\nprint(\"Columns of the data are:\", df.columns)\\n# Column dtypes\\nprint(\"Datatype of the columns are:\", df.dtypes)'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\n# Load data\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmplyrwmh5x/V5kkG8QBinflation.csv\")\\n# Rows\\nprint(\"Number of rows and columns in the data:\", df.shape)\\n# Columns\\nprint(\"Columns of the data are:\", len(df.columns))\\n# Column names\\nprint(\"Columns of the data are:\", df.columns)\\n# Column dtypes\\nprint(\"Datatype of the columns are:\", df.dtypes)'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\n# Load data\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmpuhxhip_s/wehsEFL4inflation.csv\")\\n# Set option to display all columns\\npd.set_option(\\'display.max_columns\\', None)\\n# Print the first 5 rows of the dataframe\\nprint(df.head())\\n# Print the last 5 rows of the dataframe\\nprint(df.tail())\\n# Print the column names\\nprint(df.columns)\\n# Print the data types of each column\\nprint(df.dtypes)\\n# Print the summary statistics of the dataframe\\nprint(df.describe())'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\n# Load data\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmpxsc9kaj_/JvSbJouCinflation.csv\")\\n# Rows\\nprint(\"Number of rows and columns in the data:\", df.shape)\\n# Columns\\nprint(\"Columns of the data are:\", len(df.columns))\\n# Column names\\nprint(\"Columns of the data are:\", df.columns)\\n# Column dtypes\\nprint(\"Datatype of the columns are:\", df.dtypes)'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\n# Load data\\ndf = pd.read_csv(\"<TEMP_FILE>\")\\n# Rows\\nprint(\"Number of rows and columns in the data:\", df.shape)\\n# Columns\\nprint(\"Columns of the data are:\", len(df.columns))\\n# Column names\\nprint(\"Columns of the data are:\", df.columns)\\n# Column dtypes\\nprint(\"Datatype of the columns are:\", df.dtypes)'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmp90snr8pf/QiHvaobXinflation.csv\")\\nprint(df.head())'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmplyrwmh5x/tlmsidCfinflation.csv\")\\nprint(df.head())'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmpuhxhip_s/ZxbaXSrvinflation.csv\")\\ndf.head()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmpxsc9kaj_/TD4IWlsuinflation.csv\")\\ndf.head()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\ndf = pd.read_csv(\"<TEMP_FILE>\")\\ndf.head()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\ndf = pd.read_csv(\"<TEMP_FILE>\")\\nprint(df.head())'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\nimport matplotlib.pyplot as plt\\n\\n# Load data\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmp90snr8pf/5p8YY3kIinflation.csv\")\\n\\n# Convert \\'Year\\' column to datetime\\ndf[\\'Year\\'] = pd.to_datetime(df[\\'Year\\'])\\n\\n# Group by \\'Year\\' and calculate average inflation\\naverage_inflation = df.groupby(\\'Year\\')[\\'Inflation\\'].mean()\\n\\n# Plot average yearly inflation as a time series\\nplt.figure(figsize=(10,6))\\nplt.plot(average_inflation.index, average_inflation.values, marker=\\'o\\')\\nplt.title(\\'Average Yearly Inflation\\')\\nplt.xlabel(\\'Year\\')\\nplt.ylabel(\\'Inflation Rate\\')\\nplt.grid(True)\\nplt.show()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\nimport matplotlib.pyplot as plt\\n\\n# Load data\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmplyrwmh5x/V5kkG8QBinflation.csv\")\\n\\n# Convert \\'Year\\' column to datetime\\ndf[\\'Year\\'] = pd.to_datetime(df[\\'Year\\'])\\n\\n# Group by \\'Year\\' and calculate average inflation\\naverage_inflation = df.groupby(\\'Year\\')[\\'Inflation\\'].mean()\\n\\n# Plot average yearly inflation as a time series\\nplt.figure(figsize=(10,6))\\nplt.plot(average_inflation.index, average_inflation.values, marker=\\'o\\')\\nplt.title(\\'Average Yearly Inflation\\')\\nplt.xlabel(\\'Year\\')\\nplt.ylabel(\\'Inflation Rate\\')\\nplt.grid(True)\\nplt.show()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\nimport matplotlib.pyplot as plt\\n\\n# Load data\\ndf = pd.read_csv(\"/var/folders/cz/vyh7y1d11xg881lsxsshnc5c0000gn/T/tmpuhxhip_s/wehsEFL4inflation.csv\")\\n\\n# Convert \\'date\\' column to datetime\\ndf[\\'date\\'] = pd.to_datetime(df[\\'date\\'])\\n\\n# Group by year and calculate average inflation\\naverage_inflation = df.groupby(df[\\'date\\'].dt.year)[\\'inflation\\'].mean()\\n\\n# Plot the time series\\nplt.figure(figsize=(10,6))\\nplt.plot(average_inflation.index, average_inflation.values, marker=\\'o\\')\\nplt.title(\\'Average Yearly Inflation\\')\\nplt.xlabel(\\'Year\\')\\nplt.ylabel(\\'Average Inflation\\')\\nplt.grid(True)\\nplt.show()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\nimport matplotlib.pyplot as plt\\n\\n# Load data\\ndf = pd.read_csv(\"<TEMP_FILE>\")\\n\\n# Convert \\'Year\\' column to datetime\\ndf[\\'Year\\'] = pd.to_datetime(df[\\'Year\\'])\\n\\n# Group by \\'Year\\' and calculate average inflation\\naverage_inflation = df.groupby(\\'Year\\')[\\'Inflation\\'].mean()\\n\\n# Plot time series\\nplt.figure(figsize=(10,6))\\nplt.plot(average_inflation.index, average_inflation.values, marker=\\'o\\')\\nplt.title(\\'Average Yearly Inflation\\')\\nplt.xlabel(\\'Year\\')\\nplt.ylabel(\\'Inflation Rate\\')\\nplt.grid(True)\\nplt.show()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\nimport matplotlib.pyplot as plt\\n\\n# Load data\\ndf = pd.read_csv(\"<TEMP_FILE>\")\\n\\n# Convert \\'date\\' column to datetime\\ndf[\\'date\\'] = pd.to_datetime(df[\\'date\\'])\\n\\n# Group by year and calculate average inflation\\naverage_inflation = df.groupby(df[\\'date\\'].dt.year)[\\'inflation\\'].mean()\\n\\n# Plot the time series\\nplt.figure(figsize=(10,6))\\nplt.plot(average_inflation.index, average_inflation.values, marker=\\'o\\')\\nplt.title(\\'Average Yearly Inflation\\')\\nplt.xlabel(\\'Year\\')\\nplt.ylabel(\\'Average Inflation\\')\\nplt.grid(True)\\nplt.show()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'code': 'import pandas as pd\\nimport matplotlib.pyplot as plt\\n\\n# Load the data\\ndf = pd.read_csv(\"<TEMP_FILE>\")\\n\\n# Convert the \\'Year\\' column to datetime\\ndf[\\'Year\\'] = pd.to_datetime(df[\\'Year\\'])\\n\\n# Group by year and calculate the average inflation\\naverage_inflation = df.groupby(\\'Year\\')[\\'Inflation\\'].mean().reset_index()\\n\\n# Plot the average yearly inflation as a time series\\nplt.figure(figsize=(10,6))\\nplt.plot(average_inflation[\\'Year\\'], average_inflation[\\'Inflation\\'], marker=\\'o\\')\\nplt.title(\\'Average Yearly Inflation\\')\\nplt.xlabel(\\'Year\\')\\nplt.ylabel(\\'Inflation Rate\\')\\nplt.grid(True)\\nplt.show()'}), ('tool_name', 'code_interpreter')]": {
+    "type": "value",
+    "value": {
+      "content": "completed\n[stderr]\nTraceback (most recent call last):\n  line 5, in <module>\n    from bwrap.core import main\nModuleNotFoundError: No module named 'bwrap.core'\n[/stderr]",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'query': 'Llama3-8B attention type', 'vector_db_ids': ['test-vector-db-<UUID>']}), ('tool_name', 'knowledge_search')]": {
+    "type": "value",
+    "value": {
+      "content": [
+        {
+          "text": "knowledge_search tool found 5 chunks:\nBEGIN of knowledge_search tool results.\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 1:\nDocument_id:num-1\nContent:  3 <https://llama.meta.com/llama3>`_ is a new family of models released by Meta AI that improves upon the performance of the Llama2 family\nof models across a `range of different benchmarks <https://huggingface.co/meta-llama/Meta-Llama-3-8B#base-pretrained-models>`_.\nCurrently there are two different sizes of Meta Llama 3: 8B and 70B. In this tutorial we will focus on the 8B size model.\nThere are a few main changes between Llama2-7B and Llama3-8B models:\n\n- Llama3-8B uses `grouped-query attention <https://arxiv.org/abs/2305.13245>`_ instead of the standard multi-head attention from Llama2-7B\n- Llama3-8B has a larger vocab size (128,256 instead of 32,000 from Llama2 models)\n- Llama3-8B uses a different tokenizer than Llama2 models (`tiktoken <https://github.com/openai/tiktoken>`_ instead of `sentencepiece <https://github.com/google/sentencepiece>`_)\n- Llama3-\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 2:\nDocument_id:num-1\nContent:  instead of 32,000 from Llama2 models)\n- Llama3-8B uses a different tokenizer than Llama2 models (`tiktoken <https://github.com/openai/tiktoken>`_ instead of `sentencepiece <https://github.com/google/sentencepiece>`_)\n- Llama3-8B uses a larger intermediate dimension in its MLP layers than Llama2-7B\n- Llama3-8B uses a higher base value to calculate theta in its `rotary positional embeddings <https://arxiv.org/abs/2104.09864>`_\n\n|\n\nGetting access to Llama3-8B-Instruct\n------------------------------------\n\nFor this tutorial, we will be using the instruction-tuned version of Llama3-8B. First, let's download the model from Hugging Face. You will need to follow the instructions\non the `official Meta page <https://github.com/meta-llama/llama3/blob/main/README.md>`_ to gain access to the model.\nNext, make sure you grab your Hugging Face token from `here <https://huggingface.co/settings/tokens>`_.\n\n\n.. code-block:: bash\n\n    tune download meta-llama/Meta-Llama-3\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 3:\nDocument_id:num-0\nContent: :`download Llama3 Instruct weights <llama3_label>`\n\n\nTemplate changes from Llama2 to Llama3\n--------------------------------------\n\nThe Llama2 chat model requires a specific template when prompting the pre-trained\nmodel. Since the chat model was pretrained with this prompt template, if you want to run\ninference on the model, you'll need to use the same template for optimal performance\non chat data. Otherwise, the model will just perform standard text completion, which\nmay or may not align with your intended use case.\n\nFrom the `official Llama2 prompt\ntemplate guide <https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-2>`_\nfor the Llama2 chat model, we can see that special tags are added:\n\n.. code-block:: text\n\n    <s>[INST] <<SYS>>\n    You are a helpful, respectful, and honest assistant.\n    <</SYS>>\n\n    Hi! I am a human. [/INST] Hello there! Nice to meet you! I'm Meta AI, your friendly AI assistant </s>\n\nLlama3 Instruct `overhauled <https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3>`\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 4:\nDocument_id:num-0\nContent: 'm Meta AI, your friendly AI assistant<|eot_id|>\n\nThe tags are entirely different, and they are actually encoded differently than in\nLlama2. Let's walk through tokenizing an example with the Llama2 template and the\nLlama3 template to understand how.\n\n.. note::\n    The Llama3 Base model uses a `different prompt template\n    <https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3>`_ than Llama3 Instruct\n    because it has not yet been instruct tuned and the extra special tokens are untrained. If you\n    are running inference on the Llama3 Base model without fine-tuning we recommend the base\n    template for optimal performance. Generally, for instruct and chat data, we recommend using\n    Llama3 Instruct with its prompt template. The rest of this tutorial assumes you are using\n    Llama3 Instruct.\n\n.. _prompt_template_vs_special_tokens:\n\nTokenizing prompt templates & special tokens\n--------------------------------------------\n\nLet's say I have a sample of a single user-assistant turn accompanied with a system\nprompt:\n\n.. code-block:: python\n\n    sample = [\n        {\n            \"role\": \"system\",\n            \"\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 5:\nDocument_id:num-3\nContent:  LoRA to Llama2 models\n------------------------------\n\nWith torchtune, we can easily apply LoRA to Llama2 with a variety of different configurations.\nLet's take a look at how to construct Llama2 models in torchtune with and without LoRA.\n\n.. code-block:: python\n\n  from torchtune.models.llama2 import llama2_7b, lora_llama2_7b\n\n  # Build Llama2 without any LoRA layers\n  base_model = llama2_7b()\n\n  # The default settings for lora_llama2_7b will match those for llama2_7b\n  # We just need to define which layers we want LoRA applied to.\n  # Within each self-attention, we can choose from [\"q_proj\", \"k_proj\", \"v_proj\", and \"output_proj\"].\n  # We can also set apply_lora_to_mlp=True or apply_lora_to_output=True to apply LoRA to other linear\n  # layers outside of the self-attention.\n  lora_model = lora_llama2_7b(lora_attn_modules=[\"q_proj\", \"v_proj\"])\n\n.. note::\n\n    Calling :func:`lora_llama_2\n",
+          "type": "text"
+        },
+        {
+          "text": "END of knowledge_search tool results.\n",
+          "type": "text"
+        }
+      ],
+      "error_code": null,
+      "error_message": null,
+      "metadata": {
+        "document_ids": [
+          "num-1",
+          "num-1",
+          "num-0",
+          "num-0",
+          "num-3"
+        ]
+      }
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'query': 'NBA creation date', 'vector_db_ids': ['test-vector-db-<UUID>']}), ('tool_name', 'knowledge_search')]": {
+    "type": "value",
+    "value": {
+      "content": [
+        {
+          "text": "knowledge_search tool found 3 chunks:\nBEGIN of knowledge_search tool results.\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 1:\nDocument_id:nba_w\nContent: The NBA was created on August 3, 1949, with the merger of the Basketball Association of America (BAA) and the National Basketball League (NBL).\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 2:\nDocument_id:perpl\nContent: Perplexity the company was founded in 2022 by Aravind Srinivas, Andy Konwinski, Denis Yarats and Johnny Ho, engineers with backgrounds in back-end systems, artificial intelligence (AI) and machine learning:\n\n    Srinivas, the CEO, worked at OpenAI as an AI researcher.\n    Konwinski was among the founding team at Databricks.\n    Yarats, the CTO, was an AI research scientist at Meta.\n    Ho, the CSO, worked as an engineer at Quora, then as a quantitative trader on Wall Street.[5]\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 3:\nDocument_id:perpl\nContent:  Ho, the CSO, worked as an engineer at Quora, then as a quantitative trader on Wall Street.[5]\n",
+          "type": "text"
+        },
+        {
+          "text": "END of knowledge_search tool results.\n",
+          "type": "text"
+        }
+      ],
+      "error_code": null,
+      "error_message": null,
+      "metadata": {
+        "document_ids": [
+          "nba_wiki",
+          "perplexity_wiki",
+          "perplexity_wiki"
+        ]
+      }
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'query': 'Perplexity company founding date', 'vector_db_ids': ['test-vector-db-<UUID>']}), ('tool_name', 'knowledge_search')]": {
+    "type": "value",
+    "value": {
+      "content": [
+        {
+          "text": "knowledge_search tool found 3 chunks:\nBEGIN of knowledge_search tool results.\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 1:\nDocument_id:perpl\nContent: Perplexity the company was founded in 2022 by Aravind Srinivas, Andy Konwinski, Denis Yarats and Johnny Ho, engineers with backgrounds in back-end systems, artificial intelligence (AI) and machine learning:\n\n    Srinivas, the CEO, worked at OpenAI as an AI researcher.\n    Konwinski was among the founding team at Databricks.\n    Yarats, the CTO, was an AI research scientist at Meta.\n    Ho, the CSO, worked as an engineer at Quora, then as a quantitative trader on Wall Street.[5]\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 2:\nDocument_id:perpl\nContent:  Ho, the CSO, worked as an engineer at Quora, then as a quantitative trader on Wall Street.[5]\n",
+          "type": "text"
+        },
+        {
+          "text": "Result 3:\nDocument_id:nba_w\nContent: The NBA was created on August 3, 1949, with the merger of the Basketball Association of America (BAA) and the National Basketball League (NBL).\n",
+          "type": "text"
+        },
+        {
+          "text": "END of knowledge_search tool results.\n",
+          "type": "text"
+        }
+      ],
+      "error_code": null,
+      "error_message": null,
+      "metadata": {
+        "document_ids": [
+          "perplexity_wiki",
+          "perplexity_wiki",
+          "nba_wiki"
+        ]
+      }
+    }
+  },
+  "()_[('kwargs', {'session_id': '<UUID>', 'query': 'current CEO of Meta'}), ('tool_name', 'web_search')]": {
+    "type": "value",
+    "value": {
+      "content": "{\"query\": \"current CEO of Meta\", \"top_k\": [{\"title\": \"Executives - Meta\", \"url\": \"https://about.meta.com/media-gallery/executives/\", \"content\": \"Mark Zuckerberg, Founder, Chairman and Chief Executive Officer Joel Kaplan, Chief Global Affairs Officer Susan Li, Chief Financial Officer Javier Olivan, Chief Operating Officer Chris Cox, Chief Product Officer Andrew \\u2018Boz\\u2019 Bosworth, Chief Technology Officer Jennifer Newstead, Chief Legal Officer Dave Wehner, Chief Strategy Officer Will Cathcart, Head of WhatsApp Naomi Gleit, Head of Product John Hegeman, Chief Revenue Officer Adam Mosseri, Head of Instagram Erin Egan, Chief Privacy Officer, Policy Michel Protti, Chief Privacy Officer, Product Alex Schultz, Chief Marketing Officer and VP of Analytics Tom Alison, Head of Facebook Nicola Mendelsohn, Head of Global Business Group Ahmad Al-Dahle, VP and Head of GenAI at Meta Joelle Pineau, Vice President of AI Research and Head of FAIR at Meta\", \"score\": 0.8190992, \"raw_content\": null}, {\"title\": \"Mark Zuckerberg, Founder, Chairman and Chief Executive Officer - Meta\", \"url\": \"https://about.meta.com/media-gallery/executives/mark-zuckerberg/\", \"content\": \"Mark Zuckerberg, Founder, Chairman and Chief Executive Officer | Meta Meta Quest Ray-Ban Meta Meta Horizon Meta AI Meta Verified Meta Pay Meta Horizon Workrooms Meta and you Learn about our community Shop Meta Meta Quest Meta Portal Meta Horizon Mark Zuckerberg is the founder, chairman and CEO of Meta, which he originally founded as Facebook in 2004. In October 2021, Facebook rebranded to Meta to reflect all of its products and services across its family of apps and a focus on developing social experiences for the metaverse \\u2014 moving beyond 2D screens toward immersive experiences like augmented and virtual reality to help build the next evolution in social technology. Shop Ray-Ban Meta glassesRay-Ban StoriesPrivacy informationSupported countries \\u00a9 2025 Meta\", \"score\": 0.79099923, \"raw_content\": null}, {\"title\": \"Meet the Executive CSuite Team of Meta (Facebook) [2025]\", \"url\": \"https://digitaldefynd.com/IQ/meet-the-executive-csuite-team-of-meta-facebook/\", \"content\": \"Harvard University Executive Programs Free Harvard University Courses As a chief financial officer of Meta, Susan Li oversees the firm\\u2019s finance and facilities team to keep track of the company\\u2019s overall financial health. The chief operating officer of Meta, Javier Olivan, oversees the firm\\u2019s business team, infrastructure, and other products. Andrew Bosworth, called Boz, serves as chief technology officer at Meta and is responsible for leading the firm\\u2019s AR/VR organization, Reality Labs. Andrew has also served as engineering director to oversee events, mobile monetization, and feed ads and as VP of ads and business platforms to lead engineering, design, analytics, and product teams. Meta\\u2019s c-suite team comprises experienced and diverse executives, having extensive experience in technology, finance, legal, and all major industries.\", \"score\": 0.7602419, \"raw_content\": null}, {\"title\": \"The 11 People Running Meta's $1 Trillion Social Media and ... - Observer\", \"url\": \"https://observer.com/2024/01/meta-facebook-top-executives/\", \"content\": \"He returned after just a year, saying Facebook is \\u201cthe best place for me to roll up my sleeves and dig in to help.\\u201d\\u00a0As Meta\\u2019s chief product officer, Cox is currently focusing on Meta\\u2019s A.I. initiatives, most recently undertaking Meta\\u2019s Fundamental AI Research (FAIR) team, led by Yann LeCun and Joelle Pineau. Cathcart started at Meta in 2010 as vice president of product management, notably leading the ads initiative of Facebook\\u2019s News Feed product. Filed Under: Business, Social Media, Media, Technology, Big Tech, Will Cathcart, Dave Wehner, Tom Alison, Erin Egan, Andrew Mccollum, Javier Olivan, Andrew Bosworth, Susan Li, Dustin Moskovitz, Chris Cox, Adam Mosseri, Yann LeCun, Eduardo Saverin, Chris Hughes, Leadership, Mark Zuckerberg, Facebook, Instagram, Meta\", \"score\": 0.7591723, \"raw_content\": null}, {\"title\": \"Mark Zuckerberg Tells Meta Staffers to 'Buckle up' for 'Intense Year ...\", \"url\": \"https://www.businessinsider.com/mark-zuckerberg-meta-employees-intense-year-2025-1?op=1\", \"content\": \"Mark Zuckerberg Tells Meta Staffers to 'Buckle up' for 'Intense Year' - Business Insider Best Credit Cards Best Travel Credit Cards Best First Credit Cards Best Business Credit Cards Meta CEO Mark Zuckerberg tells employees to 'buckle up' for an 'intense year' in a leaked all-hands recording Meta CEO Mark Zuckerberg told staffers in a Thursday all-hands to be ready for an \\\"intense year.\\\" Meta CEO Mark Zuckerberg told employees Thursday in a company all-hands meeting to \\\"buckle up\\\" for an \\\"intense\\\" year ahead and addressed several recent policy changes. The Meta chief also addressed the company's recent changes in its stance on DEI policies and the rollback of those programs in response to a shifting legal and regulatory landscape under the Trump administration.\", \"score\": 0.75831425, \"raw_content\": null}]}",
+      "error_code": null,
+      "error_message": null,
+      "metadata": null
+    }
+  }
+}

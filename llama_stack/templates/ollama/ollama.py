@@ -87,14 +87,13 @@ def get_distribution_template() -> DistributionTemplate:
         container_image=None,
         template_path=Path(__file__).parent / "doc_template.md",
         providers=providers,
-        default_models=[inference_model, safety_model],
         run_configs={
             "run.yaml": RunConfigSettings(
                 provider_overrides={
                     "inference": [inference_provider],
                     "vector_io": [vector_io_provider_sqlite],
                 },
-                default_models=[inference_model],
+                default_models=[inference_model, embedding_model],
                 default_tool_groups=default_tool_groups,
             ),
             "run-with-safety.yaml": RunConfigSettings(
