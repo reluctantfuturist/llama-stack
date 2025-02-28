@@ -242,7 +242,7 @@ client.tool_runtime.rag_tool.insert(
 )
 
 agent_config = AgentConfig(
-    model=os.environ["INFERENCE_MODEL"],
+    model="meta-llama/Llama-3.3-70B-Instruct",
     # Define instructions for the agent ( aka system prompt)
     instructions="You are a helpful assistant",
     enable_session_persistence=False,
