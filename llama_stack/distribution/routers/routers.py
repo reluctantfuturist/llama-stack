@@ -54,7 +54,6 @@ from llama_stack.apis.tools import (
 )
 from llama_stack.apis.vector_io import Chunk, QueryChunksResponse, VectorIO
 from llama_stack.providers.datatypes import RoutingTable
-from llama_stack.providers.utils.inference.prompt_adapter import get_default_tool_prompt_format
 
 
 class VectorIORouter(VectorIO):
@@ -180,9 +179,6 @@ class InferenceRouter(Inference):
             if tool_prompt_format:
                 params["tool_prompt_format"] = tool_prompt_format
             tool_config = ToolConfig(**params)
-
-        tool_config = copy.copy(tool_config)
-        tool_config.tool_prompt_format = tool_config.tool_prompt_format or get_default_tool_prompt_format(model_id)
 
         tools = tools or []
         if tool_config.tool_choice == ToolChoice.none:
