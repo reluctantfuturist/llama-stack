@@ -16,6 +16,7 @@ from typing import List, Optional, Tuple, Union
 import httpx
 from PIL import Image as PIL_Image
 
+from llama_stack import logcat
 from llama_stack.apis.common.content_types import (
     ImageContentItem,
     InterleavedContent,

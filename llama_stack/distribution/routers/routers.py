@@ -54,7 +54,6 @@ from llama_stack.apis.tools import (
 )
 from llama_stack.apis.vector_io import Chunk, QueryChunksResponse, VectorIO
 from llama_stack.providers.datatypes import RoutingTable
-from llama_stack.providers.utils.inference.prompt_adapter import get_default_tool_prompt_format
 
 
 class VectorIORouter(VectorIO):
