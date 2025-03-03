@@ -181,9 +181,6 @@ class InferenceRouter(Inference):
                 params["tool_prompt_format"] = tool_prompt_format
             tool_config = ToolConfig(**params)
 
-        tool_config = copy.copy(tool_config)
-        tool_config.tool_prompt_format = tool_config.tool_prompt_format or get_default_tool_prompt_format(model_id)
-
         tools = tools or []
         if tool_config.tool_choice == ToolChoice.none:
             tools = []
