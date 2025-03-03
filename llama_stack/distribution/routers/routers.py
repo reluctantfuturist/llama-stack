@@ -4,7 +4,6 @@
 # This source code is licensed under the terms described in the LICENSE file in
 # the root directory of this source tree.
 
-import copy
 from typing import Any, AsyncGenerator, Dict, List, Optional
 
 from llama_stack import logcat
