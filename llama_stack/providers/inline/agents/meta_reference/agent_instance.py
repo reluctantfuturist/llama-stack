@@ -797,6 +797,15 @@ class ChatAgent(ShieldRunnerMixin):
 
                 input_messages = input_messages + [message, result_message]
 
+    async def _initialize_tools(self, toolgroups_for_turn: Optional[List[AgentToolGroup]] = None):
+        self.toolgroup_to_args = {}
+        for toolgroup in self.agent_config.toolgroups + (toolgroups_for_turn or []):
+            if isinstance(toolgroup, AgentToolGroupWithArgs):
+                tool_group_name, _ = self._parse_toolgroup_name(toolgroup.name)
+                self.toolgroup_to_args[tool_group_name] = toolgroup.args
+
+        self.tool_defs, self.tool_name_to_group_id = await self._get_tool_defs(toolgroups_for_turn)
+
     async def _get_tool_defs(
         self, toolgroups_for_turn: Optional[List[AgentToolGroup]] = None
     ) -> Tuple[List[ToolDefinition], Dict[str, str]]:
