@@ -1,0 +1,30 @@
+---
+description: '[Chroma](https://www'
+sidebar_label: Chromadb
+sidebar_position: 2
+title: inline::chromadb
+---
+
+# inline::chromadb
+
+## Description
+
+[Chroma](https://www.trychroma.com/) is an inline and remote vector
+database provider for Llama Stack. It allows you to store and query vectors directly within a Chroma database.
+That means you're not limited to storing vectors in memory or in a separate service.
+
+## Configuration
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `db_path` | `<class 'str'>` | No |  |  |
+| `kvstore` | `utils.kvstore.config.RedisKVStoreConfig \| utils.kvstore.config.SqliteKVStoreConfig \| utils.kvstore.config.PostgresKVStoreConfig \| utils.kvstore.config.MongoDBKVStoreConfig` | No | sqlite | Config for KV store backend |
+
+## Sample Configuration
+
+```yaml
+db_path: ${env.CHROMADB_PATH}
+kvstore:
+  type: sqlite
+  db_path: ${env.SQLITE_STORE_DIR:=~/.llama/dummy}/chroma_inline_registry.db
+```
