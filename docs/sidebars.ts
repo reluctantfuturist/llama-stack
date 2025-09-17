@@ -265,6 +265,23 @@ const sidebars: SidebarsConfig = {
         'providers/openai-compatibility'
       ],
     },
+    {
+      type: 'category',
+      label: 'Building Applications',
+      collapsed: false,
+      items: [
+        'building-applications/index',
+        'building-applications/rag',
+        'building-applications/agent',
+        'building-applications/agent-execution-loop',
+        'building-applications/responses-vs-agents',
+        'building-applications/tools',
+        'building-applications/evals',
+        'building-applications/telemetry',
+        'building-applications/safety',
+        'building-applications/playground',
+      ],
+    },
     // More sections will be added during migration process
   ],
 
