@@ -11,11 +11,6 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <div className={styles.heroContent}>
-          <img
-            src="/img/llama-stack-logo.png"
-            alt="Llama Stack"
-            className={styles.heroLogo}
-          />
           <h1 className={styles.heroTitle}>Build AI Applications with Llama Stack</h1>
           <p className={styles.heroSubtitle}>
             Unified APIs for Inference, RAG, Agents, Tools, Safety, and Telemetry
@@ -124,7 +119,7 @@ function CommunityLinks() {
           </p>
           <div className={styles.communityLinks}>
             <a
-              href="https://github.com/meta-llama/llama-stack"
+              href="https://github.com/llamastack/llama-stack"
               className={clsx('button button--outline button--lg', styles.communityButton)}
               target="_blank"
               rel="noopener noreferrer">
@@ -132,7 +127,7 @@ function CommunityLinks() {
               Star on GitHub
             </a>
             <a
-              href="https://discord.gg/llama"
+              href="https://discord.gg/llama-stack"
               className={clsx('button button--outline button--lg', styles.communityButton)}
               target="_blank"
               rel="noopener noreferrer">
