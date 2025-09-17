@@ -1,0 +1,493 @@
+---
+title: Adding a New Vector Database
+description: Guide for adding new vector database providers to Llama Stack
+sidebar_label: New Vector Database
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide will walk you through the process of adding a new vector database provider to Llama Stack.
+
+:::note[Example Implementation]
+See the [Milvus Vector Database Provider](https://github.com/meta-llama/llama-stack/pull/1467) Pull Request for a complete implementation example.
+:::
+
+## Overview
+
+Vector Database providers are used to store and retrieve vector embeddings. They're not limited to vector search but can support:
+
+- **Vector search** - Semantic similarity search using embeddings
+- **Keyword search** - Traditional text-based search
+- **Hybrid search** - Combining vector and keyword search
+- **Operations** - Filtering, sorting, and aggregating vectors
+
+## Implementation Steps
+
+### Step 1: Choose Database Type
+
+Determine your vector database deployment model:
+
+<Tabs>
+<TabItem value="remote" label="Remote Provider">
+
+**Remote databases** make requests to external services:
+- External hosted services (Pinecone, Weaviate Cloud)
+- Self-hosted services running on different infrastructure
+- Requires network communication and authentication
+
+</TabItem>
+<TabItem value="inline" label="Inline Provider">
+
+**Inline databases** execute locally:
+- Embedded databases (SQLite, DuckDB)
+- Local instances (ChromaDB, FAISS)
+- Direct library integration
+
+</TabItem>
+<TabItem value="both" label="Hybrid Provider">
+
+**Both remote and inline** support:
+- Services that can run locally or remotely
+- Different connection modes for the same technology
+- Example: ChromaDB can run inline or as a remote service
+
+</TabItem>
+</Tabs>
+
+### Step 2: Implement the Provider
+
+Create a new provider class with two main components:
+
+#### Vector Index Implementation
+
+Implement `YourVectorIndex` with these required methods:
+
+<Tabs>
+<TabItem value="index-core" label="Core Methods">
+
+```python
+class YourVectorIndex:
+    async def create(self, vector_db_id: str, embedding_dimension: int, **kwargs):
+        """Create a new vector index"""
+        pass
+
+    async def initialize(self):
+        """Initialize the vector index connection"""
+        pass
+
+    async def add_chunks(self, chunks: List[Chunk]) -> List[str]:
+        """Add vector chunks to the index"""
+        pass
+
+    async def delete_chunk(self, chunk_ids: List[str]):
+        """Delete chunks by their IDs"""
+        pass
+```
+
+</TabItem>
+<TabItem value="index-search" label="Search Methods">
+
+```python
+    async def query_vector(self, embedding: List[float], k: int = 10, **kwargs):
+        """Perform vector similarity search"""
+        pass
+
+    async def query_keyword(self, query: str, k: int = 10, **kwargs):
+        """Perform keyword-based search"""
+        pass
+
+    async def query_hybrid(self,
+                          embedding: List[float],
+                          query: str,
+                          k: int = 10,
+                          **kwargs):
+        """Perform hybrid vector + keyword search"""
+        pass
+```
+
+</TabItem>
+</Tabs>
+
+#### Vector IO Adapter Implementation
+
+Implement `YourVectorIOAdapter` with these required methods:
+
+<Tabs>
+<TabItem value="adapter-lifecycle" label="Lifecycle Methods">
+
+```python
+class YourVectorIOAdapter:
+    async def initialize(self):
+        """Initialize the adapter and establish connections"""
+        pass
+
+    async def shutdown(self):
+        """Clean up resources and close connections"""
+        pass
+```
+
+</TabItem>
+<TabItem value="adapter-management" label="Database Management">
+
+```python
+    async def list_vector_dbs(self) -> List[VectorDB]:
+        """List all available vector databases"""
+        pass
+
+    async def register_vector_db(self, vector_db: VectorDB):
+        """Register a new vector database"""
+        pass
+
+    async def unregister_vector_db(self, vector_db_id: str):
+        """Unregister a vector database"""
+        pass
+```
+
+</TabItem>
+<TabItem value="adapter-operations" label="Data Operations">
+
+```python
+    async def insert_chunks(self, vector_db_id: str, chunks: List[Chunk]):
+        """Insert chunks into the specified vector database"""
+        pass
+
+    async def query_chunks(self, vector_db_id: str, query: VectorQuery):
+        """Query chunks from the specified vector database"""
+        pass
+
+    async def delete_chunks(self, vector_db_id: str, chunk_ids: List[str]):
+        """Delete chunks from the specified vector database"""
+        pass
+```
+
+</TabItem>
+</Tabs>
+
+### Step 3: Add to Registry
+
+Register your provider in `llama_stack/providers/registry/vector_io.py`:
+
+<Tabs>
+<TabItem value="inline-registration" label="Inline Provider">
+
+```python
+from llama_stack.providers.registry.specs import InlineProviderSpec
+from llama_stack.providers.registry.api import Api
+
+InlineProviderSpec(
+    api=Api.vector_io,
+    provider_type="inline::milvus",
+    pip_packages=["pymilvus>=2.4.10"],
+    module="llama_stack.providers.inline.vector_io.milvus",
+    config_class="llama_stack.providers.inline.vector_io.milvus.MilvusVectorIOConfig",
+    api_dependencies=[Api.inference],
+    optional_api_dependencies=[Api.files],
+    description="Milvus vector database for high-performance similarity search",
+)
+```
+
+</TabItem>
+<TabItem value="remote-registration" label="Remote Provider">
+
+```python
+from llama_stack.providers.registry.specs import RemoteProviderSpec
+
+RemoteProviderSpec(
+    api=Api.vector_io,
+    provider_type="remote::pinecone",
+    pip_packages=["pinecone-client>=2.0.0"],
+    module="llama_stack.providers.remote.vector_io.pinecone",
+    config_class="llama_stack.providers.remote.vector_io.pinecone.PineconeConfig",
+    api_dependencies=[Api.inference],
+    description="Pinecone cloud vector database service",
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Step 4: Add Tests
+
+Comprehensive testing ensures your provider works correctly:
+
+#### Unit Tests Configuration
+
+<Tabs>
+<TabItem value="conftest" label="Test Configuration">
+
+Update `/tests/unit/providers/vector_io/conftest.py`:
+
+```python
+# 1. Add your provider to the vector_provider fixture
+@pytest.fixture
+def vector_provider():
+    return {
+        # ... existing providers
+        "your_vectorprovider": "inline::your_vectorprovider",
+    }
+
+# 2. Create your vector index fixture
+@pytest.fixture
+async def your_vectorprovider_index():
+    config = YourVectorProviderConfig(
+        # Your test configuration
+    )
+    index = YourVectorIndex(config)
+    await index.initialize()
+    yield index
+    # Cleanup if needed
+
+# 3. Create your adapter fixture
+@pytest.fixture
+async def your_vectorprovider_adapter():
+    config = YourVectorProviderConfig(
+        # Your test configuration
+    )
+    adapter = YourVectorIOAdapter(config)
+    await adapter.initialize()
+    yield adapter
+    await adapter.shutdown()
+
+# 4. Add to vector_io_providers fixture
+@pytest.fixture
+def vector_io_providers():
+    return {
+        # ... existing providers
+        "your_vectorprovider": {
+            "index": "your_vectorprovider_index",
+            "adapter": "your_vectorprovider_adapter",
+        }
+    }
+```
+
+</TabItem>
+<TabItem value="naming" label="Naming Convention">
+
+Follow the naming convention for fixtures:
+- Index fixture: `{provider_name}_index`
+- Adapter fixture: `{provider_name}_adapter`
+
+This naming is required for the automated tests to execute properly.
+
+</TabItem>
+</Tabs>
+
+#### Integration Tests
+
+<Tabs>
+<TabItem value="vector-io-tests" label="Core Vector IO Tests">
+
+**Location:** `tests/integration/vector_io/test_vector_io.py`
+
+**Tests:** Registration, insertion, and retrieval functionality
+
+**No changes needed** - tests run automatically for all registered providers
+
+</TabItem>
+<TabItem value="openai-tests" label="OpenAI Compatibility Tests">
+
+**Location:** `tests/integration/vector_io/test_openai_vector_stores.py`
+
+Update skip conditions if your provider supports OpenAI compatibility:
+
+```python
+def skip_if_provider_doesnt_support_openai_vector_stores(provider_id):
+    unsupported = [
+        # Remove your provider from this list if it supports OpenAI vector stores
+        "your_vectorprovider",  # Remove this line if supported
+    ]
+    # ... rest of function
+
+def skip_if_provider_doesnt_support_openai_vector_stores_search(provider_id):
+    unsupported = [
+        # Remove your provider from this list if it supports search
+        "your_vectorprovider",  # Remove this line if supported
+    ]
+    # ... rest of function
+```
+
+</TabItem>
+<TabItem value="ci-tests" label="CI Configuration">
+
+Update `.github/workflows/integration-vector-io-tests.yml`:
+
+```yaml
+# Add your provider to the test matrix
+strategy:
+  matrix:
+    provider:
+      - chroma
+      - faiss
+      - your_vectorprovider  # Add your provider here
+
+# If remote provider, add container setup
+services:
+  your_vectorprovider:
+    image: your-provider/image:latest
+    ports:
+      - 8080:8080
+    env:
+      YOUR_ENV_VAR: value
+```
+
+</TabItem>
+</Tabs>
+
+### Step 5: Update Dependencies
+
+<Tabs>
+<TabItem value="inline-deps" label="Inline Provider Dependencies">
+
+For inline providers, update the `unit` group:
+
+```bash
+uv add your_pip_package --group unit
+```
+
+</TabItem>
+<TabItem value="remote-deps" label="Remote Provider Dependencies">
+
+For remote providers, update the `test` group (used in CI):
+
+```bash
+uv add your_pip_package --group test
+```
+
+</TabItem>
+</Tabs>
+
+### Step 6: Update Documentation
+
+Generate and update provider documentation:
+
+<Tabs>
+<TabItem value="generate-docs" label="Generate Documentation">
+
+```bash
+# Generate provider documentation
+./scripts/provider_codegen.py
+```
+
+</TabItem>
+<TabItem value="update-registry" label="Update Registry Description">
+
+Update the description in your registry entry:
+
+```python
+InlineProviderSpec(
+    # ... other fields
+    description="Your vector database provider description. Explain key features, use cases, and any special capabilities.",
+)
+```
+
+</TabItem>
+</Tabs>
+
+## Configuration Best Practices
+
+### Provider Configuration Class
+
+```python
+from pydantic import BaseModel, Field
+from typing import Optional
+
+class YourVectorProviderConfig(BaseModel):
+    host: str = Field(
+        default="localhost",
+        description="Host address for the vector database"
+    )
+    port: int = Field(
+        default=19530,
+        description="Port number for database connection"
+    )
+    api_key: Optional[str] = Field(
+        default=None,
+        description="API key for authentication (if required)"
+    )
+    collection_prefix: str = Field(
+        default="llama_stack_",
+        description="Prefix for collection names"
+    )
+```
+
+### Error Handling
+
+```python
+from llama_stack.apis.common.errors import ProviderError
+
+class YourVectorIndex:
+    async def add_chunks(self, chunks):
+        try:
+            # Your implementation
+            return chunk_ids
+        except YourDatabaseException as e:
+            raise ProviderError(f"Failed to add chunks to vector database: {str(e)}")
+```
+
+## Testing Your Implementation
+
+### Local Testing
+
+```bash
+# Run unit tests
+uv run --group unit pytest tests/unit/providers/vector_io/
+
+# Run integration tests
+uv run --group test pytest tests/integration/vector_io/ --stack-config=starter
+```
+
+### Manual Validation
+
+```python
+# Test your provider manually
+from your_provider import YourVectorIOAdapter
+
+config = YourVectorProviderConfig(host="localhost", port=8080)
+adapter = YourVectorIOAdapter(config)
+
+await adapter.initialize()
+# Test your methods...
+await adapter.shutdown()
+```
+
+## Common Implementation Patterns
+
+### Connection Management
+
+```python
+class YourVectorIndex:
+    def __init__(self, config):
+        self.config = config
+        self._client = None
+
+    async def initialize(self):
+        self._client = await create_client(self.config)
+
+    async def _ensure_connected(self):
+        if not self._client:
+            await self.initialize()
+```
+
+### Batch Operations
+
+```python
+async def add_chunks(self, chunks: List[Chunk]) -> List[str]:
+    batch_size = 100
+    all_ids = []
+
+    for i in range(0, len(chunks), batch_size):
+        batch = chunks[i:i+batch_size]
+        batch_ids = await self._add_batch(batch)
+        all_ids.extend(batch_ids)
+
+    return all_ids
+```
+
+## Related Resources
+
+- **[Vector IO Providers](/docs/providers/vector_io)** - Existing provider implementations
+- **[Core Concepts](/docs/concepts)** - Understanding Llama Stack architecture
+- **[New API Provider Guide](./new-api-provider)** - General provider development
+- **[Testing Guide](./testing-record-replay)** - Advanced testing techniques
