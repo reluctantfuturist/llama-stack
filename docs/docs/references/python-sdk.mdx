@@ -1,0 +1,405 @@
+# Python SDK Reference
+
+## Shared Types
+
+```python
+from llama_stack_client.types import (
+    AgentConfig,
+    BatchCompletion,
+    CompletionMessage,
+    ContentDelta,
+    Document,
+    InterleavedContent,
+    InterleavedContentItem,
+    Message,
+    ParamType,
+    QueryConfig,
+    QueryResult,
+    ReturnType,
+    SafetyViolation,
+    SamplingParams,
+    ScoringResult,
+    SystemMessage,
+    ToolCall,
+    ToolParamDefinition,
+    ToolResponseMessage,
+    URL,
+    UserMessage,
+)
+```
+
+## Toolgroups
+
+**Types:**
+```python
+from llama_stack_client.types import (
+    ListToolGroupsResponse,
+    ToolGroup,
+    ToolgroupListResponse,
+)
+```
+
+**Methods:**
+- `client.toolgroups.list()` → `ToolgroupListResponse`
+- `client.toolgroups.get(toolgroup_id)` → `ToolGroup`
+- `client.toolgroups.register(**params)` → `None`
+- `client.toolgroups.unregister(toolgroup_id)` → `None`
+
+## Tools
+
+**Types:**
+```python
+from llama_stack_client.types import ListToolsResponse, Tool, ToolListResponse
+```
+
+**Methods:**
+- `client.tools.list(**params)` → `ToolListResponse`
+- `client.tools.get(tool_name)` → `Tool`
+
+## ToolRuntime
+
+**Types:**
+```python
+from llama_stack_client.types import ToolDef, ToolInvocationResult
+```
+
+**Methods:**
+- `client.tool_runtime.invoke_tool(**params)` → `ToolInvocationResult`
+- `client.tool_runtime.list_tools(**params)` → `JSONLDecoder[ToolDef]`
+
+### RagTool
+
+**Methods:**
+- `client.tool_runtime.rag_tool.insert(**params)` → `None`
+- `client.tool_runtime.rag_tool.query(**params)` → `QueryResult`
+
+## Agents
+
+**Types:**
+```python
+from llama_stack_client.types import (
+    InferenceStep,
+    MemoryRetrievalStep,
+    ShieldCallStep,
+    ToolExecutionStep,
+    ToolResponse,
+    AgentCreateResponse,
+)
+```
+
+**Methods:**
+- `client.agents.create(**params)` → `AgentCreateResponse`
+- `client.agents.delete(agent_id)` → `None`
+
+### Session
+
+**Types:**
+```python
+from llama_stack_client.types.agents import Session, SessionCreateResponse
+```
+
+**Methods:**
+- `client.agents.session.create(agent_id, **params)` → `SessionCreateResponse`
+- `client.agents.session.retrieve(session_id, *, agent_id, **params)` → `Session`
+- `client.agents.session.delete(session_id, *, agent_id)` → `None`
+
+### Steps
+
+**Types:**
+```python
+from llama_stack_client.types.agents import StepRetrieveResponse
+```
+
+**Methods:**
+- `client.agents.steps.retrieve(step_id, *, agent_id, session_id, turn_id)` → `StepRetrieveResponse`
+
+### Turn
+
+**Types:**
+```python
+from llama_stack_client.types.agents import Turn, TurnCreateResponse
+```
+
+**Methods:**
+- `client.agents.turn.create(session_id, *, agent_id, **params)` → `TurnCreateResponse`
+- `client.agents.turn.retrieve(turn_id, *, agent_id, session_id)` → `Turn`
+
+## BatchInference
+
+**Types:**
+```python
+from llama_stack_client.types import BatchInferenceChatCompletionResponse
+```
+
+**Methods:**
+- `client.batch_inference.chat_completion(**params)` → `BatchInferenceChatCompletionResponse`
+- `client.batch_inference.completion(**params)` → `BatchCompletion`
+
+## Datasets
+
+**Types:**
+```python
+from llama_stack_client.types import (
+    ListDatasetsResponse,
+    DatasetRetrieveResponse,
+    DatasetListResponse,
+)
+```
+
+**Methods:**
+- `client.datasets.retrieve(dataset_id)` → `Optional[DatasetRetrieveResponse]`
+- `client.datasets.list()` → `DatasetListResponse`
+- `client.datasets.register(**params)` → `None`
+- `client.datasets.unregister(dataset_id)` → `None`
+
+## Eval
+
+**Types:**
+```python
+from llama_stack_client.types import EvaluateResponse, Job
+```
+
+**Methods:**
+- `client.eval.evaluate_rows(benchmark_id, **params)` → `EvaluateResponse`
+- `client.eval.run_eval(benchmark_id, **params)` → `Job`
+
+### Jobs
+
+**Types:**
+```python
+from llama_stack_client.types.eval import JobStatusResponse
+```
+
+**Methods:**
+- `client.eval.jobs.retrieve(job_id, *, benchmark_id)` → `EvaluateResponse`
+- `client.eval.jobs.cancel(job_id, *, benchmark_id)` → `None`
+- `client.eval.jobs.status(job_id, *, benchmark_id)` → `Optional[JobStatusResponse]`
+
+## Inspect
+
+**Types:**
+```python
+from llama_stack_client.types import HealthInfo, ProviderInfo, RouteInfo, VersionInfo
+```
+
+**Methods:**
+- `client.inspect.health()` → `HealthInfo`
+- `client.inspect.version()` → `VersionInfo`
+
+## Inference
+
+**Types:**
+```python
+from llama_stack_client.types import (
+    CompletionResponse,
+    EmbeddingsResponse,
+    TokenLogProbs,
+    InferenceChatCompletionResponse,
+    InferenceCompletionResponse,
+)
+```
+
+**Methods:**
+- `client.inference.chat_completion(**params)` → `InferenceChatCompletionResponse`
+- `client.inference.completion(**params)` → `InferenceCompletionResponse`
+- `client.inference.embeddings(**params)` → `EmbeddingsResponse`
+
+## VectorIo
+
+**Types:**
+```python
+from llama_stack_client.types import QueryChunksResponse
+```
+
+**Methods:**
+- `client.vector_io.insert(**params)` → `None`
+- `client.vector_io.query(**params)` → `QueryChunksResponse`
+
+## VectorDBs
+
+**Types:**
+```python
+from llama_stack_client.types import (
+    ListVectorDBsResponse,
+    VectorDBRetrieveResponse,
+    VectorDBListResponse,
+    VectorDBRegisterResponse,
+)
+```
+
+**Methods:**
+- `client.vector_dbs.retrieve(vector_db_id)` → `Optional[VectorDBRetrieveResponse]`
+- `client.vector_dbs.list()` → `VectorDBListResponse`
+- `client.vector_dbs.register(**params)` → `VectorDBRegisterResponse`
+- `client.vector_dbs.unregister(vector_db_id)` → `None`
+
+## Models
+
+**Types:**
+```python
+from llama_stack_client.types import ListModelsResponse, Model, ModelListResponse
+```
+
+**Methods:**
+- `client.models.retrieve(model_id)` → `Optional[Model]`
+- `client.models.list()` → `ModelListResponse`
+- `client.models.register(**params)` → `Model`
+- `client.models.unregister(model_id)` → `None`
+
+## PostTraining
+
+**Types:**
+```python
+from llama_stack_client.types import ListPostTrainingJobsResponse, PostTrainingJob
+```
+
+**Methods:**
+- `client.post_training.preference_optimize(**params)` → `PostTrainingJob`
+- `client.post_training.supervised_fine_tune(**params)` → `PostTrainingJob`
+
+### Job
+
+**Types:**
+```python
+from llama_stack_client.types.post_training import (
+    JobListResponse,
+    JobArtifactsResponse,
+    JobStatusResponse,
+)
+```
+
+**Methods:**
+- `client.post_training.job.list()` → `JobListResponse`
+- `client.post_training.job.artifacts(**params)` → `Optional[JobArtifactsResponse]`
+- `client.post_training.job.cancel(**params)` → `None`
+- `client.post_training.job.status(**params)` → `Optional[JobStatusResponse]`
+
+## Providers
+
+**Types:**
+```python
+from llama_stack_client.types import ListProvidersResponse, ProviderListResponse
+```
+
+**Methods:**
+- `client.providers.list()` → `ProviderListResponse`
+
+## Routes
+
+**Types:**
+```python
+from llama_stack_client.types import ListRoutesResponse, RouteListResponse
+```
+
+**Methods:**
+- `client.routes.list()` → `RouteListResponse`
+
+## Safety
+
+**Types:**
+```python
+from llama_stack_client.types import RunShieldResponse
+```
+
+**Methods:**
+- `client.safety.run_shield(**params)` → `RunShieldResponse`
+
+## Shields
+
+**Types:**
+```python
+from llama_stack_client.types import ListShieldsResponse, Shield, ShieldListResponse
+```
+
+**Methods:**
+- `client.shields.retrieve(identifier)` → `Optional[Shield]`
+- `client.shields.list()` → `ShieldListResponse`
+- `client.shields.register(**params)` → `Shield`
+
+## SyntheticDataGeneration
+
+**Types:**
+```python
+from llama_stack_client.types import SyntheticDataGenerationResponse
+```
+
+**Methods:**
+- `client.synthetic_data_generation.generate(**params)` → `SyntheticDataGenerationResponse`
+
+## Telemetry
+
+**Types:**
+```python
+from llama_stack_client.types import (
+    QuerySpansResponse,
+    SpanWithStatus,
+    Trace,
+    TelemetryGetSpanResponse,
+    TelemetryGetSpanTreeResponse,
+    TelemetryQuerySpansResponse,
+    TelemetryQueryTracesResponse,
+)
+```
+
+**Methods:**
+- `client.telemetry.get_span(span_id, *, trace_id)` → `TelemetryGetSpanResponse`
+- `client.telemetry.get_span_tree(span_id, **params)` → `TelemetryGetSpanTreeResponse`
+- `client.telemetry.get_trace(trace_id)` → `Trace`
+- `client.telemetry.log_event(**params)` → `None`
+- `client.telemetry.query_spans(**params)` → `TelemetryQuerySpansResponse`
+- `client.telemetry.query_traces(**params)` → `TelemetryQueryTracesResponse`
+- `client.telemetry.save_spans_to_dataset(**params)` → `None`
+
+## Datasetio
+
+**Types:**
+```python
+from llama_stack_client.types import PaginatedRowsResult
+```
+
+**Methods:**
+- `client.datasetio.append_rows(**params)` → `None`
+- `client.datasetio.get_rows_paginated(**params)` → `PaginatedRowsResult`
+
+## Scoring
+
+**Types:**
+```python
+from llama_stack_client.types import ScoringScoreResponse, ScoringScoreBatchResponse
+```
+
+**Methods:**
+- `client.scoring.score(**params)` → `ScoringScoreResponse`
+- `client.scoring.score_batch(**params)` → `ScoringScoreBatchResponse`
+
+## ScoringFunctions
+
+**Types:**
+```python
+from llama_stack_client.types import (
+    ListScoringFunctionsResponse,
+    ScoringFn,
+    ScoringFunctionListResponse,
+)
+```
+
+**Methods:**
+- `client.scoring_functions.retrieve(scoring_fn_id)` → `Optional[ScoringFn]`
+- `client.scoring_functions.list()` → `ScoringFunctionListResponse`
+- `client.scoring_functions.register(**params)` → `None`
+
+## Benchmarks
+
+**Types:**
+```python
+from llama_stack_client.types import (
+    Benchmark,
+    ListBenchmarksResponse,
+    BenchmarkListResponse,
+)
+```
+
+**Methods:**
+- `client.benchmarks.retrieve(benchmark_id)` → `Optional[Benchmark]`
+- `client.benchmarks.list()` → `BenchmarkListResponse`
+- `client.benchmarks.register(**params)` → `None`
