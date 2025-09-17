@@ -1,0 +1,104 @@
+---
+title: External Providers
+description: Create and maintain custom Llama Stack providers outside the main codebase
+sidebar_label: Overview
+sidebar_position: 1
+---
+
+# External Providers
+
+Llama Stack supports external providers that live outside of the main codebase. This allows you to:
+
+- **Create and maintain your own providers independently**
+- **Share providers with others** without contributing to the main codebase
+- **Keep provider-specific code separate** from the core Llama Stack code
+- **Extend functionality** with custom implementations
+
+## What are External Providers?
+
+External providers are custom implementations of Llama Stack APIs that:
+
+- **Live in separate packages** from the core Llama Stack codebase
+- **Follow the same interfaces** as built-in providers
+- **Can be distributed independently** via PyPI or other package managers
+- **Integrate seamlessly** with existing Llama Stack distributions
+
+## Types of External Providers
+
+Llama Stack supports two types of external providers:
+
+### 🌐 **Remote Providers**
+Providers that communicate with external services (e.g., cloud APIs, remote servers)
+
+**Examples:**
+- Custom cloud inference endpoints
+- Third-party safety services
+- External vector databases
+- Remote evaluation services
+
+### 🏠 **Inline Providers**
+Providers that run locally within the Llama Stack process
+
+**Examples:**
+- Custom local inference engines
+- Local safety filters
+- Custom embedding models
+- Local vector storage implementations
+
+## Getting Started
+
+### Using External Providers
+
+To use an external provider, you can specify it in your build configuration:
+
+```yaml
+version: 2
+distribution_spec:
+  providers:
+    inference:
+    - provider_type: remote::custom_provider
+      module: my-custom-provider==1.0.0
+```
+
+### Creating External Providers
+
+Ready to create your own provider? Check out our comprehensive guide:
+
+**📖 [Creating External Providers Guide](./external-providers-guide)**
+
+### Community Providers
+
+Explore providers created by the community:
+
+**🔌 [Known External Providers](./external-providers-list)**
+
+## Benefits
+
+- **🚀 Rapid Development**: Create and iterate on providers independently
+- **🔒 Security**: Keep proprietary code separate from open source
+- **🌍 Community**: Share and discover community-contributed providers
+- **⚡ Performance**: Optimize providers for specific use cases
+- **🔧 Flexibility**: Implement custom business logic and integrations
+
+## Architecture
+
+External providers integrate with Llama Stack through a standardized interface:
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────────┐
+│   Llama Stack   │◄──►│ Provider Interface│◄──►│  External Provider  │
+│      Core       │    │    (Protocol)     │    │    (Your Code)      │
+└─────────────────┘    └──────────────────┘    └─────────────────────┘
+```
+
+## Next Steps
+
+1. **🔍 [Browse Available Providers](./external-providers-list)** - See what's already available
+2. **📚 [Read the Creation Guide](./external-providers-guide)** - Learn how to build your own
+3. **💡 Join the Community** - Share your providers and get help
+
+## Related Resources
+
+- **[Provider Architecture](/docs/concepts/api-providers)** - Understanding the provider system
+- **[Building Distributions](/docs/distributions/building-distro)** - Using external providers in distributions
+- **[API Reference](/docs/api/)** - Provider interface specifications

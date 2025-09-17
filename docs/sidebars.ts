@@ -251,7 +251,18 @@ const sidebars: SidebarsConfig = {
             'providers/batches/index',
             'providers/batches/inline_reference'
           ],
-        }
+        },
+        {
+          type: 'category',
+          label: 'External Providers',
+          collapsed: true,
+          items: [
+            'providers/external/index',
+            'providers/external/external-providers-guide',
+            'providers/external/external-providers-list'
+          ],
+        },
+        'providers/openai-compatibility'
       ],
     },
     // More sections will be added during migration process
