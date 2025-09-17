@@ -11,9 +11,9 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <div className={styles.heroContent}>
-          <img 
-            src="/img/llama-stack-logo.png" 
-            alt="Llama Stack" 
+          <img
+            src="/img/llama-stack-logo.png"
+            alt="Llama Stack"
             className={styles.heroLogo}
           />
           <h1 className={styles.heroTitle}>Build AI Applications with Llama Stack</h1>
@@ -68,7 +68,7 @@ client = LlamaStackClient(
 response = client.inference.chat_completion(
   model="Llama3.2-3B-Instruct",
   messages=[{
-    "role": "user", 
+    "role": "user",
     "content": "What is machine learning?"
   }]
 )`}</code></pre>
@@ -123,23 +123,23 @@ function CommunityLinks() {
             Connect with developers building the future of AI applications
           </p>
           <div className={styles.communityLinks}>
-            <a 
-              href="https://github.com/meta-llama/llama-stack" 
+            <a
+              href="https://github.com/meta-llama/llama-stack"
               className={clsx('button button--outline button--lg', styles.communityButton)}
               target="_blank"
               rel="noopener noreferrer">
               <span className={styles.communityIcon}>⭐</span>
               Star on GitHub
             </a>
-            <a 
-              href="https://discord.gg/llama" 
+            <a
+              href="https://discord.gg/llama"
               className={clsx('button button--outline button--lg', styles.communityButton)}
               target="_blank"
               rel="noopener noreferrer">
               <span className={styles.communityIcon}>💬</span>
               Join Discord
             </a>
-            <Link 
+            <Link
               to="/docs/intro"
               className={clsx('button button--outline button--lg', styles.communityButton)}>
               <span className={styles.communityIcon}>📚</span>
