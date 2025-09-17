@@ -1,0 +1,53 @@
+---
+title: Remote-Hosted Distributions
+description: Available endpoints serving Llama Stack API that you can directly connect to
+sidebar_label: Overview
+sidebar_position: 1
+---
+
+# Remote-Hosted Distributions
+
+Remote-Hosted distributions are available endpoints serving Llama Stack API that you can directly connect to.
+
+## Available Endpoints
+
+| Distribution | Endpoint | Inference | Agents | Memory | Safety | Telemetry |
+|-------------|----------|-----------|---------|---------|---------|------------|
+| Together | [https://llama-stack.together.ai](https://llama-stack.together.ai) | remote::together | meta-reference | remote::weaviate | meta-reference | meta-reference |
+| Fireworks | [https://llamastack-preview.fireworks.ai](https://llamastack-preview.fireworks.ai) | remote::fireworks | meta-reference | remote::weaviate | meta-reference | meta-reference |
+
+## Connecting to Remote-Hosted Distributions
+
+You can use `llama-stack-client` to interact with these endpoints. For example, to list the available models served by the Fireworks endpoint:
+
+```bash
+$ pip install llama-stack-client
+$ llama-stack-client configure --endpoint https://llamastack-preview.fireworks.ai
+$ llama-stack-client models list
+```
+
+## Benefits of Remote-Hosted Distributions
+
+- **Zero Setup**: No local installation or configuration required
+- **Scalable Infrastructure**: Managed by the provider for high availability
+- **Always Updated**: Latest features and models available automatically
+- **Cost Effective**: Pay-per-use pricing without infrastructure overhead
+
+## Getting Started
+
+1. **Choose an endpoint** from the table above
+2. **Install the client**: `pip install llama-stack-client`
+3. **Configure the endpoint**: `llama-stack-client configure --endpoint <URL>`
+4. **Start building**: Use the client to interact with Llama Stack APIs
+
+## Additional Resources
+
+- **[llama-stack-client-python](https://github.com/meta-llama/llama-stack-client-python/blob/main/docs/cli_reference.md)** - CLI reference and documentation
+- **[llama-stack-apps](https://github.com/meta-llama/llama-stack-apps/tree/main)** - Example applications built on top of Llama Stack
+- **[WatsonX Distribution](./watsonx)** - IBM WatsonX integration guide
+
+## Related Guides
+
+- **[Available Distributions](../list-of-distributions)** - Compare with other distribution types
+- **[Configuration Reference](../configuration)** - Understanding configuration options
+- **[Using as Library](../importing-as-library)** - Alternative deployment approach

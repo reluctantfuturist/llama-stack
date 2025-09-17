@@ -1,0 +1,75 @@
+---
+title: Starting a Llama Stack Server
+description: Different ways to run Llama Stack servers - as library, container, or Kubernetes deployment
+sidebar_label: Starting Llama Stack Server
+sidebar_position: 7
+---
+
+# Starting a Llama Stack Server
+
+You can run a Llama Stack server in one of the following ways:
+
+## As a Library
+
+This is the simplest way to get started. Using Llama Stack as a library means you do not need to start a server. This is especially useful when you are not running inference locally and relying on an external inference service (e.g. fireworks, together, groq, etc.) 
+
+**See:** [Using Llama Stack as a Library](./importing-as-library)
+
+## Container
+
+Another simple way to start interacting with Llama Stack is to just spin up a container (via Docker or Podman) which is pre-built with all the providers you need. We provide a number of pre-built images so you can start a Llama Stack server instantly. You can also build your own custom container. Which distribution to choose depends on the hardware you have. 
+
+**See:** [Available Distributions](./list-of-distributions) for more details on selecting the right distribution.
+
+## Kubernetes
+
+If you have built a container image and want to deploy it in a Kubernetes cluster instead of starting the Llama Stack server locally.
+
+**See:** [Kubernetes Deployment Guide](/docs/deploying/kubernetes-deployment) for more details.
+
+## Which Method to Choose?
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Best For</th>
+      <th>Complexity</th>
+      <th>Use Cases</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Library</strong></td>
+      <td>Development & External Services</td>
+      <td>Low</td>
+      <td>Prototyping, using remote inference providers</td>
+    </tr>
+    <tr>
+      <td><strong>Container</strong></td>
+      <td>Local Development & Production</td>
+      <td>Medium</td>
+      <td>Consistent environments, local inference</td>
+    </tr>
+    <tr>
+      <td><strong>Kubernetes</strong></td>
+      <td>Production & Scale</td>
+      <td>High</td>
+      <td>Production deployments, high availability</td>
+    </tr>
+  </tbody>
+</table>
+
+## Getting Started
+
+1. **Choose your deployment method** based on your requirements
+2. **Select a distribution** that matches your hardware and needs
+3. **Configure your environment** with the appropriate settings
+4. **Start your stack** and begin building with Llama Stack APIs
+
+## Related Guides
+
+- **[Available Distributions](./list-of-distributions)** - Choose the right distribution
+- **[Building Custom Distributions](./building-distro)** - Create your own distribution
+- **[Configuration Reference](./configuration)** - Understanding configuration options
+- **[Customizing run.yaml](./customizing-run-yaml)** - Adapt configurations to your environment
