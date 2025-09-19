@@ -1,0 +1,71 @@
+---
+id: unregister-toolgroup
+title: "Unregister a tool group."
+description: "Unregister a tool group."
+sidebar_label: "Unregister a tool group."
+hide_title: true
+hide_table_of_contents: true
+api: eJztV01v2zgQ/SsDnVogsdOgRbe+pU12N9gUCRznsEiDgpbGFltK1JKUE8Pwf983lPwVO4GvAZyLKWmGM/PmvSEzSxz7ypaefdKbJacnJ/KTsU+droK2ZdJLrv9J5kfJx12fBjmT4/9q9oEelSddTpTRGVlHhTIj6wrOkqMktWXgMoi/qiqjUyX+3V9eNpklPs25ULIK04qxrR3+4jTAsXK2Yhd0k50PKtR+zU5j2zE7GG6m9fdgcEONNaU2Y8k/6GB4zdcHp8vxluuFc0g+Gh+RIp9bF8jXRaHclOyIAirmaPOY6zQn3RTttCoDoWBSZfs9xpnL/kFps2/kxlpCG1uiNsrrQpXHjlWmhoZpzWcjHYmkS9RcpntU+e46rpR5T2d0179qi0mR/JCp9pxRsOgsvHnCVFjHKFP6GTtHamjrEIP7ilM90inZNK2dY4R/lhcSU1mmm3g3aw0dKeP5KBH+aAee9O4XHV50awnew7J/DUwvgLfgMo2cLWIOZzeXHerbepybKdpjjH301P/zG33+4+RzR0DjJ1VUDTMW/ALVV/G+qoz6DcVX+ezJ/Plcqv94+mW3clKjoQrK4e5lEayFczldbCy7gghjPWH8FraGjWCrCz6I6iCqNyaq0y+reAMw/bswvVWWX5fWv7aGJoAQP6XMmcAmYlOByehChw7dGFZIKIA9aqwgEoOPrtPq7dNLJ5VnN0HzAadIiQGPEKsu+Ql4BzxxC8NBWgdpvSFpfVo/ry6F2cicbhu2r+K38jrbpvwCjKxD1zWYwKqIp9KQcfCUNgAwfGvllfFI1SZsS+y1jQ+iOojqbYnqZFe0PSQUVSJUU2Mv1eCoM385W1deCthM+K50PNYegkWrcfszNBbLDmIJQhHmS2CS1EvDn2IWrUQZyqmC8VYizZISDzBeWvzUojstkSoV8i285Ey8PF90ahVf2r6KKNms2hNcjXZtibWl2HyOGpFRbiXrjA2Si3kiei/pTj50l8n57mw90TnMmvO5qaV2AnQeQtXrdnFTOM4tksmOjVGFOkaT0t+d1BaJBPQM6HWYRsfzxXi6f5BvQtiYZ9vLK/GnW/Gn25a2EWfEl+ANMpMPO8ASlfsNvqt1Ba7vHHIVCHNrorHJj5Ke/WGkcLzKc5lVFgPMY2LEa452mFWuoXAGREmmmxuplH2zqXL8oxQaWhf1ub35UP4lMVCsU+NFVt8x/4yPVK+AI4aJYNLy5RUWbkAwW43w13xaRgR+Ct3K4HYmUWM7Zy0R7ht8V1TAQ2+DtWic9FtMZ7Mh7np3zszn8hrXRSeNxjIO3KF0FW3PtJd1tpwoL6b+rt+S+T3tL4CdRbUvwU4hjzK1PGH5m6fPZTh/gH2O+Y2DStJtTM7SlKuw5rx1MG7o6fzi6mJwAZH9D+9HLuA=
+sidebar_class_name: "delete api-method"
+info_path: docs/api/llama-stack-specification
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Unregister a tool group."}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"delete"}
+  path={"/v1/toolgroups/{toolgroup_id}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Unregister a tool group.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[{"name":"toolgroup_id","in":"path","description":"The ID of the tool group to unregister.","required":true,"schema":{"type":"string"}}]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={undefined}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"OK"},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

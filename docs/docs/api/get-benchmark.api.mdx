@@ -1,0 +1,71 @@
+---
+id: get-benchmark
+title: "Get a benchmark by its ID."
+description: "Get a benchmark by its ID."
+sidebar_label: "Get a benchmark by its ID."
+hide_title: true
+hide_table_of_contents: true
+api: eJztWE1v2zgQ/SuETi2Q2GmwRbe5pZtuN0CDBEl6WLRBQEljiy1FqiTlxDD83/uGkmzJdtIssJcA8cX6IDkzb94barhIHPnKGk8+OVokhwcH/JeTz5yqgrImOUqOxQcyWVFK92OU7CWZNYFM4HGyqrTKJI8bf/c8eJH4rKBS8lWYV4TpNv1OWcDEytmKXFCNKZVjETVR5HpjfXDKTJNlHDzDEHcL/2ztMrpV+eMDH3jfPNh8sZeQqcvk6GtS2pw07n2hSOe4mMFb627zFNe5DNITO+8zyxNvJ7XJIi57SdqhgutgrW7/bqfO1lUTb1mF5CZC5gHYYEZOE1nr7ad95K8LEl38ggPYE1LfybkX6znLlZc7Edhc8nQFu7ATEWCgnS2CFbUnMbEuPl5ZEDSTuo5JZmObQPieTemcnMOkClT6ndkYOvNZ+cButGuKbk2xJodnv5hnc5HXcdDQnZKC5Ah2EU7mueJxUl8MqGcNnU+Q+9UMU2uNxVb3KdJI0vQfgS0pqNp7sgpqI/zeg9aT5c1W5Get2y3cyvfCEsgH8rp8KICJ1J72INyftXKUM4l7YhoqouX/gCO7ctgDEnwNKmj2/8ODzDzu8WPFUI6lCwOJisoScBvPS2kyGiEoDuuPXVWm4frPmkCJO+mFMlhJ5QJrllLzEpT/f9XHBxnqPkUVlp1G+IZu/XN9fSGa0SJDQLGkNPD8TmofnePk8mDoVvjCuiB8XQK0eSc+imPuCpUVQjVBOyVNiFhK076PdiKHglT6qZab0WxaW4PYRFEjDfuOkOdUQ/jrOQN32JJCweKU/d7Wq/OqoehrcSy+XH5ug8ngfEpcUXJWsCPMphmBFI4QZqREtCxTW4do3FeUgcOZsFlWOwd+0YZf/0USbYa7bK3A69E7wvQAeN22KCao4tGH44vTkbi09bRALZpYre2dF5d//yXe/XnwbsSg0b0sq4YZHb9A9Z6cZC4uG4qv/Xki81vlHL7frZxMK6hCFJju+QIbESabebcwrwoiTNWM8F/a2sTCG1RJL6J6EdUzE9Xh+7W9azD9jJneKsv3pfWvraEJIET3GVHOsLHYZCChVanCSFxgo4dDAeyRUwmRaLx03U719qGdypObIfmAk6VEgIeJVRu6B94Bd9TC8CKtF2k9I2m97e9Xp8xseC6uGrav7bfyOt6mfAdGPhLnNZhAsoy7UkrYeIyNH6l5J69VD7TVcj6y8IuoXkT1vER1sMvaEyQUVcJUk1PP0azaMc8BDB3+hA5e9pqydC4UvvpOT/jIhjGKQJ8ClWSKNrB/5lBJJ9H9odeOPbHBTf9UomkZFRupZCh2HlKcnnRJWnuAhMMSm19nJLia9rb12bXSy5vYhxa2dTM6B5NHyXj2Zsyt5Xi1vh8v+i4uua2NZaqJonaMbhFCdTQe4/Ngv7AeCO9rLUu5j8xkP0aZLRM26Ql4qzCPE0+6mvT1ht8xS6OnbQI/83xxxfPFVctV2R4IsfEGk9mbHTCxtP2A5LIvu/7KoZBBtH28/2bExg91hOL3O5m8sqhaHmUiftsohwLlGt7m3IRzSXMTmZFvFpWOvhnmnnVRlNuLp9yHaMjUyWnn1Rm38j7yuwKOqCCMScuUR6k3AGGxrtyPz2p5Eeg+jCuNzzK2HFO6aBnxtcGYOdE/imOtHw2oixxy6nnGYpHiW++L08slP8bnouOc4zIW3JQTDAbkyvN1vqooD8bw6rJl9mvxexXsjKk7OTJ8bMZHJ3yHyx8039RgPEUqULf5xBRuNkOOs4yq0Ju8tSEORPXp4zVk9gu6QarO
+sidebar_class_name: "get api-method"
+info_path: docs/api/llama-stack-specification
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Get a benchmark by its ID."}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/v1/eval/benchmarks/{benchmark_id}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Get a benchmark by its ID.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[{"name":"benchmark_id","in":"path","description":"The ID of the benchmark to get.","required":true,"schema":{"type":"string"}}]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={undefined}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"A Benchmark.","content":{"application/json":{"schema":{"type":"object","properties":{"identifier":{"type":"string"},"provider_resource_id":{"type":"string"},"provider_id":{"type":"string"},"type":{"type":"string","enum":["model","shield","vector_db","dataset","scoring_function","benchmark","tool","tool_group","prompt"],"const":"benchmark","default":"benchmark","description":"The resource type, always benchmark"},"dataset_id":{"type":"string","description":"Identifier of the dataset to use for the benchmark evaluation"},"scoring_functions":{"type":"array","items":{"type":"string"},"description":"List of scoring function identifiers to apply during evaluation"},"metadata":{"type":"object","additionalProperties":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}]},"description":"Metadata for this evaluation task"}},"additionalProperties":false,"required":["identifier","provider_id","type","dataset_id","scoring_functions","metadata"],"title":"Benchmark","description":"A benchmark resource for evaluating model performance."}}}},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

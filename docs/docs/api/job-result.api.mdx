@@ -1,0 +1,71 @@
+---
+id: job-result
+title: "Get the result of a job."
+description: "Get the result of a job."
+sidebar_label: "Get the result of a job."
+hide_title: true
+hide_table_of_contents: true
+api: eJztWMFu2zgQ/RVCpxZw7LTYolvfsttsN0CLBk56WKRFQUtjiy1FqiTlxjD87/uGlGzZcYKk6GG7iC+WKM1w5s17Q1KrzJGvrfHks/Eqe358zH8F+dypOihrsnF2WZLAW40Ows5EwN0XOx1mgyy3JpAJbCHrWqtcssXoi2ezVebzkirJV2FZExzZ6RfKAwxrZ2tyQaVJ52TIRVPfe1k6J5d4VwWq/CEnsigUG0l9vuPOGno/y8ZXGwvTaJ2tB5v7qbWapOkPmaaakuuP+OCUmfdHUkC9gTaS9af1enAAsl5aYuZsFZGjhdRNHBzCFSCyjh6U3d1QRn+fnf3+v0KSs4KLjoQz6wTJvBTIcyhO2yuhvJCikjWTNLe6qYwwsiIRrGDQKQIu53NHcxmo+Jy8/dcB2cfjXUqwIjjJNwlu00q5Zgzk4SxmUnsaQPbfGuWoQDZ91hxE6NMgCypoDuwilWISn2T7wZ0cKpUUHiOaYrmyWwtMt6nkIZn0W8lGXb3wT5NjmrRN70YGba+LD1M80uyFwwH9dnuf/NaQD+K79EIZ2KlCAINKakBRIcif1jV9kKHps1fB7RxM20/p78vLc5Hehi4K4hK0eOxTct/01DkEH18ecB1L64LwTVVJt+zWAorvfC8VZKhS0k5J09betM/jPLH2QSp935nT2zy1tga5ibKppDlyJAs5BaN6Njvh8EzKIGeT3yPLJ+/rRK6n4kR8mLxtk8kR/JRE4yEqSMyx4mhBogKpkCbXM1ZOyKltQpzc15SrGXRp87xxjjD9XlwPkmWqcFetDXh9Pkevh8HbpTHHcHJ+NhQT28xLvUR5tIbixeSvP8XL349fRmnStazqxIyOX6D6dr4/ZCEmieLbeO7J/FY5z18dVk6uFVQhSph7vgjWwtgsO8fsFUSYqwXhv7KNSdsRVdGjqB5F9YuJ6vmr7XyXYPo7ZnqrLN+X1j+2gSaAEF3nRAXDxmLDGia0qlQYinPsOBBQAHvkXEIkGg9dt1K9uG2l8uQWKD7gZCkR4GFiNYaugTdvJKiF4VFaj9L6haT1or9enTGzEbm4SGzfzt/K6+Qm5TswiqF434AJJKu4Kk0JC4+xAYDhWSuvgmaSd8I3JHaX40dRPYrq1xLV8aHZ7iGhqBKmmpx7zobPXxz6bqhvKCG3/cgku09MjE0E+AxoZBhsD6WsBOlw+oW+fTyR81GYT+DAuwQ1v35WrDPF/msZyoMnvbPXXWU2ZrHKjdk7hgo++vULE1xDg5sy7Y72fJRvA+KYHxQKDDiI+T4oDwsAIAOc0jJscBXxwtTjbLR4NuLERpuU/WjVR209QgQYS4GvRxvA044hod04Ln0ZQj0ejbB3OSqtR/mPtJaVPAJt8q/D3FYZx+EJZFBhGQ1fdw3z6hM/YwnF8Ft2vWV7ccH24qIVUqwA5ufJE2CLZwcw5L7jdxQo+z2h7zmUMgh00oWCk49G7P3Q5CjSkExRW7RUjx4WN17KoXu6JKqCv3Nwv3UzmZNPTqWjj4aFYV3sGDedT/mQpNFDnJx3Ub1DR9Y+iq8GjmhvjElLoDvUsQPBaruo3GXTEiXQdRjVGvtFnjWWc9VS5CrhyyTB35YmuBnvyYuZwsMbkrdkQWWZEOxrtZpie/rB6fWah7HDdcwEXMY1YsplBy8K5fm62DTBW3N7MmlF8FT8iIYP5t99hzP8nTR9QRtnuPxKy/2ewtL+CcHepfIfCLEtQPxgWGJlxBaAUU0PT/Kc6tAzu7Hl2GkXb04v0UD+BZtkZi4=
+sidebar_class_name: "get api-method"
+info_path: docs/api/llama-stack-specification
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Get the result of a job."}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/v1/eval/benchmarks/{benchmark_id}/jobs/{job_id}/result"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Get the result of a job.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[{"name":"benchmark_id","in":"path","description":"The ID of the benchmark to run the evaluation on.","required":true,"schema":{"type":"string"}},{"name":"job_id","in":"path","description":"The ID of the job to get the result of.","required":true,"schema":{"type":"string"}}]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={undefined}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"The result of the job.","content":{"application/json":{"schema":{"type":"object","properties":{"generations":{"type":"array","items":{"type":"object","additionalProperties":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}]}},"description":"The generations from the evaluation."},"scores":{"type":"object","additionalProperties":{"type":"object","properties":{"score_rows":{"type":"array","items":{"type":"object","additionalProperties":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}]}},"description":"The scoring result for each row. Each row is a map of column name to value."},"aggregated_results":{"type":"object","additionalProperties":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}]},"description":"Map of metric name to aggregated value"}},"additionalProperties":false,"required":["score_rows","aggregated_results"],"title":"ScoringResult","description":"A scoring result for a single row."},"description":"The scores from the evaluation."}},"additionalProperties":false,"required":["generations","scores"],"title":"EvaluateResponse","description":"The response from an evaluation."}}}},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

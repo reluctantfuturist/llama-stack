@@ -1,0 +1,71 @@
+---
+id: openai-retrieve-file-content
+title: "Returns the contents of the specified file."
+description: "Returns the contents of the specified file."
+sidebar_label: "Returns the contents of the specified file."
+hide_title: true
+hide_table_of_contents: true
+api: eJztV01v2zgQ/SuETi2Q2GmwRbe+ZfuxG6BFAyc9LNIgoKmxxZYitSTlxDD83/uGomK7TooEewpgX0xJ5MybN++R0rLwFBpnA4VitCyOj474r6SgvG6idrYYFRcVCS9vxFQbEsrZSDYKGYQUE22lX4g+xKA4KPJzjiKbxmglOcrwe+BQyyKoimrJo7hoCMHd5DupiIVRR8M3xjlYscLvoPjjQUT0X0shihsg0XYujS6F86KWZup8TeX/wdJ415CPuiMlRBnbsDFPI+yMPCZuw/rn4uJMdLPBU4kS7sq6Wxui13a2s/SD9wCfJh+A2FA5H0Vo65r5dVMRUTGlOTeVVpXQXdFeS/QCBQtp8/OUZ8Xxo9TmsZm72ZzaOIvaRNXW0h56kqWcoO0ba7bgcCZtUbNVj6jyxZc0kualOBFfx59yMQrgJyTaQKWIDp3FapqTqJ0nlMn9TJ0TcuLamJKHhpSeaiWcUq33hPS/4AIwWZa6y3e20dCpNIEOCtaP9tDJ6LLvcN+tO/Ku1rJMND1AXq9/MfWuThhOzk4HYuzaWWUWaI8x7iaI8cd34s2fR28GTBrdyrrplNHrC1Jf5/tLlmLcSXyN55HKz845fnu/c5TR7OAKywMPonNYbBd9YI4KIcz0nPBfuxZzmFtd095Ue1M9M1Mdv13nu4DSP7PSs7PCprX+dS08AYboVhGVTFs6+CIJo2sdB+LMkASgCPXImYRJDB76Qfbb64dOqkB+juaDTrYSgR4WVmvpFnxHXFGmYW+tvbWekbVeb55Xp6xsIBfnndrX+bO9TnYl35NRDsSXFkogWadTaUI4eKyLIAzPsr1KmsrWxF2L/S7w3lR7Uz0vUx3dl+0RFkouYanJWeBqPuJjLTD2baxjiq23IeHLzgg9Z5lOhOYvPf6YY74S6aclO6MhK/V135lrnnXd2wt+kV7WhF2A8y8LiwssSpM0G1Fz/kbGaodAPiRP3/cw0mcmFNAyl6zlCjrPr6YMat2z6Fv0cMfBWXerFaoHoMox+Bl1GJF+VAznr4ZdNTzihGG4zEhXw3VJ3cnd1dN6bkEVYzMaDvEOcVi5gDYcGiNreYj2qR8D5eqCswZCU3RcpIXv+43r8oqfsZQT2NzlT7xenPN6cZ4FnThHfk7eUTR/dQ9r7P+w5QS56c3NyLGSUWBHm2sE+WbFLz9sNpRe8smWjdMsCmnTC5D20InvxF2CVsH7np9KRaELKj19syxQ55Nzd4NP+GPFQDFeznpUn7EzmpBM0IBHbDPMSdbM00S6xcpyvd8/MUwWT6TbOGwM3u4YW2r6MsvmsutCJxzuDl8l8eB/tBZ6jwDNZo3wwuVygjfHr96sVnwbWvYsDgzT9j1hJUAqpQ48Lu/2pwdrezHOLngpnuaee8vMN6FqLkualq8w/EGLDQuvrjC1wmGAU4/Rdk9PlKImbqzbOWW3fPj3hws48ydlsm9W
+sidebar_class_name: "get api-method"
+info_path: docs/api/llama-stack-specification
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Returns the contents of the specified file."}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/v1/openai/v1/files/{file_id}/content"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Returns the contents of the specified file.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[{"name":"file_id","in":"path","description":"The ID of the file to use for this request.","required":true,"schema":{"type":"string"}}]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={undefined}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"The raw file content as a binary response.","content":{"application/json":{"schema":{"type":"object","title":"Response"}}}},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

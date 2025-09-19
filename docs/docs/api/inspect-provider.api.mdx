@@ -1,0 +1,71 @@
+---
+id: inspect-provider
+title: "Get detailed information about a specific provider."
+description: "Get detailed information about a specific provider."
+sidebar_label: "Get detailed information about a specific provider."
+hide_title: true
+hide_table_of_contents: true
+api: eJztWE1v2zgQ/SuELtsCiZ0GW7T1Ldt2uwFaJMjHYZEGxZgcW2wpUiUpN4bh/74zlGRLtrP1FnsJ4FwiS8OZNzPvDUUtMo+hdDZgyEaL7PTkhP8pDNLrMmpns1F2Ji69m2mF/txOnHDjryijkM5G0FbbqYg5irIx+S0IhfTAhEF2lLER2sg+oSyNlsA+h18DO15kQeZYAF/FeYkUqvZNC8ldiT7qGhaUumMUoqeoZNSHeUMozi7PhYUCCZIOK0xCF6XBgoCEbJl8p9tftPq511urv1coyN5GPdHkbOJ8L+Oey9rZPlDZQrjJDpCpRuyVqjfR013lAaU0W4G57BXKWbyYZKO71QpbGUOuVr/HzhkE271lq2KcsthE3bkD3sO8e6NBsrxfbub2NoGufMpClOCpHRF92Fm3HMHE/KllWHlPbRI1eBGoYVXgVvazWz6WxARMwCMS3vdKeyQO3iWC94m5yakVG1ZFuz/Koo6GsXb1uUU2vumLuh0wdlUUIDxOdaCuoOrwz0pTKdazjkHIXhvBqn66A8qPM/x918BgenN2GKL4AYE8z8BoJYgABRhGg+r/Gw41oI6dJrdT6sBmIf66ublsuyWdQiZgU8GfCfa998xeNj6i8oXc+ShCVRTg523nMdn8yLXMha6T9hqIJ0x8sM3zFCdRiofkvpFraw5tnKXcRF4VYI89goKxQdFZ04PDkbSlnK3cI8tnF2XN1ufiTNxefWySkQR+jKIKxJboqLO0GmcoCudpMG6xi4OHEiVNSymclEktEjdw/Rd1NB1uu7UqXkcBqUyPFK/d4cTEuyJhoG1iIK5cNc3NnNpjjPsRxNWfb8Wr1yevBlw0fAAex11+EdXX8f4AJa5qiq/x7Mn8Rjmnb3YrRxqdpgstD3wRnaPFdt46Zq9EhKmeIf0vXEU2XFtd4EFUB1E9MVGdvlnHuyGmf2KmN8oKXWn97SrSBFUIHySi4rKx2CCiMLrQcSAuad8nQJHYA1N6NRWGHvp2p3r52E4V0M+o+VROllLaE6k3lcUHqnekX9iU4SCtg7SekLRedverc2Y2IRfXNdvX8Rt5nW1Tvi2GGoiLipiAUKRdaYy08ViXjkOqlZfCCVQm7jg9/ovjg6gOonpaojrZFW0PCSWVMNVgGjib9sQWGH8f7weMTavJy3ZlYV3X9ujGX1q4dsnsXCX2s1H8sjqNkl5WJ/F0euavJGTYP3Jqjl8CHS53fbE4f7d5yGUmNKEYw7pd0VfUvi3xtsfuJSVNWHLHWKeY5MxRR9lw9mLYeg/DRQfekozqrbpOoPJc8zzGcjQc0kvDce7oRKuOjYECjqlf8ttAuiLjWAGpCzrO08J37aS6u+dnXOEEsWnrR14vrnm9uG4qXX+ROco4eF2P2YsdJWLBhx71oSvGrueYQ2zLGD5bsfFHTcb0Vo9WlY5mWUhHcPKiPY0tX7O5PqzzZJ+AxFA7BY+f+cuccT5Jddv5mE8nhsTrYdqi+kSjkD/Z8bcsqiPNFa5JQ5JfY2SvOov1oP9Fdw2FIj7EYWno9Y6xJhIsGvLc1V1Z0YeuR11+U7OZI2y4WIzpVfHWm+WSb9Pbpmdy0GWa12NmAlFF6cDXajWQHs3p2VXD/ediL6nszKb9FGXnzDUwFf+iy28435Bq+iqV0+AnaTPQ2uJMSixjZ+3WjtoT3of3NyTFfwC2d7gp
+sidebar_class_name: "get api-method"
+info_path: docs/api/llama-stack-specification
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Get detailed information about a specific provider."}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/v1/providers/{provider_id}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Get detailed information about a specific provider.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[{"name":"provider_id","in":"path","description":"The ID of the provider to inspect.","required":true,"schema":{"type":"string"}}]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={undefined}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"A ProviderInfo object containing the provider's details.","content":{"application/json":{"schema":{"type":"object","properties":{"api":{"type":"string","description":"The API name this provider implements"},"provider_id":{"type":"string","description":"Unique identifier for the provider"},"provider_type":{"type":"string","description":"The type of provider implementation"},"config":{"type":"object","additionalProperties":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}]},"description":"Configuration parameters for the provider"},"health":{"type":"object","additionalProperties":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}]},"description":"Current health status of the provider"}},"additionalProperties":false,"required":["api","provider_id","provider_type","config","health"],"title":"ProviderInfo","description":"Information about a registered provider including its configuration and health status."}}}},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

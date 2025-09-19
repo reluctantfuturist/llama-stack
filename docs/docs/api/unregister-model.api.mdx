@@ -1,0 +1,71 @@
+---
+id: unregister-model
+title: "Unregister a model."
+description: "Unregister a model."
+sidebar_label: "Unregister a model."
+hide_title: true
+hide_table_of_contents: true
+api: eJztV11v2zYU/SuEnlogsdOgRVe/ZWuGBUuRIHEehjQoaOraYkuRGkk5MQz9955LybZcO0P2GMB5MSXez3PPIZVl5ilUzgYK2WiZnZ6c8E9OQXldRe1sNsqu/s6ao+z9vq1xQcLTvzWFKB5lENrOpdG5cF6U0kydLynPjjLlbCQb2V9WldFKsv/we+AgyyyogkrJq7ioCGHd5DupCMfKu4p81G11IcpYh56dRtgZeRhul/XXeHwtWmuhXE5cf9TRUM83RK/tbMf13HsUn4yPhBShcD6KUJel9AvhpiKiY0o2j4VWhdBt015LGwUaFtJ2+ylPw/Gj1OalmVtrTm2cRW+iqEtpjz3JXE4MiZ7PVjmcSVv0bNULunxzlVbSvBVn4u7msmtGofgJiTpQLqLDZOFNcxKl84Q2eZ5pckJOXB1T8lCR0lOthFOq9p6Q/pe6UJjMc93mu+4NdCpNoKOM+aM9eDK6X014Na01eA/r+bUwPQPeisti6l2Zaji7vhiIG1fPCrPAeIxxj0Hc/PmH+PjbyccBg0ZPsqxaZqz4Bapv8v0uc3HTUnxTzwuZ3zTc/fvTT/uVo4yGKkQB98CL6Byc7WIVmKOCCDM9J/yWroYNY6tLOojqIKpXJqrTT5t8YzD9CzO9U1boS+sfV0MTQIieFFHOsLHYZCRhdKnjQFwbkigogj1yJiESg00/6PT24bmbKpCfY/iAk6VEgIeJVVt6At4RT9TBcJDWQVqvSFof+vfVBTMblYvblu2b/J28znYpvwIjH4irGkwgWaZbaUK4eKyLAAx7nbxymsraxF2J/Vfgg6gOonpdojrZl+0FEkoqYarJWeBuvoB6JnDx28XeWU8zHSBWjLlkowFSMDAJ3QtAkdVrm2/JgsUgvSwJbzj4MrN4gGHa/aZZZpqDVzIWO/DwFahzSJDl7FcDSq486E0yLmQzkOhrDGhHnh2pmgadoaDCccEIhdpSmShglA3n74YpQRguVzU22G5v4raF2jOkRYzVaDjEN8Fx4VBEfmyMLOUxxqF+DJQrM04UCCDruEiOn1cH0f0D7zE1U33d1C7ZX9yyv7jtCJqgRX5O3oIyf7cHJ9Zz2GK27GutHzkWMgqcUHMgG75a8csfDg9KH+1k88rhqAo4G9IHjfY4lXxL1hxICj7H/FQqCm1Q6emrZcI5n5S4G3zC/3wYaNPL2aqqlm6J1BVwxLHBmHQ02c+5re6Xm3P6GfNu/pGe4rAy+PriXGmIy27s9y2q7eCxGK3piTHxdNlkuZzgG+7Om6bh1/gM9DxWLNNBOuEZYsi5DrzO1yfFs9W+ueko+1b8L6bv7ad7CToyW6Sp+QnLH7Toy615gG2BYxn3D1fbbp8pRVXsOe7cd1ui+Xx+eT4+h5J+AqV4HXo=
+sidebar_class_name: "delete api-method"
+info_path: docs/api/llama-stack-specification
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Unregister a model."}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"delete"}
+  path={"/v1/models/{model_id}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Unregister a model.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[{"name":"model_id","in":"path","description":"The identifier of the model to unregister.","required":true,"schema":{"type":"string"}}]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={undefined}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"OK"},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

@@ -1,0 +1,71 @@
+---
+id: get-training-jobs
+title: "Get all training jobs."
+description: "Get all training jobs."
+sidebar_label: "Get all training jobs."
+hide_title: true
+hide_table_of_contents: true
+api: eJztWNtu2zgQ/ZWBnlrAlzTYotu8pd1uN4sWNRz3YZEGwUgaW0wpUktSTgzD/74zlFTLzqUpsC8BnBdJ0VzPnEOKXieOfGWNJ5+crJPjoyO55OQzp6qgrElOklP4pHyYWB9mDpVRZvG3Tf209RslgySzJpAJ4opVpVWG4jq+9uK/TnxWUIlyF1YVcUSbXlMW2LFytiIXVJM9x9C3QudwxUYqUOl/7n1t06u6VnnP0gfH1SabzSDBPFdSFOpJz2uO2tOAMfi3Vo7Y9WIb5nKQBBW0xNnrnQP+SsTYVi/aY2hKaI79231zmBUEEpd8gBv0oMwStcrBOihRz60rOd//NgwfMNR92BWHXZBjw92y/prNJtBYQ2ZzbuFHq/uD2Hf94BwXH40HgOAL6wL4uizRrcDOIXDHFG1uCpUVoJqmnUITgBsGNO37mGcj8QMq/dTMjbWk1tZwb1DUJZqhI8wx1QQ9n51yJJMy3LPJntDliy9Vw5OXcApfp5/aZjIuPiWoPeUQLE+WvWlJUFpH3KbMM04OMLV1iMl9RZmaqwxsltXOEaffq+tXeNlOuJvWD/B6VI0wPQBet3DA3Nky1nA6ORvB1NaLQq94PFrbGw/TP9/Dm9+P3owENLrFsmqY0fGLqb7N9w5zmDYU39bzROa3yjl+e79yMq1YFVCwu5ebYC07m1UXWKIyERZqSXwtbc02gq0q6SCqg6iemaiO327zzZjpn4XprbJ8X1r/2Jo1wQjRbUaUC2wiNgwEWpUqjGCiCbmgwOzBBe9YoPmlG7V6e/3QTuXJLXn4DKdIiRgeIVZt6JbxDvxELQwHaR2k9Yyk9bq/X50Js7lyOG/Yvs3fyuv0LuU7MPIRfKmZCYRl3JVS4o3H2MCA8btWXjnNsdbhno/yRwIfRHUQ1fMS1dF92Z4goagSoRouvHTTP1bBi/e2lOu5tealNLTbwEcKgFrzxtba88nPy2lW8IqgnzFCyYLCVWdyJSYiEnRYEktfknJgvi9saxxfh4IfxstX44oLGnbu49a92RrFd53UTnosQqhOxmPepIcFe1A+1BpLHDI+2fdRZstkcyl+3LUKq+j4R7cyXFzKO+FKZGF3yBR/OBd/OG8ZE5vi/JK8wWD56s5cZ4UIzO9QDfvk70cOBQbgJWOpOMg3A3t/rGaKX9Fk8sry2uFZrPELQzleJlzDnlzAl4XFzTEj3wRFR9+MMMC6KI27wVM5DWgWi8NFV9VnXnq0jywT5FnHgonhYT028B0A1tu182GPVuuBbsO40vxSMsZRrtvpXzTY7syfnyMDeFwyZTFar1P+uPrq9GYj/+bvM7dqOBVXuFRmyQNmB16OeN2VyX+nlcgiy6gStvFRqI4/l+yv85s+Mz9+mLFY/gOcC0Tx
+sidebar_class_name: "get api-method"
+info_path: docs/api/llama-stack-specification
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Get all training jobs."}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/v1/post-training/jobs"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Get all training jobs.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={undefined}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"A ListPostTrainingJobsResponse.","content":{"application/json":{"schema":{"type":"object","properties":{"data":{"type":"array","items":{"type":"object","properties":{"job_uuid":{"type":"string"}},"additionalProperties":false,"required":["job_uuid"],"title":"PostTrainingJob"}}},"additionalProperties":false,"required":["data"],"title":"ListPostTrainingJobsResponse"}}}},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

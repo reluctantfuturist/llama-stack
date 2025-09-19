@@ -1,0 +1,71 @@
+---
+id: register-benchmark
+title: "Register a benchmark."
+description: "Register a benchmark."
+sidebar_label: "Register a benchmark."
+hide_title: true
+hide_table_of_contents: true
+api: eJztWFtPGzkU/ivWPO1KkFDUqlveoO1q0bYChfRhRSPk8ZxkXDz2rO0JRFH+e8+x5wohpd19QUoeyMT2uX/fOR7WiQVXGu3AJSfr5PjoiL4ycMLK0kujk5Pk4u9kc5C83rY1zYFZ+LcC59kdd0zqJVcyY8aygqu5sQVkyUEijPagPcnzslRScJIff3OkZJ04kUPB6cmvSkC1Jv0GwqNgaU0J1svonfPcV653TqLaBVg8OHTrr+n0ksXTTJgMyH8vvYKerPNW6sUj0Y/WovPh8AHjzOXGeuaqouB2xcyceYwYwpm7XIqcyRi0lVx7hgEzruv9YGdD+j2X6rmW42kyrYzG2FheFVwfWuAZTxWwnszAHbIkNcasxTOi/O0iPHH1OztlXyaf6mAEOp8CqxxkzBusLErDElhhLGCYVM9QOcZTU/lg3JUg5FwKZoSorAU0/8AvdIxnmYz2LnsFnXPl4CAh/EiLODm5bircVKtN3qytX0zTE8lrsMzm1hTBh9PL8xGbmGqRqxWWRylz59jkz/fs7R9Hb0eUNLjnRRmR0eALod7ZO+MZm0SId/48E/mbDUX/+vjdduYIJZEVLEdxRw/eGBTWq0YxaUUgLOQS8LswFZ6h3MoC9qTak+qFker4XWdvikj/TEivmeX61PrHVMgJzBDcC4CM0kZk4x6YkoX0I3apgKNDHtHDFxxJonDTjmq+vXlqUjmwSyw+ppOoBJgeAlal4R7z7fEX1GnYU2tPrRdErTf9eXVOyEbP2VVEe2e/ptfpY8g3ychG7KJCJAAvwlRKAQePNh4Thns1vTKY80r5xxTbpXhPqj2pXhapjrZZewaFAksIanzhKJozzEaOwLl1FMDQ4QkspEO6YqHT5tgIDVF6Qo7PMSGYm3jqpj1DpOCWF4CrZGQWE4iD9MxkK4rifyJba/FGZj8GFM3Y8w9N5VvZiKIYQ8h2xj2Ob/8LOmtJ0lhRhYlhfVNBvROGVN3MKy1IS79ZcGv5Co1ID4V7bH2zzXytj7X6dpvHDC5l1i/XLwTaKBlm8RlG/4OpnQYQa5yyvw0z25m9ToyGiznCs5XQlVKorP2dGoM3Od1f0lWRgu2vtKV5UMTeQu3JZra1fo3ruwL8mf40qOsAzduw1+taDd3bltC8V4aG0ZnwtoKY8txQAyhNePcsuc/x13j5agz4sjlOu86ChsO0dyHblaUmlXtfnozHeMs+zFEBZIdK8YIfYoMTtyNhCswXyWHbkn4VBD80o/16RnvULSZdX/nYNckhtHs46zG7W91CyOtmd/YkYTr5Abi75R4kN2HwzU1AZ53tTxQtu6Jo2VU9oEIXRFFKVQTI8tUWetA8d4PJxvuztq/Z59w3FHJfNXvwwcsDhJd20Flp8Kri8G4QXmikxVuJjcMqo/ZC9xg75wJcVMotfNU0cIwNk/ix8pT++aBwNlu+aLz6jDcd5WJPwKrjtYFyonFW7Jg3g/h7w+NJgZp3Hu79uFT4Bkb2AuzWNUyvY2YJqPiVDoYgwZFOrNcpouWLVZsNLSPQ7CpOs3CXSqmM18TpHC8+2BQIoreAR5L30cPDKflBx1UVGsPDUUc9IkqcCgGl33l21qPc5cXVlPyux2lB90ecxPwOF+nvSRLGdDtewto6UVwvKiwG7ked9PkODfB7hg==
+sidebar_class_name: "post api-method"
+info_path: docs/api/llama-stack-specification
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Register a benchmark."}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/v1/eval/benchmarks"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Register a benchmark.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"benchmark_id":{"type":"string","description":"The ID of the benchmark to register."},"dataset_id":{"type":"string","description":"The ID of the dataset to use for the benchmark."},"scoring_functions":{"type":"array","items":{"type":"string"},"description":"The scoring functions to use for the benchmark."},"provider_benchmark_id":{"type":"string","description":"The ID of the provider benchmark to use for the benchmark."},"provider_id":{"type":"string","description":"The ID of the provider to use for the benchmark."},"metadata":{"type":"object","additionalProperties":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}]},"description":"The metadata to use for the benchmark."}},"additionalProperties":false,"required":["benchmark_id","dataset_id","scoring_functions"],"title":"RegisterBenchmarkRequest"}}},"required":true}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"OK"},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      
