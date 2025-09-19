@@ -29,32 +29,49 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
-/* Custom styles for Llama Stack */
-.hero--primary {
-  --ifm-hero-background-color: var(--ifm-color-primary);
+/* Sidebar Method labels */
+.api-method>.menu__link {
+  align-items: center;
+  justify-content: start;
 }
 
-/* Code block improvements */
-.prism-code {
-  font-size: 14px;
+.api-method>.menu__link::before {
+  width: 50px;
+  height: 20px;
+  font-size: 12px;
+  line-height: 20px;
+  text-transform: uppercase;
+  font-weight: 600;
+  border-radius: 0.25rem;
+  border: 1px solid;
+  margin-right: var(--ifm-spacing-horizontal);
+  text-align: center;
+  flex-shrink: 0;
+  border-color: transparent;
+  color: white;
 }
 
-/* Table improvements */
-table {
-  display: table;
-  width: 100%;
+.get>.menu__link::before {
+  content: "get";
+  background-color: var(--ifm-color-primary);
 }
 
-/* Admonition styles */
-.alert {
-  margin-bottom: 1rem;
+.put>.menu__link::before {
+  content: "put";
+  background-color: var(--openapi-code-blue);
 }
 
-/* Language tabs styling */
-.tabs {
-  margin-bottom: 1rem;
+.post>.menu__link::before {
+  content: "post";
+  background-color: var(--openapi-code-green);
 }
 
-.tabs__item {
-  border-radius: 0.25rem 0.25rem 0 0;
+.delete>.menu__link::before {
+  content: "del";
+  background-color: var(--openapi-code-red);
+}
+
+.patch>.menu__link::before {
+  content: "patch";
+  background-color: var(--openapi-code-orange);
 }

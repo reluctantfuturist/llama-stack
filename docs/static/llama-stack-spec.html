@@ -62,9 +62,7 @@
                 "tags": [
                     "DatasetIO"
                 ],
-                "summary": "Append rows to a dataset.",
                 "description": "Append rows to a dataset.",
-                "operationId": "append_rows",
                 "parameters": [
                     {
                         "name": "dataset_id",
@@ -117,9 +115,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "Generate chat completions for a batch of messages using the specified model.",
                 "description": "Generate chat completions for a batch of messages using the specified model.",
-                "operationId": "batch_chat_completion",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -162,9 +158,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "Generate completions for a batch of content using the specified model.",
                 "description": "Generate completions for a batch of content using the specified model.",
-                "operationId": "batch_completion",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -200,9 +194,7 @@
                 "tags": [
                     "PostTraining (Coming Soon)"
                 ],
-                "summary": "Cancel a training job.",
                 "description": "Cancel a training job.",
-                "operationId": "cancel_training_job",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -250,9 +242,7 @@
                 "tags": [
                     "BatchInference (Coming Soon)"
                 ],
-                "summary": "Generate a chat completion for the given messages using the specified model.",
                 "description": "Generate a chat completion for the given messages using the specified model.",
-                "operationId": "chat_completion",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -300,9 +290,7 @@
                 "tags": [
                     "BatchInference (Coming Soon)"
                 ],
-                "summary": "Generate a completion for the given content using the specified model.",
                 "description": "Generate a completion for the given content using the specified model.",
-                "operationId": "completion",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -345,9 +333,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "List all agents.",
                 "description": "List all agents.",
-                "operationId": "list_agents",
                 "parameters": [
                     {
                         "name": "start_index",
@@ -397,9 +383,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Create an agent with the given configuration.",
                 "description": "Create an agent with the given configuration.",
-                "operationId": "create_agent",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -442,9 +426,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Create a new session for an agent.",
                 "description": "Create a new session for an agent.",
-                "operationId": "create_agent_session",
                 "parameters": [
                     {
                         "name": "agent_id",
@@ -502,9 +484,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Create a new turn for an agent.",
                 "description": "Create a new turn for an agent.",
-                "operationId": "create_agent_turn",
                 "parameters": [
                     {
                         "name": "agent_id",
@@ -566,9 +546,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "List all OpenAI responses.",
                 "description": "List all OpenAI responses.",
-                "operationId": "list_openai_responses",
                 "parameters": [
                     {
                         "name": "after",
@@ -641,9 +619,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Create a new OpenAI response.",
                 "description": "Create a new OpenAI response.",
-                "operationId": "create_openai_response",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -686,9 +662,7 @@
                 "tags": [
                     "Prompts"
                 ],
-                "summary": "List all prompts.",
                 "description": "List all prompts.",
-                "operationId": "list_prompts",
                 "parameters": []
             },
             "post": {
@@ -719,9 +693,7 @@
                 "tags": [
                     "Prompts"
                 ],
-                "summary": "Create a new prompt.",
                 "description": "Create a new prompt.",
-                "operationId": "create_prompt",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -764,9 +736,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Describe an agent by its ID.",
                 "description": "Describe an agent by its ID.",
-                "operationId": "get_agent",
                 "parameters": [
                     {
                         "name": "agent_id",
@@ -800,9 +770,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Delete an agent by its ID and its associated sessions and turns.",
                 "description": "Delete an agent by its ID and its associated sessions and turns.",
-                "operationId": "delete_agent",
                 "parameters": [
                     {
                         "name": "agent_id",
@@ -845,9 +813,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Retrieve an agent session by its ID.",
                 "description": "Retrieve an agent session by its ID.",
-                "operationId": "get_agents_session",
                 "parameters": [
                     {
                         "name": "session_id",
@@ -902,9 +868,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Delete an agent session by its ID and its associated turns.",
                 "description": "Delete an agent session by its ID and its associated turns.",
-                "operationId": "delete_agents_session",
                 "parameters": [
                     {
                         "name": "session_id",
@@ -956,9 +920,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Retrieve an OpenAI response by its ID.",
                 "description": "Retrieve an OpenAI response by its ID.",
-                "operationId": "get_openai_response",
                 "parameters": [
                     {
                         "name": "response_id",
@@ -999,9 +961,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Delete an OpenAI response by its ID.",
                 "description": "Delete an OpenAI response by its ID.",
-                "operationId": "delete_openai_response",
                 "parameters": [
                     {
                         "name": "response_id",
@@ -1044,9 +1004,7 @@
                 "tags": [
                     "Prompts"
                 ],
-                "summary": "Get a prompt by its identifier and optional version.",
                 "description": "Get a prompt by its identifier and optional version.",
-                "operationId": "get_prompt",
                 "parameters": [
                     {
                         "name": "prompt_id",
@@ -1096,9 +1054,7 @@
                 "tags": [
                     "Prompts"
                 ],
-                "summary": "Update an existing prompt (increments version).",
                 "description": "Update an existing prompt (increments version).",
-                "operationId": "update_prompt",
                 "parameters": [
                     {
                         "name": "prompt_id",
@@ -1142,9 +1098,7 @@
                 "tags": [
                     "Prompts"
                 ],
-                "summary": "Delete a prompt.",
                 "description": "Delete a prompt.",
-                "operationId": "delete_prompt",
                 "parameters": [
                     {
                         "name": "prompt_id",
@@ -1187,9 +1141,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "Generate embeddings for content pieces using the specified model.",
                 "description": "Generate embeddings for content pieces using the specified model.",
-                "operationId": "embeddings",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -1232,9 +1184,7 @@
                 "tags": [
                     "Eval"
                 ],
-                "summary": "Evaluate a list of rows on a benchmark.",
                 "description": "Evaluate a list of rows on a benchmark.",
-                "operationId": "evaluate_rows",
                 "parameters": [
                     {
                         "name": "benchmark_id",
@@ -1287,9 +1237,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Retrieve an agent step by its ID.",
                 "description": "Retrieve an agent step by its ID.",
-                "operationId": "get_agents_step",
                 "parameters": [
                     {
                         "name": "agent_id",
@@ -1359,9 +1307,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Retrieve an agent turn by its ID.",
                 "description": "Retrieve an agent turn by its ID.",
-                "operationId": "get_agents_turn",
                 "parameters": [
                     {
                         "name": "agent_id",
@@ -1422,9 +1368,7 @@
                 "tags": [
                     "Benchmarks"
                 ],
-                "summary": "Get a benchmark by its ID.",
                 "description": "Get a benchmark by its ID.",
-                "operationId": "get_benchmark",
                 "parameters": [
                     {
                         "name": "benchmark_id",
@@ -1467,9 +1411,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "Describe a chat completion by its ID.",
                 "description": "Describe a chat completion by its ID.",
-                "operationId": "get_chat_completion",
                 "parameters": [
                     {
                         "name": "completion_id",
@@ -1512,9 +1454,7 @@
                 "tags": [
                     "Datasets"
                 ],
-                "summary": "Get a dataset by its ID.",
                 "description": "Get a dataset by its ID.",
-                "operationId": "get_dataset",
                 "parameters": [
                     {
                         "name": "dataset_id",
@@ -1548,9 +1488,7 @@
                 "tags": [
                     "Datasets"
                 ],
-                "summary": "Unregister a dataset by its ID.",
                 "description": "Unregister a dataset by its ID.",
-                "operationId": "unregister_dataset",
                 "parameters": [
                     {
                         "name": "dataset_id",
@@ -1593,9 +1531,7 @@
                 "tags": [
                     "Models"
                 ],
-                "summary": "Get a model by its identifier.",
                 "description": "Get a model by its identifier.",
-                "operationId": "get_model",
                 "parameters": [
                     {
                         "name": "model_id",
@@ -1629,9 +1565,7 @@
                 "tags": [
                     "Models"
                 ],
-                "summary": "Unregister a model.",
                 "description": "Unregister a model.",
-                "operationId": "unregister_model",
                 "parameters": [
                     {
                         "name": "model_id",
@@ -1674,9 +1608,7 @@
                 "tags": [
                     "ScoringFunctions"
                 ],
-                "summary": "Get a scoring function by its ID.",
                 "description": "Get a scoring function by its ID.",
-                "operationId": "get_scoring_function",
                 "parameters": [
                     {
                         "name": "scoring_fn_id",
@@ -1719,9 +1651,7 @@
                 "tags": [
                     "Shields"
                 ],
-                "summary": "Get a shield by its identifier.",
                 "description": "Get a shield by its identifier.",
-                "operationId": "get_shield",
                 "parameters": [
                     {
                         "name": "identifier",
@@ -1755,9 +1685,7 @@
                 "tags": [
                     "Shields"
                 ],
-                "summary": "Unregister a shield.",
                 "description": "Unregister a shield.",
-                "operationId": "unregister_shield",
                 "parameters": [
                     {
                         "name": "identifier",
@@ -1800,9 +1728,7 @@
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Get a span by its ID.",
                 "description": "Get a span by its ID.",
-                "operationId": "get_span",
                 "parameters": [
                     {
                         "name": "trace_id",
@@ -1854,9 +1780,7 @@
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Get a span tree by its ID.",
                 "description": "Get a span tree by its ID.",
-                "operationId": "get_span_tree",
                 "parameters": [
                     {
                         "name": "span_id",
@@ -1909,9 +1833,7 @@
                 "tags": [
                     "ToolGroups"
                 ],
-                "summary": "Get a tool by its name.",
                 "description": "Get a tool by its name.",
-                "operationId": "get_tool",
                 "parameters": [
                     {
                         "name": "tool_name",
@@ -1954,9 +1876,7 @@
                 "tags": [
                     "ToolGroups"
                 ],
-                "summary": "Get a tool group by its ID.",
                 "description": "Get a tool group by its ID.",
-                "operationId": "get_tool_group",
                 "parameters": [
                     {
                         "name": "toolgroup_id",
@@ -1990,9 +1910,7 @@
                 "tags": [
                     "ToolGroups"
                 ],
-                "summary": "Unregister a tool group.",
                 "description": "Unregister a tool group.",
-                "operationId": "unregister_toolgroup",
                 "parameters": [
                     {
                         "name": "toolgroup_id",
@@ -2035,9 +1953,7 @@
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Get a trace by its ID.",
                 "description": "Get a trace by its ID.",
-                "operationId": "get_trace",
                 "parameters": [
                     {
                         "name": "trace_id",
@@ -2080,9 +1996,7 @@
                 "tags": [
                     "PostTraining (Coming Soon)"
                 ],
-                "summary": "Get the artifacts of a training job.",
                 "description": "Get the artifacts of a training job.",
-                "operationId": "get_training_job_artifacts",
                 "parameters": [
                     {
                         "name": "job_uuid",
@@ -2125,9 +2039,7 @@
                 "tags": [
                     "PostTraining (Coming Soon)"
                 ],
-                "summary": "Get the status of a training job.",
                 "description": "Get the status of a training job.",
-                "operationId": "get_training_job_status",
                 "parameters": [
                     {
                         "name": "job_uuid",
@@ -2170,9 +2082,7 @@
                 "tags": [
                     "PostTraining (Coming Soon)"
                 ],
-                "summary": "Get all training jobs.",
                 "description": "Get all training jobs.",
-                "operationId": "get_training_jobs",
                 "parameters": []
             }
         },
@@ -2205,9 +2115,7 @@
                 "tags": [
                     "VectorDBs"
                 ],
-                "summary": "Get a vector database by its identifier.",
                 "description": "Get a vector database by its identifier.",
-                "operationId": "get_vector_db",
                 "parameters": [
                     {
                         "name": "vector_db_id",
@@ -2241,9 +2149,7 @@
                 "tags": [
                     "VectorDBs"
                 ],
-                "summary": "Unregister a vector database.",
                 "description": "Unregister a vector database.",
-                "operationId": "unregister_vector_db",
                 "parameters": [
                     {
                         "name": "vector_db_id",
@@ -2286,9 +2192,7 @@
                 "tags": [
                     "Inspect"
                 ],
-                "summary": "Get the current health status of the service.",
                 "description": "Get the current health status of the service.",
-                "operationId": "health",
                 "parameters": []
             }
         },
@@ -2314,9 +2218,7 @@
                 "tags": [
                     "ToolRuntime"
                 ],
-                "summary": "Index documents so they can be used by the RAG system.",
                 "description": "Index documents so they can be used by the RAG system.",
-                "operationId": "insert",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -2352,9 +2254,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Insert chunks into a vector database.",
                 "description": "Insert chunks into a vector database.",
-                "operationId": "insert_chunks",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -2397,9 +2297,7 @@
                 "tags": [
                     "Providers"
                 ],
-                "summary": "Get detailed information about a specific provider.",
                 "description": "Get detailed information about a specific provider.",
-                "operationId": "inspect_provider",
                 "parameters": [
                     {
                         "name": "provider_id",
@@ -2442,9 +2340,7 @@
                 "tags": [
                     "ToolRuntime"
                 ],
-                "summary": "Run a tool with the given arguments.",
                 "description": "Run a tool with the given arguments.",
-                "operationId": "invoke_tool",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -2487,9 +2383,7 @@
                 "tags": [
                     "DatasetIO"
                 ],
-                "summary": "Get a paginated list of rows from a dataset.",
                 "description": "Get a paginated list of rows from a dataset.\nUses offset-based pagination where:\n- start_index: The starting index (0-based). If None, starts from beginning.\n- limit: Number of items to return. If None or -1, returns all items.\n\nThe response includes:\n- data: List of items for the current page.\n- has_more: Whether there are more items available after this set.",
-                "operationId": "iterrows",
                 "parameters": [
                     {
                         "name": "dataset_id",
@@ -2550,9 +2444,7 @@
                 "tags": [
                     "Eval"
                 ],
-                "summary": "Get the status of a job.",
                 "description": "Get the status of a job.",
-                "operationId": "job_status",
                 "parameters": [
                     {
                         "name": "benchmark_id",
@@ -2595,9 +2487,7 @@
                 "tags": [
                     "Eval"
                 ],
-                "summary": "Cancel a job.",
                 "description": "Cancel a job.",
-                "operationId": "job_cancel",
                 "parameters": [
                     {
                         "name": "benchmark_id",
@@ -2649,9 +2539,7 @@
                 "tags": [
                     "Eval"
                 ],
-                "summary": "Get the result of a job.",
                 "description": "Get the result of a job.",
-                "operationId": "job_result",
                 "parameters": [
                     {
                         "name": "benchmark_id",
@@ -2703,9 +2591,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "List all session(s) of a given agent.",
                 "description": "List all session(s) of a given agent.",
-                "operationId": "list_agent_sessions",
                 "parameters": [
                     {
                         "name": "agent_id",
@@ -2766,9 +2652,7 @@
                 "tags": [
                     "Benchmarks"
                 ],
-                "summary": "List all benchmarks.",
                 "description": "List all benchmarks.",
-                "operationId": "list_benchmarks",
                 "parameters": []
             },
             "post": {
@@ -2792,9 +2676,7 @@
                 "tags": [
                     "Benchmarks"
                 ],
-                "summary": "Register a benchmark.",
                 "description": "Register a benchmark.",
-                "operationId": "register_benchmark",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -2837,9 +2719,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "List all chat completions.",
                 "description": "List all chat completions.",
-                "operationId": "list_chat_completions",
                 "parameters": [
                     {
                         "name": "after",
@@ -2914,9 +2794,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "Generate an OpenAI-compatible chat completion for the given messages using the specified model.",
                 "description": "Generate an OpenAI-compatible chat completion for the given messages using the specified model.",
-                "operationId": "openai_chat_completion",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -2959,9 +2837,7 @@
                 "tags": [
                     "Datasets"
                 ],
-                "summary": "List all datasets.",
                 "description": "List all datasets.",
-                "operationId": "list_datasets",
                 "parameters": []
             },
             "post": {
@@ -2992,9 +2868,7 @@
                 "tags": [
                     "Datasets"
                 ],
-                "summary": "Register a new dataset.",
                 "description": "Register a new dataset.",
-                "operationId": "register_dataset",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -3037,9 +2911,7 @@
                 "tags": [
                     "Models"
                 ],
-                "summary": "List all models.",
                 "description": "List all models.",
-                "operationId": "list_models",
                 "parameters": []
             },
             "post": {
@@ -3070,9 +2942,7 @@
                 "tags": [
                     "Models"
                 ],
-                "summary": "Register a model.",
                 "description": "Register a model.",
-                "operationId": "register_model",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -3115,9 +2985,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "List input items for a given OpenAI response.",
                 "description": "List input items for a given OpenAI response.",
-                "operationId": "list_openai_response_input_items",
                 "parameters": [
                     {
                         "name": "response_id",
@@ -3208,9 +3076,7 @@
                 "tags": [
                     "Prompts"
                 ],
-                "summary": "List all versions of a specific prompt.",
                 "description": "List all versions of a specific prompt.",
-                "operationId": "list_prompt_versions",
                 "parameters": [
                     {
                         "name": "prompt_id",
@@ -3253,9 +3119,7 @@
                 "tags": [
                     "Providers"
                 ],
-                "summary": "List all available providers.",
                 "description": "List all available providers.",
-                "operationId": "list_providers",
                 "parameters": []
             }
         },
@@ -3288,9 +3152,7 @@
                 "tags": [
                     "Inspect"
                 ],
-                "summary": "List all available API routes with their methods and implementing providers.",
                 "description": "List all available API routes with their methods and implementing providers.",
-                "operationId": "list_routes",
                 "parameters": []
             }
         },
@@ -3323,9 +3185,7 @@
                 "tags": [
                     "ToolRuntime"
                 ],
-                "summary": "List all tools in the runtime.",
                 "description": "List all tools in the runtime.",
-                "operationId": "list_runtime_tools",
                 "parameters": [
                     {
                         "name": "tool_group_id",
@@ -3377,9 +3237,7 @@
                 "tags": [
                     "ScoringFunctions"
                 ],
-                "summary": "List all scoring functions.",
                 "description": "List all scoring functions.",
-                "operationId": "list_scoring_functions",
                 "parameters": []
             },
             "post": {
@@ -3403,9 +3261,7 @@
                 "tags": [
                     "ScoringFunctions"
                 ],
-                "summary": "Register a scoring function.",
                 "description": "Register a scoring function.",
-                "operationId": "register_scoring_function",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -3448,9 +3304,7 @@
                 "tags": [
                     "Shields"
                 ],
-                "summary": "List all shields.",
                 "description": "List all shields.",
-                "operationId": "list_shields",
                 "parameters": []
             },
             "post": {
@@ -3481,9 +3335,7 @@
                 "tags": [
                     "Shields"
                 ],
-                "summary": "Register a shield.",
                 "description": "Register a shield.",
-                "operationId": "register_shield",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -3526,9 +3378,7 @@
                 "tags": [
                     "ToolGroups"
                 ],
-                "summary": "List tool groups with optional provider.",
                 "description": "List tool groups with optional provider.",
-                "operationId": "list_tool_groups",
                 "parameters": []
             },
             "post": {
@@ -3552,9 +3402,7 @@
                 "tags": [
                     "ToolGroups"
                 ],
-                "summary": "Register a tool group.",
                 "description": "Register a tool group.",
-                "operationId": "register_tool_group",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -3597,9 +3445,7 @@
                 "tags": [
                     "ToolGroups"
                 ],
-                "summary": "List tools with optional tool group.",
                 "description": "List tools with optional tool group.",
-                "operationId": "list_tools",
                 "parameters": [
                     {
                         "name": "toolgroup_id",
@@ -3642,9 +3488,7 @@
                 "tags": [
                     "VectorDBs"
                 ],
-                "summary": "List all vector databases.",
                 "description": "List all vector databases.",
-                "operationId": "list_vector_dbs",
                 "parameters": []
             },
             "post": {
@@ -3675,9 +3519,7 @@
                 "tags": [
                     "VectorDBs"
                 ],
-                "summary": "Register a vector database.",
                 "description": "Register a vector database.",
-                "operationId": "register_vector_db",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -3713,9 +3555,7 @@
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Log an event.",
                 "description": "Log an event.",
-                "operationId": "log_event",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -3758,9 +3598,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "List files in a vector store.",
                 "description": "List files in a vector store.",
-                "operationId": "openai_list_files_in_vector_store",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -3846,9 +3684,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Attach a file to a vector store.",
                 "description": "Attach a file to a vector store.",
-                "operationId": "openai_attach_file_to_vector_store",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -3901,9 +3737,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "Generate an OpenAI-compatible completion for the given prompt using the specified model.",
                 "description": "Generate an OpenAI-compatible completion for the given prompt using the specified model.",
-                "operationId": "openai_completion",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -3946,9 +3780,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Returns a list of vector stores.",
                 "description": "Returns a list of vector stores.",
-                "operationId": "openai_list_vector_stores",
                 "parameters": [
                     {
                         "name": "limit",
@@ -4016,9 +3848,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Creates a vector store.",
                 "description": "Creates a vector store.",
-                "operationId": "openai_create_vector_store",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -4061,9 +3891,7 @@
                 "tags": [
                     "Files"
                 ],
-                "summary": "Returns information about a specific file.",
                 "description": "Returns information about a specific file.",
-                "operationId": "openai_retrieve_file",
                 "parameters": [
                     {
                         "name": "file_id",
@@ -4104,9 +3932,7 @@
                 "tags": [
                     "Files"
                 ],
-                "summary": "Delete a file.",
                 "description": "Delete a file.",
-                "operationId": "openai_delete_file",
                 "parameters": [
                     {
                         "name": "file_id",
@@ -4149,9 +3975,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Retrieves a vector store.",
                 "description": "Retrieves a vector store.",
-                "operationId": "openai_retrieve_vector_store",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -4192,9 +4016,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Updates a vector store.",
                 "description": "Updates a vector store.",
-                "operationId": "openai_update_vector_store",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -4245,9 +4067,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Delete a vector store.",
                 "description": "Delete a vector store.",
-                "operationId": "openai_delete_vector_store",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -4290,9 +4110,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Retrieves a vector store file.",
                 "description": "Retrieves a vector store file.",
-                "operationId": "openai_retrieve_vector_store_file",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -4342,9 +4160,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Updates a vector store file.",
                 "description": "Updates a vector store file.",
-                "operationId": "openai_update_vector_store_file",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -4404,9 +4220,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Delete a vector store file.",
                 "description": "Delete a vector store file.",
-                "operationId": "openai_delete_vector_store_file",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -4458,9 +4272,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "Generate OpenAI-compatible embeddings for the given input using the specified model.",
                 "description": "Generate OpenAI-compatible embeddings for the given input using the specified model.",
-                "operationId": "openai_embeddings",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -4503,9 +4315,7 @@
                 "tags": [
                     "Files"
                 ],
-                "summary": "Returns a list of files that belong to the user's organization.",
                 "description": "Returns a list of files that belong to the user's organization.",
-                "operationId": "openai_list_files",
                 "parameters": [
                     {
                         "name": "after",
@@ -4573,9 +4383,7 @@
                 "tags": [
                     "Files"
                 ],
-                "summary": "Upload a file that can be used across various endpoints.",
                 "description": "Upload a file that can be used across various endpoints.\nThe file upload should be a multipart form request with:\n- file: The File object (not file name) to be uploaded.\n- purpose: The intended purpose of the uploaded file.\n- expires_after: Optional form values describing expiration for the file. Expected expires_after[anchor] = \"created_at\", expires_after[seconds] = <int>. Seconds must be between 3600 and 2592000 (1 hour to 30 days).",
-                "operationId": "openai_upload_file",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -4653,9 +4461,7 @@
                 "tags": [
                     "Models"
                 ],
-                "summary": "List models using the OpenAI API.",
                 "description": "List models using the OpenAI API.",
-                "operationId": "openai_list_models",
                 "parameters": []
             }
         },
@@ -4688,9 +4494,7 @@
                 "tags": [
                     "Files"
                 ],
-                "summary": "Returns the contents of the specified file.",
                 "description": "Returns the contents of the specified file.",
-                "operationId": "openai_retrieve_file_content",
                 "parameters": [
                     {
                         "name": "file_id",
@@ -4733,9 +4537,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Retrieves the contents of a vector store file.",
                 "description": "Retrieves the contents of a vector store file.",
-                "operationId": "openai_retrieve_vector_store_file_contents",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -4787,9 +4589,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Search for chunks in a vector store.",
                 "description": "Search for chunks in a vector store.\nSearches a vector store for relevant chunks based on a query and optional file attribute filters.",
-                "operationId": "openai_search_vector_store",
                 "parameters": [
                     {
                         "name": "vector_store_id",
@@ -4842,9 +4642,7 @@
                 "tags": [
                     "PostTraining (Coming Soon)"
                 ],
-                "summary": "Run preference optimization of a model.",
                 "description": "Run preference optimization of a model.",
-                "operationId": "preference_optimize",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -4887,9 +4685,7 @@
                 "tags": [
                     "ToolRuntime"
                 ],
-                "summary": "Query the RAG system for context; typically invoked by the agent.",
                 "description": "Query the RAG system for context; typically invoked by the agent.",
-                "operationId": "query",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -4932,9 +4728,7 @@
                 "tags": [
                     "VectorIO"
                 ],
-                "summary": "Query chunks from a vector database.",
                 "description": "Query chunks from a vector database.",
-                "operationId": "query_chunks",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -4977,9 +4771,7 @@
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Query metrics.",
                 "description": "Query metrics.",
-                "operationId": "query_metrics",
                 "parameters": [
                     {
                         "name": "metric_name",
@@ -5032,9 +4824,7 @@
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Query spans.",
                 "description": "Query spans.",
-                "operationId": "query_spans",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5077,9 +4867,7 @@
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Query traces.",
                 "description": "Query traces.",
-                "operationId": "query_traces",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5122,9 +4910,7 @@
                 "tags": [
                     "Inference"
                 ],
-                "summary": "Rerank a list of documents based on their relevance to a query.",
                 "description": "Rerank a list of documents based on their relevance to a query.",
-                "operationId": "rerank",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5172,9 +4958,7 @@
                 "tags": [
                     "Agents"
                 ],
-                "summary": "Resume an agent turn with executed tool call responses.",
                 "description": "Resume an agent turn with executed tool call responses.\nWhen a Turn has the status `awaiting_input` due to pending input from client side tool calls, this endpoint can be used to submit the outputs from the tool calls once they are ready.",
-                "operationId": "resume_agent_turn",
                 "parameters": [
                     {
                         "name": "agent_id",
@@ -5245,9 +5029,7 @@
                 "tags": [
                     "Eval"
                 ],
-                "summary": "Run an evaluation on a benchmark.",
                 "description": "Run an evaluation on a benchmark.",
-                "operationId": "run_eval",
                 "parameters": [
                     {
                         "name": "benchmark_id",
@@ -5300,9 +5082,7 @@
                 "tags": [
                     "Safety"
                 ],
-                "summary": "Classifies if text and/or image inputs are potentially harmful.",
                 "description": "Classifies if text and/or image inputs are potentially harmful.",
-                "operationId": "run_moderation",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5345,9 +5125,7 @@
                 "tags": [
                     "Safety"
                 ],
-                "summary": "Run a shield.",
                 "description": "Run a shield.",
-                "operationId": "run_shield",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5383,9 +5161,7 @@
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Save spans to a dataset.",
                 "description": "Save spans to a dataset.",
-                "operationId": "save_spans_to_dataset",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5428,9 +5204,7 @@
                 "tags": [
                     "Scoring"
                 ],
-                "summary": "Score a list of rows.",
                 "description": "Score a list of rows.",
-                "operationId": "score",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5473,9 +5247,7 @@
                 "tags": [
                     "Scoring"
                 ],
-                "summary": "Score a batch of rows.",
                 "description": "Score a batch of rows.",
-                "operationId": "score_batch",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5518,9 +5290,7 @@
                 "tags": [
                     "Prompts"
                 ],
-                "summary": "Set which version of a prompt should be the default in get_prompt (latest).",
                 "description": "Set which version of a prompt should be the default in get_prompt (latest).",
-                "operationId": "set_default_version",
                 "parameters": [
                     {
                         "name": "prompt_id",
@@ -5573,9 +5343,7 @@
                 "tags": [
                     "PostTraining (Coming Soon)"
                 ],
-                "summary": "Run supervised fine-tuning of a model.",
                 "description": "Run supervised fine-tuning of a model.",
-                "operationId": "supervised_fine_tune",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5618,9 +5386,7 @@
                 "tags": [
                     "SyntheticDataGeneration (Coming Soon)"
                 ],
-                "summary": "Generate synthetic data based on input dialogs and apply filtering.",
                 "description": "Generate synthetic data based on input dialogs and apply filtering.",
-                "operationId": "synthetic_data_generate",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -5663,9 +5429,7 @@
                 "tags": [
                     "Inspect"
                 ],
-                "summary": "Get the version of the service.",
                 "description": "Get the version of the service.",
-                "operationId": "version",
                 "parameters": []
             }
         }

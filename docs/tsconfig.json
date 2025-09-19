@@ -1,9 +1,7 @@
 {
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@site/*": ["./src/*"]
-    }
-  }
+    "baseUrl": "."
+  },
+  "exclude": [".docusaurus", "build"]
 }
