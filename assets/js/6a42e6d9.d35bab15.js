@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocusaurus_template_openapi_docs=self.webpackChunkdocusaurus_template_openapi_docs||[]).push([[1102],{76619:e=>{e.exports=JSON.parse('{"tags":[{"label":"getting-started","permalink":"/llama-stack/docs/tags/getting-started","count":1},{"label":"overview","permalink":"/llama-stack/docs/tags/overview","count":1}]}')}}]);
