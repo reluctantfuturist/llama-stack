@@ -7,7 +7,7 @@ The Scoring API in Llama Stack allows you to evaluate outputs of your GenAI syst
 Llama Stack provides multiple scoring providers:
 
 - **Basic** (`inline::basic`) - Simple evaluation metrics and scoring functions
-- **Braintrust** (`inline::braintrust`) - Advanced evaluation using the Braintrust platform  
+- **Braintrust** (`inline::braintrust`) - Advanced evaluation using the Braintrust platform
 - **LLM-as-Judge** (`inline::llm-as-judge`) - Uses language models to evaluate responses
 
 The Scoring API is associated with `ScoringFunction` resources and provides a suite of out-of-the-box scoring functions. You can also add custom evaluators to meet specific evaluation needs.
@@ -130,7 +130,7 @@ print(f"Accuracy: {result.results[0].score}")
 # Register an LLM-as-judge scoring function
 client.scoring_functions.register(
     scoring_function_id="quality_judge",
-    provider_id="llm_judge", 
+    provider_id="llm_judge",
     provider_scoring_function_id="response_quality",
     params={
         "criteria": "Evaluate response quality, relevance, and helpfulness",
@@ -181,7 +181,7 @@ result = client.scoring.score(
 The Scoring API works closely with the [Evaluation](./evaluation.mdx) API to provide comprehensive evaluation workflows:
 
 1. **Datasets** are loaded via the DatasetIO API
-2. **Evaluation** generates model outputs using the Eval API  
+2. **Evaluation** generates model outputs using the Eval API
 3. **Scoring** evaluates the quality of outputs using various scoring functions
 4. **Results** are aggregated and reported for analysis
 

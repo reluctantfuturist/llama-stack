@@ -131,7 +131,7 @@ eval_rows = []
 # Define expected answers for our test prompts
 expected_answers = [
     "Dallas Mavericks and the Minnesota Timberwolves",
-    "Season 4, Episode 12", 
+    "Season 4, Episode 12",
     "King Cobra",
 ]
 
@@ -159,7 +159,7 @@ scoring_params = {
 
 # Run evaluation using Llama Stack's scoring API
 scoring_response = client.scoring.score(
-    input_rows=eval_rows, 
+    input_rows=eval_rows,
     scoring_functions=scoring_params
 )
 
@@ -201,7 +201,7 @@ You can also create custom scoring functions for domain-specific evaluation need
 - Include clear expected answers or success criteria
 - Balance your dataset across different difficulty levels
 
-### 📊 **Metrics Selection**  
+### 📊 **Metrics Selection**
 - Choose appropriate scoring functions for your use case
 - Combine multiple metrics for comprehensive evaluation
 - Consider both automated and human evaluation metrics
@@ -244,7 +244,7 @@ Combining different scoring approaches:
 ```python
 comprehensive_scoring = {
     "exact_match": "basic::exact_match",
-    "subset_match": "basic::subset_of", 
+    "subset_match": "basic::subset_of",
     "llm_judge": "llm_as_judge::accuracy",
     "safety_check": "llm_as_judge::safety",
 }

@@ -1,7 +1,7 @@
 ---
 title: Agents
 description: Build powerful AI applications with the Llama Stack agent framework
-sidebar_label: Agents  
+sidebar_label: Agents
 sidebar_position: 3
 ---
 
@@ -21,7 +21,7 @@ The Llama Stack agent framework is built on a modular architecture that allows f
 Agents are configured using the `AgentConfig` class, which includes:
 
 - **Model**: The underlying LLM to power the agent
-- **Instructions**: System prompt that defines the agent's behavior  
+- **Instructions**: System prompt that defines the agent's behavior
 - **Tools**: Capabilities the agent can use to interact with external systems
 - **Safety Shields**: Guardrails to ensure responsible AI behavior
 
@@ -97,7 +97,7 @@ pprint(response.steps)
 Each turn consists of multiple steps that represent the agent's thought process:
 
 - **Inference Steps**: The agent generating text responses
-- **Tool Execution Steps**: The agent using tools to gather information  
+- **Tool Execution Steps**: The agent using tools to gather information
 - **Shield Call Steps**: Safety checks being performed
 
 ## Agent Execution Loop

@@ -91,7 +91,7 @@ chunks_with_embeddings = [
         "metadata": {"document_id": "doc1", "section": "introduction"},
     },
     {
-        "content": "Second chunk of text", 
+        "content": "Second chunk of text",
         "mime_type": "text/plain",
         "embedding": [0.2, 0.3, 0.4, ...],  # Your precomputed embedding vector
         "metadata": {"document_id": "doc1", "section": "methodology"},
@@ -114,7 +114,7 @@ You can query the vector database to retrieve documents based on their embedding
 ```python
 # You can then query for these chunks
 chunks_response = client.vector_io.query(
-    vector_db_id=vector_db_id, 
+    vector_db_id=vector_db_id,
     query="What do you know about..."
 )
 ```
@@ -132,7 +132,7 @@ A better way to ingest documents is to use the RAG Tool. This tool allows you to
 The RAG tool has been updated to use OpenAI-compatible APIs. This provides several benefits:
 
 - **Files API Integration**: Documents are now uploaded using OpenAI's file upload endpoints
-- **Vector Stores API**: Vector storage operations use OpenAI's vector store format with configurable chunking strategies  
+- **Vector Stores API**: Vector storage operations use OpenAI's vector store format with configurable chunking strategies
 - **Error Resilience**: When processing multiple documents, individual failures are logged but don't crash the operation. Failed documents are skipped while successful ones continue processing.
 
 ### Migration Path
@@ -140,7 +140,7 @@ The RAG tool has been updated to use OpenAI-compatible APIs. This provides sever
 We recommend migrating to the OpenAI-compatible Search API for:
 
 1. **Better OpenAI Ecosystem Integration**: Direct compatibility with OpenAI tools and workflows including the Responses API
-2. **Future-Proof**: Continued support and feature development  
+2. **Future-Proof**: Continued support and feature development
 3. **Full OpenAI Compatibility**: Vector Stores, Files, and Search APIs are fully compatible with OpenAI's Responses API
 
 The OpenAI APIs are used under the hood, so you can continue to use your existing RAG Tool code with minimal changes. However, we recommend updating your code to use the new OpenAI-compatible APIs for better long-term support. If any documents fail to process, they will be logged in the response but will not cause the entire operation to fail.
@@ -304,7 +304,7 @@ for vector_db_id in client.vector_dbs.list():
 - Consider overlap between chunks for better context preservation
 - Experiment with different chunking strategies for your content type
 
-### 🔍 **Embedding Strategy**  
+### 🔍 **Embedding Strategy**
 - Choose embedding models that match your domain
 - Consider the trade-off between embedding dimension and performance
 - Test different embedding models for your specific use case

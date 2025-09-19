@@ -11,7 +11,7 @@ Llama Stack provides multiple evaluation providers:
 
 The Evaluation API works with several related APIs to provide comprehensive evaluation capabilities:
 - `/datasetio` + `/datasets` API - Interface with datasets and data loaders
-- `/scoring` + `/scoring_functions` API - Evaluate outputs of the system  
+- `/scoring` + `/scoring_functions` API - Evaluate outputs of the system
 - `/eval` + `/benchmarks` API - Generate outputs and perform scoring
 
 :::tip
@@ -78,7 +78,7 @@ client = LlamaStackClient(base_url="http://localhost:8321")
 client.datasets.register(
     purpose="evaluation",
     source={
-        "type": "uri", 
+        "type": "uri",
         "uri": "huggingface://datasets/llamastack/evaluation_dataset"
     },
     dataset_id="my_eval_dataset"

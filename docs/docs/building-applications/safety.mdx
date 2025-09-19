@@ -31,7 +31,7 @@ The Shield system in Llama Stack provides:
 # Register a safety shield
 shield_id = "content_safety"
 client.shields.register(
-    shield_id=shield_id, 
+    shield_id=shield_id,
     provider_shield_id="llama-guard-basic"
 )
 ```
@@ -42,7 +42,7 @@ client.shields.register(
 ```python
 # Run content through shield manually
 response = client.safety.run_shield(
-    shield_id=shield_id, 
+    shield_id=shield_id,
     messages=[{"role": "user", "content": "User message here"}]
 )
 
@@ -91,7 +91,7 @@ response = agent.create_turn(
 # Create agent with output safety shields
 agent = Agent(
     client,
-    model="meta-llama/Llama-3.2-3B-Instruct", 
+    model="meta-llama/Llama-3.2-3B-Instruct",
     instructions="You are a helpful assistant",
     output_shields=["content_safety"],  # Shield agent outputs
     tools=["builtin::websearch"],
@@ -164,7 +164,7 @@ client.shields.register(
     provider_shield_id="llama-guard-advanced",
     config={
         "categories": [
-            "violence", "hate_speech", "sexual_content", 
+            "violence", "hate_speech", "sexual_content",
             "self_harm", "illegal_activity"
         ],
         "threshold": 0.8
@@ -215,10 +215,10 @@ if response.violation:
     print(f"Violation Type: {violation.violation_type}")
     print(f"User Message: {violation.user_message}")
     print(f"Metadata: {violation.metadata}")
-    
+
     # Log the violation for audit purposes
     logger.warning(f"Safety violation detected: {violation.violation_type}")
-    
+
     # Provide appropriate user feedback
     return "I can't help with that request. Please try asking something else."
 ```
@@ -229,12 +229,12 @@ if response.violation:
 ```python
 def handle_safety_response(safety_response, user_message):
     """Advanced safety response handling with logging and user feedback"""
-    
+
     if not safety_response.violation:
         return {"safe": True, "message": "Content passed safety checks"}
-    
+
     violation = safety_response.violation
-    
+
     # Log violation details
     audit_log = {
         "timestamp": datetime.now().isoformat(),
@@ -244,7 +244,7 @@ def handle_safety_response(safety_response, user_message):
         "metadata": violation.metadata
     }
     logger.warning(f"Safety violation: {audit_log}")
-    
+
     # Determine appropriate response based on violation type
     if violation.violation_type == "hate_speech":
         user_feedback = "I can't engage with content that contains hate speech. Let's keep our conversation respectful."
@@ -252,9 +252,9 @@ def handle_safety_response(safety_response, user_message):
         user_feedback = "I can't provide information that could promote violence. How else can I help you today?"
     else:
         user_feedback = "I can't help with that request. Please try asking something else."
-    
+
     return {
-        "safe": False, 
+        "safe": False,
         "user_feedback": user_feedback,
         "violation_details": audit_log
     }
@@ -301,7 +301,7 @@ agent = Agent(
     model="meta-llama/Llama-3.2-3B-Instruct",
     instructions="You are a healthcare assistant",
     input_shields=["medical_safety"],
-    output_shields=["medical_safety"], 
+    output_shields=["medical_safety"],
     # Context helps shields make better decisions
     safety_context={
         "domain": "healthcare",
@@ -319,7 +319,7 @@ def select_shield_for_user(user_profile):
     if user_profile.age < 18:
         return "child_safety_shield"
     elif user_profile.context == "enterprise":
-        return "enterprise_compliance_shield" 
+        return "enterprise_compliance_shield"
     else:
         return "general_safety_shield"
 
@@ -357,7 +357,7 @@ client.shields.register(
 ```python
 # Financial services safety configuration
 client.shields.register(
-    shield_id="finra_compliance", 
+    shield_id="finra_compliance",
     provider_shield_id="financial-safety-shield",
     config={
         "detect_financial_advice": True,
@@ -374,7 +374,7 @@ client.shields.register(
 # Educational platform safety for minors
 client.shields.register(
     shield_id="coppa_compliance",
-    provider_shield_id="educational-safety-shield", 
+    provider_shield_id="educational-safety-shield",
     config={
         "child_protection": True,
         "educational_content_only": True,

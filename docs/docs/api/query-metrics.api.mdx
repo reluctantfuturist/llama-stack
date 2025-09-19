@@ -31,7 +31,7 @@ import Heading from "@theme/Heading";
   path={"/v1/telemetry/metrics/{metric_name}"}
   context={"endpoint"}
 >
-  
+
 </MethodEndpoint>
 
 
@@ -49,14 +49,14 @@ Query metrics.
 <ParamsDetails
   parameters={[{"name":"metric_name","in":"path","description":"The name of the metric to query.","required":true,"schema":{"type":"string"}}]}
 >
-  
+
 </ParamsDetails>
 
 <RequestSchema
   title={"Body"}
   body={{"content":{"application/json":{"schema":{"type":"object","properties":{"start_time":{"type":"integer","description":"The start time of the metric to query."},"end_time":{"type":"integer","description":"The end time of the metric to query."},"granularity":{"type":"string","description":"The granularity of the metric to query."},"query_type":{"type":"string","enum":["range","instant"],"description":"The type of query to perform."},"label_matchers":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string","description":"The name of the label to match"},"value":{"type":"string","description":"The value to match against"},"operator":{"type":"string","enum":["=","!=","=~","!~"],"description":"The comparison operator to use for matching","default":"="}},"additionalProperties":false,"required":["name","value","operator"],"title":"MetricLabelMatcher","description":"A matcher for filtering metrics by label values."},"description":"The label matchers to apply to the metric."}},"additionalProperties":false,"required":["start_time","query_type"],"title":"QueryMetricsRequest"}}},"required":true}}
 >
-  
+
 </RequestSchema>
 
 <StatusCodes
@@ -64,8 +64,5 @@ Query metrics.
   label={undefined}
   responses={{"200":{"description":"A QueryMetricsResponse.","content":{"application/json":{"schema":{"type":"object","properties":{"data":{"type":"array","items":{"type":"object","properties":{"metric":{"type":"string","description":"The name of the metric"},"labels":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string","description":"The name of the label"},"value":{"type":"string","description":"The value of the label"}},"additionalProperties":false,"required":["name","value"],"title":"MetricLabel","description":"A label associated with a metric."},"description":"List of labels associated with this metric series"},"values":{"type":"array","items":{"type":"object","properties":{"timestamp":{"type":"integer","description":"Unix timestamp when the metric value was recorded"},"value":{"type":"number","description":"The numeric value of the metric at this timestamp"},"unit":{"type":"string"}},"additionalProperties":false,"required":["timestamp","value","unit"],"title":"MetricDataPoint","description":"A single data point in a metric time series."},"description":"List of data points in chronological order"}},"additionalProperties":false,"required":["metric","labels","values"],"title":"MetricSeries","description":"A time series of metric data points."},"description":"List of metric series matching the query criteria"}},"additionalProperties":false,"required":["data"],"title":"QueryMetricsResponse","description":"Response containing metric time series data."}}}},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
 >
-  
+
 </StatusCodes>
-
-
-      
