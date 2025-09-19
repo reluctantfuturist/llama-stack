@@ -10,9 +10,9 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://reluctantfuturist.github.io/llama-stack',
+  url: 'https://reluctantfuturist.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
-  baseUrl: '/',
+  baseUrl: '/llama-stack/',
 
   // GitHub pages deployment config.
   organizationName: 'reluctantfuturist',
