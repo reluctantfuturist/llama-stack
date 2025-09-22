@@ -270,7 +270,7 @@ def generate_provider_docs(progress, provider_spec: Any, api_name: str) -> str:
     if config_info.get("sample_config"):
         md_lines.append("## Sample Configuration")
         md_lines.append("")
-        md_lines.append(r"```yaml")
+        md_lines.append("```yaml")
         try:
             sample_config_func = config_info["sample_config"]
             import inspect
@@ -306,7 +306,7 @@ def generate_provider_docs(progress, provider_spec: Any, api_name: str) -> str:
                 md_lines.append("# No sample configuration available.")
         except Exception as e:
             md_lines.append(f"# Error generating sample config: {str(e)}")
-        md_lines.append(r"```")
+        md_lines.append("```")
         md_lines.append("")
 
     if (
