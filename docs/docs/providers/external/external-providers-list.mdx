@@ -1,0 +1,116 @@
+---
+title: Known External Providers
+description: Community-contributed external providers for Llama Stack
+sidebar_label: Community Providers
+sidebar_position: 3
+---
+
+# Known External Providers
+
+Here's a list of known external providers that you can use with Llama Stack:
+
+## Available Providers
+
+| Name | Description | API | Type | Repository |
+|------|-------------|-----|------|------------|
+| **KubeFlow Training** | Train models with KubeFlow | Post Training | Remote | [llama-stack-provider-kft](https://github.com/opendatahub-io/llama-stack-provider-kft) |
+| **KubeFlow Pipelines** | Train models with KubeFlow Pipelines | Post Training | Inline **and** Remote | [llama-stack-provider-kfp-trainer](https://github.com/opendatahub-io/llama-stack-provider-kfp-trainer) |
+| **RamaLama** | Inference models with RamaLama | Inference | Remote | [ramalama-stack](https://github.com/containers/ramalama-stack) |
+| **TrustyAI LM-Eval** | Evaluate models with TrustyAI LM-Eval | Eval | Remote | [llama-stack-provider-lmeval](https://github.com/trustyai-explainability/llama-stack-provider-lmeval) |
+| **MongoDB** | VectorIO with MongoDB | Vector IO | Remote | [mongodb-llama-stack](https://github.com/mongodb-partners/mongodb-llama-stack) |
+
+## Using External Providers
+
+To use any of these providers, you can add them to your build configuration:
+
+### Method 1: Module-based Installation (Recommended)
+
+```yaml
+version: 2
+distribution_spec:
+  providers:
+    inference:
+    - provider_type: remote::ramalama
+      module: ramalama_stack==0.3.0a0
+```
+
+### Method 2: Manual Installation
+
+1. **Install the provider package:**
+   ```bash
+   pip install provider-package-name
+   ```
+
+2. **Configure in your build.yaml:**
+   ```yaml
+   providers:
+     inference:
+     - provider_type: remote::custom_provider
+   ```
+
+## Provider Categories
+
+### 🚀 **Inference Providers**
+- **RamaLama**: Container-native AI model inference
+
+### 🎯 **Post Training Providers**
+- **KubeFlow Training**: Enterprise-grade model training
+- **KubeFlow Pipelines**: ML pipeline-based training
+
+### 📊 **Evaluation Providers**
+- **TrustyAI LM-Eval**: Comprehensive model evaluation suite
+
+### 🗃️ **Vector IO Providers**
+- **MongoDB**: Document-based vector storage and retrieval
+
+## Contributing Your Provider
+
+Have you created an external provider? We'd love to include it in this list!
+
+### Submission Process
+
+1. **Create a Pull Request** adding your provider to this list
+2. **Include the following information:**
+   - Provider name and description
+   - API type (Inference, Safety, etc.)
+   - Provider type (Remote/Inline)
+   - Repository link
+   - Basic usage example
+
+3. **Requirements for listing:**
+   - ✅ Open source repository
+   - ✅ Clear documentation
+   - ✅ Working examples
+   - ✅ Compatible with current Llama Stack version
+
+### Template Entry
+
+```markdown
+| **Your Provider Name** | Brief description | API Type | Remote/Inline | [repository-link](https://github.com/your-org/your-repo) |
+```
+
+## Getting Help
+
+### Provider Development
+- **📚 [Creation Guide](./external-providers-guide)** - Learn how to build providers
+- **🔧 [Provider Architecture](/docs/concepts/api-providers)** - Understanding the system
+- **💬 [GitHub Discussions](https://github.com/meta-llama/llama-stack/discussions)** - Ask questions
+
+### Integration Issues
+- **🐛 [Issue Tracker](https://github.com/meta-llama/llama-stack/issues)** - Report bugs
+- **📖 [Integration Tests](https://github.com/meta-llama/llama-stack/blob/main/tests/integration/README.md)** - Test your provider
+
+## Community
+
+Join the growing ecosystem of Llama Stack providers:
+
+- **Share** your providers with the community
+- **Discover** new providers for your use cases
+- **Collaborate** on provider development
+- **Contribute** to existing provider projects
+
+## Related Resources
+
+- **[External Providers Overview](./index)** - Understanding external providers
+- **[Creating External Providers](./external-providers-guide)** - Development guide
+- **[Building Distributions](/docs/distributions/building-distro)** - Using providers in distributions

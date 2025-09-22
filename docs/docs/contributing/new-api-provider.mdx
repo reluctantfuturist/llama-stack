@@ -1,0 +1,283 @@
+---
+title: Adding a New API Provider
+description: Guide for adding new API providers to Llama Stack
+sidebar_label: New API Provider
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide will walk you through the process of adding a new API provider to Llama Stack.
+
+## Getting Started
+
+Before implementing your provider, complete these preparatory steps:
+
+<Tabs>
+<TabItem value="planning" label="Planning">
+
+**1. Review Core Concepts**
+- Study the [core concepts](/docs/concepts) of Llama Stack
+- Choose the API your provider belongs to (Inference, Safety, VectorIO, etc.)
+
+**2. Determine Provider Type**
+- **Remote providers**: Make requests to external services
+- **Inline providers**: Execute implementation locally
+
+</TabItem>
+<TabItem value="implementation" label="Implementation Steps">
+
+**3. Add Provider to Registry**
+- Add your provider to the appropriate registry in `llama_stack/providers/registry/`
+- Specify pip dependencies necessary for your provider
+
+**4. Update Distribution Templates**
+- Update `build.yaml` and `run.yaml` files in `llama_stack/distributions/` if they should include your provider by default
+- Run `./scripts/distro_codegen.py` if necessary
+
+:::note[Distribution Compatibility]
+`distro_codegen.py` will fail if the new provider causes any distribution template to attempt to import provider-specific dependencies. The distribution's `get_distribution_template()` code path should only import Config or model alias definitions from each provider, not the provider's actual implementation.
+:::
+
+</TabItem>
+</Tabs>
+
+## Example Implementations
+
+Study these example PRs to understand the implementation patterns:
+
+- **[Grok Inference Implementation](https://github.com/meta-llama/llama-stack/pull/609)** - OpenAI-compatible inference provider
+- **[Nvidia Inference Implementation](https://github.com/meta-llama/llama-stack/pull/355)** - Remote inference service integration
+- **[Model Context Protocol Tool Runtime](https://github.com/meta-llama/llama-stack/pull/665)** - Tool runtime provider
+
+## Provider Types: Internal vs External
+
+| **Type** | **Internal (In-tree)** | **External (Out-of-tree)** |
+|----------|------------------------|---------------------------|
+| **Description** | Provider directly in Llama Stack code | Provider outside core codebase but accessible by Llama Stack |
+| **Benefits** | Minimal configuration, direct integration | Separate provider code, no core changes needed |
+| **Use Cases** | Core functionality, widely-used services | Specialized services, experimental providers |
+
+## Inference Provider Patterns
+
+When implementing Inference providers for OpenAI-compatible APIs, Llama Stack provides mixin classes to simplify development.
+
+### OpenAIMixin
+
+The `OpenAIMixin` class provides OpenAI API functionality for providers that work with OpenAI-compatible endpoints.
+
+<Tabs>
+<TabItem value="features" label="Features">
+
+**Direct API Methods:**
+- `openai_completion()`: Legacy text completion API with full parameter support
+- `openai_chat_completion()`: Chat completion API supporting streaming, tools, and function calling
+- `openai_embeddings()`: Text embeddings generation with customizable encoding and dimensions
+
+**Model Management:**
+- `check_model_availability()`: Queries the API endpoint to verify model existence and accessibility
+
+**Client Management:**
+- `client` property: Automatically creates and configures AsyncOpenAI client instances using your provider's credentials
+
+</TabItem>
+<TabItem value="implementation" label="Implementation">
+
+To use `OpenAIMixin`, your provider must implement these abstract methods:
+
+```python
+from abc import abstractmethod
+
+class YourProvider(OpenAIMixin):
+    @abstractmethod
+    def get_api_key(self) -> str:
+        """Return the API key for authentication"""
+        pass
+
+    @abstractmethod
+    def get_base_url(self) -> str:
+        """Return the OpenAI-compatible API base URL"""
+        pass
+
+    # Your provider-specific implementation
+    async def completion(self, request):
+        return await self.openai_completion(request)
+
+    async def chat_completion(self, request):
+        return await self.openai_chat_completion(request)
+```
+
+</TabItem>
+</Tabs>
+
+## Testing Your Provider
+
+Comprehensive testing ensures your provider works correctly across different scenarios.
+
+### Prerequisites
+
+Install required dependencies for your provider:
+
+```bash
+llama stack build --distro <your-distribution>
+```
+
+### Testing Levels
+
+<Tabs>
+<TabItem value="integration" label="Integration Testing">
+
+**Location:** `tests/integration/`
+
+**Purpose:** Test functionality using python client-SDK APIs from the `llama_stack_client` package.
+
+**Configuration:** Each provider's `sample_run_config()` method references environment variables for API keys. Set these in the environment or pass via the `--env` flag.
+
+**Running Tests:**
+```bash
+# Set environment variables
+export YOUR_PROVIDER_API_KEY=your-key-here
+
+# Run integration tests
+uv run --group test pytest tests/integration/ --stack-config=<your-config>
+```
+
+For details, see `tests/integration/README.md`.
+
+</TabItem>
+<TabItem value="unit" label="Unit Testing">
+
+**Location:** `tests/unit/providers/`
+
+**Purpose:** Fast, isolated testing of provider components.
+
+**Running Tests:**
+```bash
+uv run --group unit pytest tests/unit/providers/
+```
+
+These tests run automatically as part of the CI process. For details, see `tests/unit/README.md`.
+
+</TabItem>
+<TabItem value="e2e" label="End-to-End Testing">
+
+**Manual Validation:**
+
+1. **Start Llama Stack Server**
+   ```bash
+   llama stack run <your-distribution>
+   ```
+
+2. **Test with Client Scripts**
+   - Use existing client scripts in [llama-stack-apps](https://github.com/meta-llama/llama-stack-apps/tree/main)
+   - Verify compatibility with your provider
+   - Document which scripts work with your provider
+
+3. **Validate Core Functionality**
+   - Test all supported API methods
+   - Verify error handling and edge cases
+   - Confirm streaming behavior (if applicable)
+
+</TabItem>
+</Tabs>
+
+## Implementation Best Practices
+
+### Configuration Management
+
+```python
+from pydantic import BaseModel, Field
+
+class YourProviderConfig(BaseModel):
+    api_key: str = Field(
+        description="API key for authentication with your service"
+    )
+    base_url: str = Field(
+        default="https://api.yourservice.com/v1",
+        description="Base URL for the API endpoint"
+    )
+    timeout: int = Field(
+        default=30,
+        description="Request timeout in seconds"
+    )
+```
+
+### Error Handling
+
+```python
+from llama_stack.apis.common.errors import ProviderError
+
+async def your_api_method(self, request):
+    try:
+        response = await self.client.your_api_call(request)
+        return response
+    except Exception as e:
+        raise ProviderError(f"Failed to call your API: {str(e)}")
+```
+
+### Logging
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+class YourProvider:
+    async def your_method(self, request):
+        logger.debug(f"Processing request: {request}")
+        # Implementation
+        logger.info("Request processed successfully")
+```
+
+## Submitting Your Pull Request
+
+### Pre-submission Checklist
+
+- [ ] **All tests pass** - Both unit and integration tests
+- [ ] **Code follows style guidelines** - Pre-commit hooks pass
+- [ ] **Documentation updated** - Provider configuration documented
+- [ ] **Distribution templates updated** - If provider should be included by default
+- [ ] **Example usage provided** - Working example in PR description
+
+### PR Content
+
+**Include in your PR:**
+
+1. **Comprehensive test plan** describing:
+   - Test scenarios covered
+   - Any manual testing performed
+   - Compatibility with existing client scripts
+
+2. **Documentation updates** including:
+   - Provider configuration options
+   - Environment variables required
+   - Known limitations or considerations
+
+3. **Example configuration** showing:
+   - How to configure your provider
+   - Sample API keys or endpoints (redacted)
+   - Integration with distributions
+
+## Troubleshooting
+
+### Common Issues
+
+**Import Errors:**
+- Ensure dependencies are properly listed in registry
+- Check that distribution templates don't import implementation code directly
+
+**Test Failures:**
+- Verify API keys and environment variables are set correctly
+- Check that your provider's `sample_run_config()` method is properly implemented
+
+**Configuration Issues:**
+- Ensure Pydantic models have proper `description` fields
+- Verify that configuration validation works as expected
+
+## Related Resources
+
+- **[Core Concepts](/docs/concepts)** - Understanding Llama Stack architecture
+- **[External Providers](/docs/providers/external)** - Alternative implementation approach
+- **[Vector Database Guide](./new-vector-database)** - Specialized provider implementation
+- **[Testing Record-Replay](./testing-record-replay)** - Advanced testing techniques

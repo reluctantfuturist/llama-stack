@@ -1,0 +1,179 @@
+---
+title: iOS SDK
+description: Native iOS development with Llama Stack using Swift SDK for remote and on-device inference
+sidebar_label: iOS SDK
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# iOS SDK
+
+We offer both remote and on-device use of Llama Stack in Swift via a single SDK [llama-stack-client-swift](https://github.com/meta-llama/llama-stack-client-swift/) that contains two components:
+
+1. **LlamaStackClient** for remote inference
+2. **Local Inference** for on-device inference
+
+![Seamlessly switching between local, on-device inference and remote hosted inference](/img/remote_or_local.gif)
+
+## Remote Only
+
+If you don't want to run inference on-device, then you can connect to any hosted Llama Stack distribution with the remote client.
+
+### Setup
+
+1. Add `https://github.com/meta-llama/llama-stack-client-swift/` as a Package Dependency in Xcode
+
+2. Add `LlamaStackClient` as a framework to your app target
+
+3. Call an API:
+
+```swift
+import LlamaStackClient
+
+let agents = RemoteAgents(url: URL(string: "http://localhost:8321")!)
+let request = Components.Schemas.CreateAgentTurnRequest(
+        agent_id: agentId,
+        messages: [
+          .UserMessage(Components.Schemas.UserMessage(
+            content: .case1("Hello Llama!"),
+            role: .user
+          ))
+        ],
+        session_id: self.agenticSystemSessionId,
+        stream: true
+      )
+
+      for try await chunk in try await agents.createTurn(request: request) {
+        let payload = chunk.event.payload
+      // ...
+```
+
+Check out [iOSCalendarAssistant](https://github.com/meta-llama/llama-stack-client-swift/tree/main/examples/ios_calendar_assistant) for a complete app demo.
+
+## LocalInference
+
+LocalInference provides a local inference implementation powered by [executorch](https://github.com/pytorch/executorch/).
+
+Llama Stack currently supports on-device inference for iOS with Android coming soon. You can run on-device inference on Android today using [executorch](https://github.com/pytorch/executorch/tree/main/examples/demo-apps/android/LlamaDemo), PyTorch's on-device inference library.
+
+The APIs *work the same as remote* – the only difference is you'll instead use the `LocalAgents` / `LocalInference` classes and pass in a `DispatchQueue`:
+
+```swift
+private let runnerQueue = DispatchQueue(label: "org.llamastack.stacksummary")
+let inference = LocalInference(queue: runnerQueue)
+let agents = LocalAgents(inference: self.inference)
+```
+
+Check out [iOSCalendarAssistantWithLocalInf](https://github.com/meta-llama/llama-stack-client-swift/tree/main/examples/ios_calendar_assistant) for a complete app demo.
+
+### Installation
+
+:::info[Development Status]
+We're working on making LocalInference easier to set up. For now, you'll need to import it via `.xcframework`.
+:::
+
+1. Clone the executorch submodule in this repo and its dependencies: `git submodule update --init --recursive`
+2. Install [Cmake](https://cmake.org/) for the executorch build
+3. Drag `LocalInference.xcodeproj` into your project
+4. Add `LocalInference` as a framework in your app target
+
+### Preparing a Model
+
+1. Prepare a `.pte` file [following the executorch docs](https://github.com/pytorch/executorch/blob/main/examples/models/llama/README.md#step-2-prepare-model)
+2. Bundle the `.pte` and `tokenizer.model` file into your app
+
+We now support models quantized using SpinQuant and QAT-LoRA which offer a significant performance boost (demo app on iPhone 13 Pro):
+
+| Llama 3.2 1B | Tokens / Second (total) |  | Time-to-First-Token (sec) |  |
+| :---- | :---- | :---- | :---- | :---- |
+|  | Haiku | Paragraph | Haiku | Paragraph |
+| BF16 | 2.2 | 2.5 | 2.3 | 1.9 |
+| QAT+LoRA | 7.1 | 3.3 | 0.37 | 0.24 |
+| SpinQuant | 10.1 | 5.2 | 0.2 | 0.2 |
+
+### Using LocalInference
+
+<Tabs>
+<TabItem value="init" label="1. Initialize">
+
+Instantiate LocalInference with a DispatchQueue. Optionally, pass it into your agents service:
+
+```swift
+init () {
+  runnerQueue = DispatchQueue(label: "org.meta.llamastack")
+  inferenceService = LocalInferenceService(queue: runnerQueue)
+  agentsService = LocalAgentsService(inference: inferenceService)
+}
+```
+
+</TabItem>
+<TabItem value="load" label="2. Load Model">
+
+Before making any inference calls, load your model from your bundle:
+
+```swift
+let mainBundle = Bundle.main
+inferenceService.loadModel(
+    modelPath: mainBundle.url(forResource: "llama32_1b_spinquant", withExtension: "pte"),
+    tokenizerPath: mainBundle.url(forResource: "tokenizer", withExtension: "model"),
+    completion: {_ in } // use to handle load failures
+)
+```
+
+</TabItem>
+<TabItem value="inference" label="3. Make Inference Calls">
+
+Make inference calls (or agents calls) as you normally would with LlamaStack:
+
+```swift
+for await chunk in try await agentsService.initAndCreateTurn(
+    messages: [
+    .UserMessage(Components.Schemas.UserMessage(
+        content: .case1("Call functions as needed to handle any actions in the following text:\n\n" + text),
+        role: .user))
+    ]
+) {
+```
+
+</TabItem>
+</Tabs>
+
+### Troubleshooting
+
+If you receive errors like "missing package product" or "invalid checksum", try cleaning the build folder and resetting the Swift package cache:
+
+**(Opt+Click) Product > Clean Build Folder Immediately**
+
+```bash
+rm -rf \
+  ~/Library/org.swift.swiftpm \
+  ~/Library/Caches/org.swift.swiftpm \
+  ~/Library/Caches/com.apple.dt.Xcode \
+  ~/Library/Developer/Xcode/DerivedData
+```
+
+## Performance Considerations
+
+- **Model Size**: Smaller models (1B-3B parameters) work best on mobile devices
+- **Quantization**: Use SpinQuant or QAT-LoRA for optimal performance
+- **Memory Usage**: Monitor app memory usage with larger models
+- **Battery Life**: On-device inference can impact battery performance
+
+## Use Cases
+
+The iOS SDK is ideal for:
+
+- **Native iOS applications** requiring AI capabilities
+- **Offline functionality** without internet dependency
+- **Privacy-focused** applications processing sensitive data locally
+- **Real-time inference** with low latency requirements
+- **Hybrid applications** switching between local and remote inference
+
+## Related Resources
+
+- **[llama-stack-client-swift](https://github.com/meta-llama/llama-stack-client-swift/)** - Official Swift SDK repository
+- **[iOS Calendar Assistant](https://github.com/meta-llama/llama-stack-client-swift/tree/main/examples/ios_calendar_assistant)** - Complete example app
+- **[executorch](https://github.com/pytorch/executorch/)** - PyTorch on-device inference library
+- **[Android SDK](./android-sdk)** - Android development guide

@@ -1,0 +1,62 @@
+---
+title: Passthrough Distribution
+description: Self-hosted distribution using Passthrough hosted llama-stack endpoint for LLM inference
+sidebar_label: Passthrough
+sidebar_position: 5
+---
+
+# Passthrough Distribution
+
+The `llamastack/distribution-passthrough` distribution consists of the following provider configurations.
+
+## Provider Configuration
+
+| API | Provider(s) |
+|-----|-------------|
+| agents | `inline::meta-reference` |
+| datasetio | `remote::huggingface`, `inline::localfs` |
+| eval | `inline::meta-reference` |
+| inference | `remote::passthrough`, `inline::sentence-transformers` |
+| safety | `inline::llama-guard` |
+| scoring | `inline::basic`, `inline::llm-as-judge`, `inline::braintrust` |
+| telemetry | `inline::meta-reference` |
+| tool_runtime | `remote::brave-search`, `remote::tavily-search`, `remote::wolfram-alpha`, `inline::rag-runtime`, `remote::model-context-protocol` |
+| vector_io | `inline::faiss`, `remote::chromadb`, `remote::pgvector` |
+
+## Getting Started
+
+### Installation
+
+```bash
+docker pull llamastack/distribution-passthrough
+```
+
+### Environment Variables
+
+The following environment variables can be configured:
+
+- `LLAMA_STACK_PORT`: Port for the Llama Stack distribution server (default: `8321`)
+- `PASSTHROUGH_API_KEY`: Passthrough API Key (default: ``)
+- `PASSTHROUGH_URL`: Passthrough URL (default: ``)
+
+### Available Models
+
+The following models are available by default:
+
+- `llama3.1-8b-instruct`
+- `llama3.2-11b-vision-instruct`
+
+## Use Cases
+
+The Passthrough distribution is ideal for:
+
+- Using hosted Llama Stack endpoints
+- Reducing local infrastructure requirements
+- Quick prototyping and development
+- Accessing pre-configured model endpoints
+
+## Related Guides
+
+- **[Building Custom Distributions](../building-distro)** - Create your own distribution
+- **[Configuration Reference](../configuration)** - Understanding configuration options
+- **[Starting Llama Stack Server](../starting-llama-stack-server)** - How to run distributions

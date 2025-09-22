@@ -1,0 +1,315 @@
+---
+title: Contributing to Llama Stack
+description: Guide for contributing to the Llama Stack project
+sidebar_label: Overview
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+We want to make contributing to this project as easy and transparent as possible.
+
+## Quick Start
+
+<Tabs>
+<TabItem value="setup" label="Development Setup">
+
+### Set up your development environment
+
+We use [uv](https://github.com/astral-sh/uv) to manage python dependencies and virtual environments.
+Install `uv` by following this [guide](https://docs.astral.sh/uv/getting-started/installation/).
+
+Install dependencies:
+
+```bash
+cd llama-stack
+uv sync --group dev
+uv pip install -e .
+source .venv/bin/activate
+```
+
+:::note[Python Version]
+You can use a specific version of Python with `uv` by adding the `--python <version>` flag (e.g. `--python 3.12`).
+Otherwise, `uv` will automatically select a Python version according to the `requires-python` section of the `pyproject.toml`.
+For more info, see the [uv docs around Python versions](https://docs.astral.sh/uv/concepts/python-versions/).
+:::
+
+### Environment Configuration
+
+Create a `.env` file with necessary environment variables:
+
+```bash
+LLAMA_STACK_BASE_URL=http://localhost:8321
+LLAMA_STACK_CLIENT_LOG=debug
+LLAMA_STACK_PORT=8321
+LLAMA_STACK_CONFIG=<provider-name>
+TAVILY_SEARCH_API_KEY=
+BRAVE_SEARCH_API_KEY=
+```
+
+Use with integration tests:
+
+```bash
+uv run --env-file .env -- pytest -v tests/integration/inference/test_text_inference.py --text-model=meta-llama/Llama-3.1-8B-Instruct
+```
+
+</TabItem>
+<TabItem value="pre-commit" label="Pre-commit Hooks">
+
+### Pre-commit Hooks
+
+We use [pre-commit](https://pre-commit.com/) to run linting and formatting checks:
+
+```bash
+# Install pre-commit hooks (runs automatically before each commit)
+uv run pre-commit install
+
+# Run checks manually
+uv run pre-commit run --all-files
+```
+
+:::caution
+Before pushing your changes, make sure that the pre-commit hooks have passed successfully.
+:::
+
+</TabItem>
+</Tabs>
+
+## Contributing Workflow
+
+### Discussions → Issues → Pull Requests
+
+We actively welcome your pull requests. If in doubt, please open a [discussion](https://github.com/meta-llama/llama-stack/discussions); we can always convert that to an issue later.
+
+<Tabs>
+<TabItem value="questions" label="I have a question!">
+
+1. Open a discussion or use [Discord](https://discord.gg/llama-stack)
+
+</TabItem>
+<TabItem value="bugs" label="I have a bug!">
+
+1. Search the issue tracker and discussions for similar issues
+2. If you don't have steps to reproduce, open a discussion
+3. If you have steps to reproduce, open an issue
+
+</TabItem>
+<TabItem value="features" label="I have an idea for a feature!">
+
+1. Open a discussion
+
+</TabItem>
+<TabItem value="contributions" label="I'd like to contribute!">
+
+If you are new to the project, start by looking at issues tagged with "good first issue". Leave a comment and a triager will assign it to you.
+
+**Guidelines:**
+- Work on only 1–2 issues at a time
+- Check if issues are already assigned
+- If blocked, unassign yourself or leave a comment
+
+</TabItem>
+</Tabs>
+
+### Opening a Pull Request
+
+1. Fork the repo and create your branch from `main`
+2. If you've changed APIs, update the documentation
+3. Ensure the test suite passes
+4. Make sure your code lints using `pre-commit`
+5. Complete the Contributor License Agreement ("CLA")
+6. Follow [conventional commits format](https://www.conventionalcommits.org/en/v1.0.0/)
+7. Follow the [coding style guidelines](#coding-style)
+
+Keep PRs small and focused. Split large changes into logically grouped, smaller PRs.
+
+:::tip[PR Guidelines]
+- **Experienced contributors**: No more than 5 open PRs at a time
+- **New contributors**: One open PR at a time until familiar with the process
+:::
+
+## Adding New Providers
+
+Learn how to extend Llama Stack with new capabilities:
+
+- **[Adding a New API Provider](./new-api-provider)** - Add new API providers to the Stack
+- **[Adding a Vector Database](./new-vector-database)** - Add new vector databases
+- **[External Providers](/docs/providers/external)** - Add external providers to the Stack
+
+## Testing
+
+Llama Stack uses two types of tests:
+
+| Type | Location | Purpose |
+|------|----------|---------|
+| **Unit** | `tests/unit/` | Fast, isolated component testing |
+| **Integration** | `tests/integration/` | End-to-end workflows with record-replay |
+
+### Testing Philosophy
+
+For unit tests, create minimal mocks and rely more on "fakes". Mocks are too brittle. Tests must be very fast and reliable.
+
+### Record-Replay for Integration Tests
+
+Testing AI applications end-to-end creates challenges:
+- **API costs** accumulate quickly during development and CI
+- **Non-deterministic responses** make tests unreliable
+- **Multiple providers** require testing the same logic across different APIs
+
+Our solution: **Record real API responses once, replay them for fast, deterministic tests.**
+
+Benefits:
+- **Cost control** - No repeated API calls during development
+- **Speed** - Instant test execution with cached responses
+- **Reliability** - Consistent results regardless of external service state
+- **Provider coverage** - Same tests work across OpenAI, Anthropic, local models, etc.
+
+### Running Tests
+
+<Tabs>
+<TabItem value="unit" label="Unit Tests">
+
+```bash
+uv run --group unit pytest -sv tests/unit/
+```
+
+</TabItem>
+<TabItem value="integration" label="Integration Tests">
+
+**Prerequisites:**
+- A stack config (various formats supported):
+  - `server:<config>` - auto-start server (e.g., `server:starter`)
+  - `server:<config>:<port>` - custom port (e.g., `server:starter:8322`)
+  - URL pointing to a Llama Stack server
+  - Distribution name or path to `run.yaml`
+  - Comma-separated API=provider pairs
+
+**Run tests in replay mode:**
+```bash
+uv run --group test \
+  pytest -sv tests/integration/ --stack-config=starter
+```
+
+</TabItem>
+<TabItem value="recording" label="Re-recording Tests">
+
+**Local Re-recording (Manual Setup Required):**
+```bash
+LLAMA_STACK_TEST_INFERENCE_MODE=record \
+  uv run --group test \
+  pytest -sv tests/integration/ --stack-config=starter -k "<test name>"
+```
+
+:::warning[CI Compatibility]
+When re-recording locally, you must match the CI setup:
+- Ollama running with specific models
+- Using the `starter` distribution
+:::
+
+**Remote Re-recording (Recommended):**
+```bash
+# Record tests for specific subdirectories
+./scripts/github/schedule-record-workflow.sh --test-subdirs "agents,inference"
+
+# Record with vision tests
+./scripts/github/schedule-record-workflow.sh --test-suite vision
+
+# Record with specific provider
+./scripts/github/schedule-record-workflow.sh --test-subdirs "agents" --test-provider vllm
+```
+
+**Prerequisites:**
+- GitHub CLI: `brew install gh && gh auth login`
+- jq: `brew install jq`
+- Your branch pushed to a remote
+
+</TabItem>
+</Tabs>
+
+## Common Development Tasks
+
+### Using `llama stack build`
+
+Building a stack image uses production packages. For development, set environment variables:
+
+```bash
+cd work/
+git clone https://github.com/meta-llama/llama-stack.git
+git clone https://github.com/meta-llama/llama-stack-client-python.git
+cd llama-stack
+LLAMA_STACK_DIR=$(pwd) LLAMA_STACK_CLIENT_DIR=../llama-stack-client-python llama stack build --distro <...>
+```
+
+### Updating Configurations
+
+**Distribution configurations:**
+```bash
+./scripts/distro_codegen.py
+```
+Don't manually edit `docs/source/.../distributions/` files - they're auto-generated.
+
+**Provider documentation:**
+```bash
+./scripts/provider_codegen.py
+```
+Don't manually edit `docs/source/.../providers/` files - they're auto-generated.
+
+### Building Documentation
+
+```bash
+# Rebuild documentation pages
+uv run --group docs make -C docs/ html
+
+# Start local server with auto-rebuild (usually at http://127.0.0.1:8000)
+uv run --group docs sphinx-autobuild docs/source docs/build/html --write-all
+```
+
+### Update API Documentation
+
+If you modify API endpoints:
+
+```bash
+uv run ./docs/openapi_generator/run_openapi_generator.sh
+```
+
+Generated documentation will be in `docs/_static/`. Review changes before committing.
+
+## Coding Style
+
+- **Comments**: Provide meaningful insights, avoid filler comments
+- **Exceptions**: Use specific exception types, not broad catch-alls
+- **Error messages**: Prefix with "Failed to ..."
+- **Indentation**: 4 spaces, not tabs
+- **`# noqa` usage**: Include comment explaining justification
+- **`# type: ignore` usage**: Include comment explaining justification
+- **Character encoding**: ASCII-only preferred
+- **Provider config**: Use Pydantic Field class with `description` field
+- **Function calls**: Use keyword arguments when possible
+- **Custom exceptions**: Use [custom Exception classes](llama_stack/apis/common/errors.py) where applicable
+
+## Legal
+
+### Issues and Security
+
+We use GitHub issues to track public bugs. For security bugs, use Meta's [bounty program](http://facebook.com/whitehat/info).
+
+### Contributor License Agreement
+
+Complete your CLA here: [https://code.facebook.com/cla](https://code.facebook.com/cla)
+
+### License
+
+By contributing to Llama Stack, you agree that your contributions will be licensed under the LICENSE file in the root directory.
+
+## Advanced Topics
+
+- **[Testing Record-Replay System](./testing-record-replay)** - Deep dive into testing internals
+
+## Related Resources
+
+- **[Adding API Providers](./new-api-provider)** - Extend Llama Stack with new providers
+- **[Vector Database Integration](./new-vector-database)** - Add vector database support
+- **[External Providers](/docs/providers/external)** - External provider development
+- **[GitHub Discussions](https://github.com/meta-llama/llama-stack/discussions)** - Community discussion
+- **[Discord](https://discord.gg/llama-stack)** - Real-time community chat

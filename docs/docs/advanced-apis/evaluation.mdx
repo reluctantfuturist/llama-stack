@@ -1,0 +1,118 @@
+# Evaluation
+
+The Evaluation API in Llama Stack allows you to run evaluation tasks on your GenAI applications and datasets. This section covers all available evaluation providers and their configuration.
+
+## Overview
+
+Llama Stack provides multiple evaluation providers:
+
+- **Meta Reference** (`inline::meta-reference`) - Meta's reference implementation with multi-language support
+- **NVIDIA** (`remote::nvidia`) - NVIDIA's evaluation platform integration
+
+The Evaluation API works with several related APIs to provide comprehensive evaluation capabilities:
+- `/datasetio` + `/datasets` API - Interface with datasets and data loaders
+- `/scoring` + `/scoring_functions` API - Evaluate outputs of the system
+- `/eval` + `/benchmarks` API - Generate outputs and perform scoring
+
+:::tip
+For conceptual information about evaluations, see our [Evaluation Concepts](../concepts/evaluation-concepts.mdx) guide.
+:::
+
+## Meta Reference
+
+Meta's reference implementation of evaluation tasks with support for multiple languages and evaluation metrics.
+
+### Configuration
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `kvstore` | `RedisKVStoreConfig \| SqliteKVStoreConfig \| PostgresKVStoreConfig \| MongoDBKVStoreConfig` | No | sqlite | Key-value store configuration |
+
+### Sample Configuration
+
+```yaml
+kvstore:
+  type: sqlite
+  db_path: ${env.SQLITE_STORE_DIR:=~/.llama/dummy}/meta_reference_eval.db
+```
+
+### Features
+
+- Multi-language evaluation support
+- Comprehensive evaluation metrics
+- Integration with various key-value stores (SQLite, Redis, PostgreSQL, MongoDB)
+- Built-in support for popular benchmarks
+
+## NVIDIA
+
+NVIDIA's evaluation provider for running evaluation tasks on NVIDIA's platform.
+
+### Configuration
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `evaluator_url` | `str` | No | http://0.0.0.0:7331 | The url for accessing the evaluator service |
+
+### Sample Configuration
+
+```yaml
+evaluator_url: ${env.NVIDIA_EVALUATOR_URL:=http://localhost:7331}
+```
+
+### Features
+
+- Integration with NVIDIA's evaluation platform
+- Remote evaluation capabilities
+- Scalable evaluation processing
+
+## Usage Example
+
+Here's a basic example of using the evaluation API:
+
+```python
+from llama_stack_client import LlamaStackClient
+
+client = LlamaStackClient(base_url="http://localhost:8321")
+
+# Register a dataset for evaluation
+client.datasets.register(
+    purpose="evaluation",
+    source={
+        "type": "uri",
+        "uri": "huggingface://datasets/llamastack/evaluation_dataset"
+    },
+    dataset_id="my_eval_dataset"
+)
+
+# Run evaluation
+eval_result = client.eval.run_evaluation(
+    dataset_id="my_eval_dataset",
+    scoring_functions=["accuracy", "bleu"],
+    model_id="my_model"
+)
+
+print(f"Evaluation completed: {eval_result}")
+```
+
+## Supported Benchmarks
+
+Llama Stack pre-registers several popular open-benchmarks for easy model evaluation:
+
+- **MMLU-COT** - Measuring Massive Multitask Language Understanding with Chain of Thought
+- **GPQA-COT** - Graduate-level Google-Proof Q&A with Chain of Thought
+- **SimpleQA** - Short fact-seeking question benchmark
+- **MMMU** - Multimodal understanding and reasoning benchmark
+
+## Best Practices
+
+- **Choose appropriate providers**: Use Meta Reference for comprehensive evaluation, NVIDIA for platform-specific needs
+- **Configure storage properly**: Ensure your key-value store configuration matches your performance requirements
+- **Monitor evaluation progress**: Large evaluations can take time - implement proper monitoring
+- **Use appropriate scoring functions**: Select scoring metrics that align with your evaluation goals
+
+## Next Steps
+
+- Check out the [Evaluation Concepts](../concepts/evaluation-concepts.mdx) guide for detailed conceptual information
+- See the [Building Applications - Evaluation](../building-applications/evals.mdx) guide for application examples
+- Review the [Evaluation Reference](../references/evals-reference.mdx) for comprehensive CLI and API usage
+- Explore the [Scoring](./scoring.mdx) documentation for available scoring functions

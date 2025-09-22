@@ -1,0 +1,25 @@
+---
+description: Anthropic inference provider for accessing Claude models and Anthropic's
+  AI services
+sidebar_label: Anthropic
+sidebar_position: 4
+title: remote::anthropic
+---
+
+# remote::anthropic
+
+## Description
+
+Anthropic inference provider for accessing Claude models and Anthropic's AI services.
+
+## Configuration
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `api_key` | `str \| None` | No |  | API key for Anthropic models |
+
+## Sample Configuration
+
+```yaml
+api_key: ${env.ANTHROPIC_API_KEY:=}
+```
