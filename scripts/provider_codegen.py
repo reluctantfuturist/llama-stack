@@ -251,18 +251,20 @@ def generate_provider_docs(progress, provider_spec: Any, api_name: str) -> str:
             default = (
                 str(field_info["default"]) if field_info["default"] is not None else ""
             )
-            description = field_info["description"] or ""
+            description_text = field_info["description"] or ""
 
             md_lines.append(
-                f"| `{field_name}` | `{field_type}` | {required} | {default} | {description} |"
+                f"| `{field_name}` | `{field_type}` | {required} | {default} | {description_text} |"
             )
 
         md_lines.append("")
 
         if config_info.get("accepts_extra_config"):
+            md_lines.append(":::note")
             md_lines.append(
-                "\`\`\`{note}\n This configuration class accepts additional fields beyond those listed above. You can pass any additional configuration options that will be forwarded to the underlying provider.\n \`\`\`\n"
+                "This configuration class accepts additional fields beyond those listed above. You can pass any additional configuration options that will be forwarded to the underlying provider."
             )
+            md_lines.append(":::")
             md_lines.append("")
 
     if config_info.get("sample_config"):
@@ -313,21 +315,23 @@ def generate_provider_docs(progress, provider_spec: Any, api_name: str) -> str:
     ):
         md_lines.append("## Deprecation Notice")
         md_lines.append("")
-        md_lines.append(
-            f"\`\`\`{{warning}}\n{provider_spec.deprecation_warning}\n\`\`\`"
-        )
+        md_lines.append(":::warning")
+        md_lines.append(provider_spec.deprecation_warning)
+        md_lines.append(":::")
         md_lines.append("")
 
     if hasattr(provider_spec, "deprecation_error") and provider_spec.deprecation_error:
         md_lines.append("## Deprecation Error")
         md_lines.append("")
-        md_lines.append(f"❌ **Error**: {provider_spec.deprecation_error}")
+        md_lines.append(":::danger")
+        md_lines.append(f"**Error**: {provider_spec.deprecation_error}")
+        md_lines.append(":::")
 
     return "\n".join(md_lines) + "\n"
 
 
 def generate_index_docs(
-    api_name: str, api_docstring: str, toctree_entries: list
+    api_name: str, api_docstring: str | None, provider_entries: list
 ) -> str:
     """Generate MDX documentation for the index file."""
     # Create sidebar label for the API
@@ -364,12 +368,11 @@ def generate_index_docs(
     md_lines.append("## Providers")
     md_lines.append("")
 
-    md_lines.append(f"\`\`\`{{toctree}}")
-    md_lines.append(":maxdepth: 1")
-    md_lines.append("")
-    for entry in toctree_entries:
-        md_lines.append(entry)
-    md_lines.append("\`\`\`")
+    # For Docusaurus, create a simple list of links instead of toctree
+    for entry in provider_entries:
+        provider_name = entry["display_name"]
+        filename = entry["filename"]
+        md_lines.append(f"- [{provider_name}](./{filename})")
     md_lines.append("")
 
     return "\n".join(md_lines)
@@ -390,7 +393,7 @@ def process_provider_registry(progress, change_tracker: ChangedPathTracker) -> N
             change_tracker.add_paths(doc_output_dir)
 
             api_docstring = get_api_docstring(api_name)
-            toctree_entries = []
+            provider_entries = []
 
             for provider_type, provider in sorted(providers.items()):
                 filename = provider_type.replace("::", "_").replace(":", "_")
@@ -400,11 +403,21 @@ def process_provider_registry(progress, change_tracker: ChangedPathTracker) -> N
 
                 provider_doc_file.write_text(provider_docs)
                 change_tracker.add_paths(provider_doc_file)
-                toctree_entries.append(f"{filename}")
+
+                # Create display name for the index
+                display_name = provider_type.replace("::", " - ").replace("_", " ")
+                if display_name.startswith("inline - "):
+                    display_name = display_name[9:].title()
+                else:
+                    display_name = display_name.title()
+
+                provider_entries.append(
+                    {"filename": filename, "display_name": display_name}
+                )
 
             # Generate index file with frontmatter
             index_content = generate_index_docs(
-                api_name, api_docstring, toctree_entries
+                api_name, api_docstring, provider_entries
             )
             index_file = doc_output_dir / "index.mdx"
             index_file.write_text(index_content)
