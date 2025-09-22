@@ -19,12 +19,12 @@ function HomepageHeader() {
             <Link
               className={clsx('button button--primary button--lg', styles.getStartedButton)}
               to="/docs/getting-started">
-              Get Started 🚀
+              🚀 Get Started
             </Link>
             <Link
-              className={clsx('button button--outline button--lg', styles.apiButton)}
+              className={clsx('button button--primary button--lg', styles.apiButton)}
               to="/docs/category/llama-stack-api">
-              API Reference
+              📚 API Reference
             </Link>
           </div>
         </div>
