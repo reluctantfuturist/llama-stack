@@ -1,7 +1,6 @@
 ---
-description: Meta's reference implementation of a vector database
-sidebar_label: Meta Reference
-sidebar_position: 4
+description: "Meta's reference implementation of a vector database."
+sidebar_label: Meta-Reference
 title: inline::meta-reference
 ---
 
@@ -24,3 +23,9 @@ kvstore:
   type: sqlite
   db_path: ${env.SQLITE_STORE_DIR:=~/.llama/dummy}/faiss_store.db
 ```
+## Deprecation Notice
+
+:::warning
+Please use the `inline::faiss` provider instead.
+:::
+

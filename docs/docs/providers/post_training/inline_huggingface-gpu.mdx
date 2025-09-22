@@ -1,8 +1,6 @@
 ---
-description: HuggingFace-based post-training provider for fine-tuning models using
-  the HuggingFace ecosystem
-sidebar_label: Huggingface Gpu
-sidebar_position: 4
+description: "HuggingFace-based post-training provider for fine-tuning models using the HuggingFace ecosystem."
+sidebar_label: Huggingface-Gpu
 title: inline::huggingface-gpu
 ---
 
@@ -17,10 +15,13 @@ HuggingFace-based post-training provider for fine-tuning models using the Huggin
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
 | `device` | `<class 'str'>` | No | cuda |  |
-| `distributed_backend` | `Literal['fsdp', 'deepspeed']` | No |  |  |
-| `checkpoint_format` | `Literal['full_state', 'huggingface']` | No | huggingface |  |
-| `chat_template` | `<class 'str'>` | No | `<\|user\|>{input}<\|assistant\|>{output}` |  |
-| `model_specific_config` | `<class 'dict'>` | No | `{'trust_remote_code': True, 'attn_implementation': 'sdpa'}` |  |
+| `distributed_backend` | `Literal['fsdp', 'deepspeed'` | No |  |  |
+| `checkpoint_format` | `Literal['full_state', 'huggingface'` | No | huggingface |  |
+| `chat_template` | `<class 'str'>` | No | <|user|>
+{input}
+<|assistant|>
+{output} |  |
+| `model_specific_config` | `<class 'dict'>` | No | {'trust_remote_code': True, 'attn_implementation': 'sdpa'} |  |
 | `max_seq_length` | `<class 'int'>` | No | 2048 |  |
 | `gradient_checkpointing` | `<class 'bool'>` | No | False |  |
 | `save_total_limit` | `<class 'int'>` | No | 3 |  |
