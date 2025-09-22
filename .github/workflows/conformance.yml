@@ -13,8 +13,8 @@ on:
     branches: [ main ]
     types: [opened, synchronize, reopened]
     paths:
-      - 'docs/_static/llama-stack-spec.yaml'
-      - 'docs/_static/llama-stack-spec.html'
+      - 'docs/static/llama-stack-spec.yaml'
+      - 'docs/static/llama-stack-spec.html'
       - '.github/workflows/conformance.yml' # This workflow itself
 
 concurrency:
