@@ -31,7 +31,7 @@ import Heading from "@theme/Heading";
   path={"/v1/tools/{tool_name}"}
   context={"endpoint"}
 >
-  
+
 </MethodEndpoint>
 
 
@@ -49,14 +49,14 @@ Get a tool by its name.
 <ParamsDetails
   parameters={[{"name":"tool_name","in":"path","description":"The name of the tool to get.","required":true,"schema":{"type":"string"}}]}
 >
-  
+
 </ParamsDetails>
 
 <RequestSchema
   title={"Body"}
   body={undefined}
 >
-  
+
 </RequestSchema>
 
 <StatusCodes
@@ -64,8 +64,5 @@ Get a tool by its name.
   label={undefined}
   responses={{"200":{"description":"A Tool.","content":{"application/json":{"schema":{"type":"object","properties":{"identifier":{"type":"string"},"provider_resource_id":{"type":"string"},"provider_id":{"type":"string"},"type":{"type":"string","enum":["model","shield","vector_db","dataset","scoring_function","benchmark","tool","tool_group","prompt"],"const":"tool","default":"tool","description":"Type of resource, always 'tool'"},"toolgroup_id":{"type":"string","description":"ID of the tool group this tool belongs to"},"description":{"type":"string","description":"Human-readable description of what the tool does"},"parameters":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string","description":"Name of the parameter"},"parameter_type":{"type":"string","description":"Type of the parameter (e.g., string, integer)"},"description":{"type":"string","description":"Human-readable description of what the parameter does"},"required":{"type":"boolean","default":true,"description":"Whether this parameter is required for tool invocation"},"default":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}],"description":"(Optional) Default value for the parameter if not provided"}},"additionalProperties":false,"required":["name","parameter_type","description","required"],"title":"ToolParameter","description":"Parameter definition for a tool."},"description":"List of parameters this tool accepts"},"metadata":{"type":"object","additionalProperties":{"oneOf":[{"type":"null"},{"type":"boolean"},{"type":"number"},{"type":"string"},{"type":"array"},{"type":"object"}]},"description":"(Optional) Additional metadata about the tool"}},"additionalProperties":false,"required":["identifier","provider_id","type","toolgroup_id","description","parameters"],"title":"Tool","description":"A tool that can be invoked by agents."}}}},"400":{"description":"The request was invalid or malformed","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":400,"title":"Bad Request","detail":"The request was invalid or malformed"}}}},"429":{"description":"The client has sent too many requests in a given amount of time","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":429,"title":"Too Many Requests","detail":"You have exceeded the rate limit. Please try again later."}}}},"500":{"description":"The server encountered an unexpected error","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":500,"title":"Internal Server Error","detail":"An unexpected error occurred. Our team has been notified."}}}},"default":{"description":"An unexpected error occurred","content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"integer","description":"HTTP status code"},"title":{"type":"string","description":"Error title, a short summary of the error which is invariant for an error type"},"detail":{"type":"string","description":"Error detail, a longer human-readable description of the error"},"instance":{"type":"string","description":"(Optional) A URL which can be used to retrieve more information about the specific occurrence of the error"}},"additionalProperties":false,"required":["status","title","detail"],"title":"Error","description":"Error response from the API. Roughly follows RFC 7807."},"example":{"status":0,"title":"Error","detail":"An unexpected error occurred"}}}}}}
 >
-  
+
 </StatusCodes>
-
-
-      
