@@ -226,6 +226,13 @@ def generate_provider_docs(progress, provider_spec: Any, api_name: str) -> str:
             field_type = field_info["type"].replace("|", "\\|")
             required = "Yes" if field_info["required"] else "No"
             default = str(field_info["default"]) if field_info["default"] is not None else ""
+
+            # Handle multiline default values and escape problematic characters for MDX
+            if "\n" in default:
+                default = default.replace("\n", "<br/>").replace("<", "&lt;").replace(">", "&gt;").replace("{", "&#123;").replace("}", "&#125;")
+            else:
+                default = default.replace("<", "&lt;").replace(">", "&gt;").replace("{", "&#123;").replace("}", "&#125;")
+
             description_text = field_info["description"] or ""
 
             md_lines.append(f"| `{field_name}` | `{field_type}` | {required} | {default} | {description_text} |")
